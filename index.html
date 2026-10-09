@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><title>Fulfillment Management System</title>
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#0f172a">
+  <style>
+:root{--bg:#f1f5f9;--card:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--pri:#2563eb;--pri2:#1d4ed8;--ok:#16a34a;--warn:#d97706;--err:#dc2626;--side:#0f172a;--radius:12px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--pri)}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.right{margin-left:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn:hover{background:#f8fafc}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{background:var(--pri2)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.err{background:var(--err);border-color:var(--err);color:#fff}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{padding:4px 8px;font-size:12px}
+input.in,select.in,textarea.in{border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px;background:#fff;min-width:0}
+input.in:focus,select.in:focus,textarea.in:focus{outline:2px solid #93c5fd;border-color:var(--pri)}
+label.f{display:block;margin:10px 0 4px;font-weight:600;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.badge{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;background:#e2e8f0;color:#334155}
+.b-IMPORTED{background:#e2e8f0;color:#334155}.b-READY_FOR_PICKING{background:#dbeafe;color:#1e40af}
+.b-PICKING_IN_PROGRESS{background:#fef3c7;color:#92400e}.b-PICKING_COMPLETED{background:#e0e7ff;color:#3730a3}
+.b-PACKING_IN_PROGRESS{background:#ffedd5;color:#9a3412}.b-PACKING_COMPLETED{background:#dcfce7;color:#166534}
+.b-EXCEPTION{background:#fee2e2;color:#991b1b}.b-CANCELLED{background:#f1f5f9;color:#64748b;text-decoration:line-through}
+.b-ACTIVE,.b-UPLOADED,.b-RESOLVED,.b-COMPLETED{background:#dcfce7;color:#166534}.b-INACTIVE,.b-FAILED,.b-OPEN{background:#fee2e2;color:#991b1b}
+.b-PENDING,.b-UPLOADING,.b-LOGGED{background:#fef3c7;color:#92400e}.b-PURGED{background:#f1f5f9;color:#64748b}
+.b-SUPER_ADMIN{background:#fae8ff;color:#86198f}.b-ADMIN{background:#ede9fe;color:#5b21b6}.b-PICKER{background:#dbeafe;color:#1e40af}.b-PACKER{background:#ffedd5;color:#9a3412}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);padding:8px 8px;background:#f8fafc;position:sticky;top:0}
+table.t td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
+table.t tr.click{cursor:pointer}table.t tr.click:hover td{background:#f8fafc}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;max-height:70vh}
+/* toast & modal */
+#toasts{position:fixed;z-index:9999;top:12px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;width:min(92vw,520px)}
+.toast{padding:12px 14px;border-radius:10px;color:#fff;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18);background:#0f172a}
+.toast.ok{background:var(--ok)}.toast.err{background:var(--err)}.toast.warn{background:var(--warn)}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;color:var(--fg);border-radius:14px;max-width:min(96vw,640px);width:100%;max-height:92vh;overflow:auto;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.modal.wide{max-width:min(96vw,1100px)}
+.modal h3{margin:0 0 10px}
+/* login */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.login .card{width:min(100%,380px);padding:24px}
+.login h1{font-size:20px;margin:0 0 2px}
+.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;margin-bottom:12px}
+.err-box{background:#fee2e2;color:#991b1b;border-radius:8px;padding:10px 12px;margin-top:10px;font-weight:600}
+.ok-box{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 12px;margin-top:10px;font-weight:600}
+.warn-box{background:#fef3c7;color:#92400e;border-radius:8px;padding:10px 12px;margin-top:10px;font-weight:600}
+/* ───────── ADMIN ───────── */
+.adm{display:flex;min-height:100vh}
+.side{width:230px;background:var(--side);color:#cbd5e1;padding:14px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
+.side .brand{color:#fff;font-weight:800;padding:4px 8px 14px;font-size:15px}
+.side a{display:block;color:#cbd5e1;text-decoration:none;padding:8px 10px;border-radius:8px;margin:1px 0;font-weight:500;cursor:pointer}
+.side a:hover{background:#1e293b;color:#fff}.side a.on{background:#2563eb;color:#fff}
+.side .sub{padding-left:22px;font-size:13px}
+.side .me{border-top:1px solid #1e293b;margin-top:14px;padding:12px 8px 0;font-size:12px}
+.main{flex:1;min-width:0;padding:20px 24px}
+.main h2{margin:0 0 14px;font-size:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat .v{font-size:26px;font-weight:800;line-height:1.1}.stat .l{color:var(--muted);font-size:12px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px;flex-wrap:wrap}
+.tabs a{padding:8px 12px;cursor:pointer;border-bottom:2px solid transparent;font-weight:600;color:var(--muted)}
+.tabs a.on{border-color:var(--pri);color:var(--pri)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
+.kv{display:grid;grid-template-columns:170px 1fr;gap:4px 12px;font-size:13px}.kv div:nth-child(odd){color:var(--muted)}
+pre.json{white-space:pre-wrap;word-break:break-all;font-size:11px;margin:0;max-width:420px}
+@media (max-width:900px){.adm{flex-direction:column}.side{width:auto;height:auto;position:static}.grid2{grid-template-columns:1fr}.main{padding:14px}}
+/* ───────── PICKER (mobile 360–480) ───────── */
+.pk{max-width:480px;margin:0 auto;min-height:100vh;padding:12px 12px 120px}
+.pk-head{display:flex;align-items:center;gap:8px;padding:4px 0 12px}
+.pk-title{font-weight:800;letter-spacing:.06em;font-size:15px}
+.pk-big{display:block;width:100%;padding:26px 16px;font-size:22px;font-weight:800;border-radius:16px;border:0;margin:12px 0;color:#fff;background:var(--pri);cursor:pointer;letter-spacing:.04em}
+.pk-big.alt{background:#0f172a}
+.pk-big:active{transform:scale(.99)}
+.pk-resi{font-size:26px;font-weight:800;word-break:break-all;font-family:ui-monospace,Menlo,Consolas,monospace}
+.pk-item{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+.pk-item.done{border-color:var(--ok);background:#f0fdf4}
+.pk-item .nm{font-weight:700;font-size:15px}
+.pk-item .qty{font-size:30px;font-weight:900;margin:4px 0}
+.pk-check{width:100%;padding:16px;font-size:18px;font-weight:800;border-radius:12px;border:2px solid var(--pri);background:#fff;color:var(--pri);cursor:pointer}
+.pk-item.done .pk-check{background:var(--ok);border-color:var(--ok);color:#fff}
+.pk-foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+.pk-foot .inner{max-width:480px;margin:0 auto}
+.pk-result{border-radius:16px;padding:22px 16px;color:#fff;text-align:center;margin:14px 0}
+.pk-result h2{margin:0 0 6px;font-size:24px;letter-spacing:.03em}
+.pk-result.err{background:var(--err)}.pk-result.warn{background:var(--warn)}.pk-result.ok{background:var(--ok)}
+#pk-reader{width:100%;border-radius:14px;overflow:hidden;background:#000}
+#pk-reader video{width:100%!important}
+/* ───────── PACKER (desktop, dark) ───────── */
+body.dark{background:#0b1220;color:#e2e8f0}
+.pc{min-height:100vh;display:flex;flex-direction:column}
+.pc-head{display:flex;align-items:center;gap:14px;padding:10px 18px;background:#020617;border-bottom:1px solid #1e293b}
+.pc-head .ws{background:#1e293b;color:#fcd34d;font-weight:800;border-radius:8px;padding:6px 10px;font-family:ui-monospace,Menlo,Consolas,monospace;cursor:pointer;border:0}
+.pc-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(380px,1fr);gap:16px;padding:16px;flex:1}
+.pc-cam{position:relative;background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#64748b}
+.pc-cam canvas{width:100%;height:100%;object-fit:contain}
+.pc-rec{position:absolute;top:12px;right:12px;background:#dc2626;color:#fff;font-weight:800;border-radius:8px;padding:4px 10px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.pc-panel{background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:14px}
+.pc-scan{width:100%;font-size:24px;padding:14px;border-radius:12px;border:2px solid #334155;background:#020617;color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em}
+.pc-scan:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.3)}
+.pc-msg{border-radius:12px;padding:12px 14px;margin-top:10px;font-weight:600}
+.pc-msg.ok{background:#14532d;color:#bbf7d0}.pc-msg.err{background:#7f1d1d;color:#fecaca}.pc-msg.warn{background:#78350f;color:#fde68a}
+.pc-msg h4{margin:0 0 2px;font-size:17px}
+.pc-items{list-style:none;padding:0;margin:8px 0 0}
+.pc-items li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #1e293b}
+.pc-items .q{font-size:22px;font-weight:900;color:#fcd34d;min-width:56px;text-align:right}
+.pc-done{width:100%;padding:18px;font-size:20px;font-weight:900;border-radius:12px;border:0;background:#16a34a;color:#fff;cursor:pointer;margin-top:12px;letter-spacing:.04em}
+.pc-done:disabled{opacity:.4;cursor:not-allowed}
+body.dark .btn{background:#1e293b;border-color:#334155;color:#e2e8f0}
+body.dark .btn.pri{background:var(--pri);border-color:var(--pri)}
+body.dark .muted{color:#94a3b8}
+.q-item{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #1e293b;font-size:13px}
+.bar{height:6px;background:#1e293b;border-radius:4px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:#3b82f6}
+@media (max-width:1000px){.pc-body{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+  <div id="app"><div class="login"><div class="muted">Memuat…</div></div></div>
+  <script>window.FMS_API_URL = "https://script.google.com/macros/s/AKfycbw6tf9kZ1pjB1IBbQ42RtsJR_uOTVMHI1bXdGYOnbkplBJGruJB1G_YI6aG8G56fSBp9w/exec";</script>
+  <script>
+/* ═════════════ JsCommon — transport API, sesi, util UI ═════════════ */
+var Store = {
+  get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return Store._m[k] || null; } },
+  set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { Store._m[k] = v; } },
+  del: function (k) { try { window.localStorage.removeItem(k); } catch (e) { delete Store._m[k]; } },
+  _m: {}
+};
+
+var App = {
+  token: Store.get('fms_token'),
+  me: null,
+  view: null,
+
+  start: function () {
+    if (!App.token) return App.showLogin();
+    api('me', {}, { silent: true }).then(function (me) { App.enter(me); }).catch(function (e) {
+      if (['UNAUTHENTICATED', 'SESSION_EXPIRED', 'INACTIVE', 'MUST_CHANGE_PASSWORD'].indexOf(e.code) < 0) App.showLogin(e.message);
+    });
+  },
+
+  enter: function (me) {
+    App.me = me;
+    document.body.className = '';
+    if (me.user.mustChangePassword) return App.showChangePassword(true);
+    var r = me.user.role;
+    if (r === 'PICKER') return Picker.start(me);
+    if (r === 'PACKER') return Packer.start(me);
+    return Admin.start(me);
+  },
+
+  showLogin: function (msg) {
+    if (App.view && App.view.stop) try { App.view.stop(); } catch (e) {}
+    App.view = null;
+    document.body.className = '';
+    $app().innerHTML =
+      '<div class="login"><form class="card" id="lf" autocomplete="on">' +
+      '<div class="logo">F</div><h1>Fulfillment Management System</h1><div class="muted" style="margin-bottom:8px">Silakan login dengan akun Anda.</div>' +
+      '<label class="f">Username / Email</label><input class="in" style="width:100%" name="identifier" autocomplete="username" autocapitalize="off" required>' +
+      '<label class="f">Password</label><input class="in" style="width:100%" type="password" name="password" autocomplete="current-password" required>' +
+      '<button class="btn pri" style="width:100%;margin-top:16px;padding:11px" type="submit">LOGIN</button>' +
+      (msg ? '<div class="err-box">' + esc(msg) + '</div>' : '') + '<div id="lerr"></div></form></div>';
+    var f = document.getElementById('lf');
+    f.identifier.focus();
+    f.onsubmit = function (ev) {
+      ev.preventDefault();
+      var b = f.querySelector('button'); b.disabled = true; b.textContent = 'Memproses…';
+      api('login', { identifier: f.identifier.value, password: f.password.value, device: deviceInfo() }, { silent: true })
+        .then(function (r) { App.token = r.token; Store.set('fms_token', r.token); App.enter(r.me); })
+        .catch(function (e) { document.getElementById('lerr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; b.disabled = false; b.textContent = 'LOGIN'; f.password.value = ''; f.password.focus(); });
+    };
+  },
+
+  showChangePassword: function (forced, container) {
+    var min = (App.me && App.me.config.passwordMinLength) || 8;
+    var html = '<form class="card" id="cpf" style="max-width:420px">' +
+      (forced ? '<div class="logo">F</div><h1 style="font-size:19px;margin:0">Ganti Password</h1><div class="warn-box">Anda wajib mengganti password sebelum menggunakan aplikasi.</div>' : '<h3 style="margin-top:0">Ganti Password</h3>') +
+      '<label class="f">Password lama</label><input class="in" style="width:100%" type="password" name="o" autocomplete="current-password" required>' +
+      '<label class="f">Password baru (min. ' + min + ' karakter, huruf + angka)</label><input class="in" style="width:100%" type="password" name="n" autocomplete="new-password" required>' +
+      '<label class="f">Ulangi password baru</label><input class="in" style="width:100%" type="password" name="n2" autocomplete="new-password" required>' +
+      '<div class="row" style="margin-top:14px"><button class="btn pri" type="submit">Simpan</button>' + (forced ? '<button class="btn ghost" type="button" id="cplo">Logout</button>' : '') + '</div><div id="cperr"></div></form>';
+    if (container) container.innerHTML = html; else $app().innerHTML = '<div class="login">' + html + '</div>';
+    var f = document.getElementById('cpf');
+    if (forced) document.getElementById('cplo').onclick = App.logout;
+    f.onsubmit = function (ev) {
+      ev.preventDefault();
+      var out = document.getElementById('cperr');
+      if (f.n.value !== f.n2.value) { out.innerHTML = '<div class="err-box">Konfirmasi password tidak sama.</div>'; return; }
+      api('changePassword', { oldPassword: f.o.value, newPassword: f.n.value }, { silent: true })
+        .then(function (me) { toast('Password berhasil diganti.', 'ok'); if (forced) App.enter(me); else { f.reset(); out.innerHTML = '<div class="ok-box">Password berhasil diganti. Sesi di perangkat lain telah dikeluarkan.</div>'; } })
+        .catch(function (e) { out.innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; });
+    };
+  },
+
+  logout: function () {
+    var go = function () { App.token = null; Store.del('fms_token'); App.showLogin(); };
+    api('logout', {}, { silent: true }).then(go, go);
+  }
+};
+
+/** Panggil server. Mengembalikan Promise data; error {code,message}. */
+function api(name, args, opts) {
+  opts = opts || {};
+  return new Promise(function (resolve, reject) {
+    var done = function (raw) {
+      var r;
+      try { r = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { r = { ok: false, code: 'BAD_RESPONSE', message: 'Respon server tidak valid.' }; }
+      if (r && r.ok) return resolve(r.data);
+      var err = { code: r && r.code || 'ERROR', message: r && r.message || 'Terjadi kesalahan.', extra: r && r.extra };
+      if (['UNAUTHENTICATED', 'SESSION_EXPIRED', 'INACTIVE'].indexOf(err.code) >= 0 && name !== 'login') {
+        App.token = null; Store.del('fms_token');
+        App.showLogin(err.message);
+      } else if (err.code === 'MUST_CHANGE_PASSWORD') {
+        api('me').then(function (me) { App.me = me; App.showChangePassword(true); });
+      } else if (!opts.silent) toast(err.message, 'err');
+      reject(err);
+    };
+    var fail = function (e) { done({ ok: false, code: 'NETWORK', message: 'Koneksi ke server gagal: ' + (e && e.message || e) }); };
+    if (window.google && google.script && google.script.run) {
+      google.script.run.withSuccessHandler(done).withFailureHandler(fail).api(name, App.token, args || {});
+    } else {
+      fetch(window.FMS_API_URL, { method: 'POST', body: JSON.stringify({ fn: name, token: App.token, args: args || {} }) })
+        .then(function (r) { return r.text(); }).then(done, fail);
+    }
+  });
+}
+
+/* ───────── util ───────── */
+function $app() { return document.getElementById('app'); }
+function $(sel, root) { return (root || document).querySelector(sel); }
+function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function esc(s) { return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function badge(s) { return s ? '<span class="badge b-' + esc(s) + '">' + esc(String(s).replace(/_/g, ' ')) + '</span>' : ''; }
+function fmtDur(sec) { sec = Number(sec); if (!sec && sec !== 0 || isNaN(sec)) return '-'; var m = Math.floor(sec / 60), s = sec % 60; return m >= 60 ? Math.floor(m / 60) + 'j ' + (m % 60) + 'm' : m + 'm ' + (s < 10 ? '0' : '') + s + 'd'; }
+function fmtBytes(n) { n = Number(n) || 0; return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
+function deviceInfo() { var u = navigator.userAgent; var m = u.match(/\(([^)]+)\)/); return ((m ? m[1] : '') + ' | ' + (u.match(/(Chrome|Firefox|Safari|Edg)\/[\d.]+/) || [''])[0]).slice(0, 180); }
+function todayStr() { var d = new Date(Date.now() + 7 * 3600000); return d.toISOString().slice(0, 10); }
+
+function toast(msg, kind, ms) {
+  var box = document.getElementById('toasts');
+  if (!box) { box = document.createElement('div'); box.id = 'toasts'; document.body.appendChild(box); }
+  var t = document.createElement('div');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  box.appendChild(t);
+  setTimeout(function () { t.remove(); }, ms || (kind === 'err' ? 6000 : 3500));
+}
+
+/** Modal sederhana. Mengembalikan elemen .modal; close() untuk menutup. */
+function modal(html, opts) {
+  opts = opts || {};
+  var bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = '<div class="modal ' + (opts.wide ? 'wide' : '') + '">' + html + '</div>';
+  document.body.appendChild(bg);
+  var m = bg.firstChild;
+  m.close = function () { bg.remove(); if (opts.onClose) opts.onClose(); };
+  bg.addEventListener('mousedown', function (e) { if (e.target === bg && !opts.sticky) m.close(); });
+  $$('[data-close]', m).forEach(function (b) { b.onclick = m.close; });
+  return m;
+}
+function modalOpen() { return !!document.querySelector('.modal-bg'); }
+
+/** Prompt teks dalam modal → Promise<string|null>. */
+function promptText(title, label, opts) {
+  opts = opts || {};
+  return new Promise(function (resolve) {
+    var m = modal('<h3>' + esc(title) + '</h3>' + (opts.html || '') + '<label class="f">' + esc(label) + '</label><textarea class="in" rows="3" style="width:100%" id="pt"></textarea>' +
+      '<div class="row" style="margin-top:12px"><button class="btn ' + (opts.danger ? 'err' : 'pri') + '" id="pok">' + esc(opts.ok || 'OK') + '</button><button class="btn" data-close>Batal</button></div>', { onClose: function () { resolve(null); } });
+    var t = $('#pt', m); t.focus();
+    $('#pok', m).onclick = function () { var v = t.value.trim(); if ((opts.min || 0) > v.length) { toast('Wajib diisi (min. ' + opts.min + ' karakter).', 'err'); return; } resolve(v); m.close(); };
+  });
+}
+
+/** Konfirmasi (pengganti confirm() yang bisa diblok iframe) → Promise<boolean>. */
+function ask(msg, okLabel, danger) {
+  return new Promise(function (resolve) {
+    var answered = false;
+    var m = modal('<h3>Konfirmasi</h3><p>' + esc(msg) + '</p><div class="row" style="margin-top:12px"><button class="btn ' + (danger ? 'err' : 'pri') + '" id="ask-ok" style="padding:12px 18px">' + esc(okLabel || 'Ya') + '</button><button class="btn" data-close style="padding:12px 18px">Batal</button></div>',
+      { onClose: function () { if (!answered) resolve(false); } });
+    $('#ask-ok', m).onclick = function () { answered = true; m.close(); resolve(true); };
+  });
+}
+
+/** Pesan kamera ditolak + tautan ke versi di luar iframe (rencana B) bila dikonfigurasi. */
+function cameraHelp(msg) {
+  var url = App.me && App.me.config.publicUrl;
+  var inFrame = !!(window.google && google.script && google.script.run);
+  return esc(msg) + (url && inFrame ? ' <a href="' + esc(url) + '" target="_top" style="color:inherit;font-weight:800">Buka versi kamera →</a>' : '');
+}
+
+function beep(ok) {
+  try {
+    var C = window.AudioContext || window.webkitAudioContext; var ctx = beep.ctx || (beep.ctx = new C());
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = ok ? 1200 : 300; o.connect(g); g.connect(ctx.destination); g.gain.value = 0.15;
+    o.start(); o.stop(ctx.currentTime + (ok ? 0.12 : 0.45));
+  } catch (e) {}
+}
+
+/** Muat script eksternal sekali (mis. html5-qrcode). */
+function loadScript(src) {
+  loadScript.p = loadScript.p || {};
+  if (loadScript.p[src]) return loadScript.p[src];
+  return (loadScript.p[src] = new Promise(function (res, rej) { var s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = function () { delete loadScript.p[src]; rej(new Error('Gagal memuat ' + src)); }; document.head.appendChild(s); }));
+}
+</script>
+
+  <script>
+/* ═════════════ PICKER — mobile web (360–480 px) ═════════════ */
+var QR_LIB = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
+
+var Picker = {
+  me: null, cur: null, scanner: null, busy: false, checkQueue: Promise.resolve(), reasons: {},
+
+  start: function (me) {
+    Picker.me = me;
+    App.view = Picker;
+    Picker.home();
+  },
+  stop: function () { Picker.stopScanner(); },
+
+  shell: function (inner, foot) {
+    $app().innerHTML = '<div class="pk"><div class="pk-head"><div class="grow"><div class="pk-title">FULFILLMENT PICKER</div><div class="muted" style="font-size:12px">' + esc(Picker.me.user.name) + '</div></div>' +
+      '<button class="btn sm" id="pk-out">Logout</button></div>' + inner + '</div>' + (foot ? '<div class="pk-foot"><div class="inner">' + foot + '</div></div>' : '');
+    $('#pk-out').onclick = function () { var go = function () { Picker.stopScanner(); App.logout(); }; if (!Picker.cur) return go(); ask('Order sedang dipicking. Tetap logout? Order tetap terkunci atas nama Anda sampai lock habis.', 'Logout').then(function (y) { if (y) go(); }); };
+  },
+
+  home: function (notice) {
+    Picker.cur = null;
+    Picker.stopScanner();
+    Picker.shell('<div id="pk-notice">' + (notice || '') + '</div>' +
+      '<button class="pk-big" id="b-scan">SCAN RESI</button><button class="pk-big alt" id="b-input">INPUT RESI</button>' +
+      '<div class="card" style="margin-top:8px"><div class="row"><div class="grow muted">Selesai hari ini</div><div style="font-size:24px;font-weight:800" id="pk-done">…</div></div><div id="pk-active"></div></div>');
+    $('#b-scan').onclick = Picker.scan;
+    $('#b-input').onclick = Picker.input;
+    api('pickHome', {}, { silent: true }).then(function (h) {
+      Picker.reasons = h.reasons;
+      var d = $('#pk-done'); if (d) d.textContent = h.todayCompleted;
+      var box = $('#pk-active');
+      if (box && h.active.length) {
+        box.innerHTML = '<div class="warn-box" style="font-weight:500">Order yang masih Anda pegang (ketuk untuk lanjut):' +
+          h.active.map(function (a) { return '<div><a href="#" data-resi="' + esc(a.tracking_number) + '" class="mono">' + esc(a.tracking_number) + '</a></div>'; }).join('') + '</div>';
+        $$('[data-resi]', box).forEach(function (el) { el.onclick = function (e) { e.preventDefault(); Picker.lookup(el.getAttribute('data-resi')); }; });
+      }
+    }).catch(function () {});
+  },
+
+  input: function () {
+    Picker.shell('<div class="card"><label class="f" style="margin-top:0">Nomor resi</label>' +
+      '<input class="in mono" id="pk-in" style="width:100%;font-size:20px;padding:14px;text-transform:uppercase" autocomplete="off" autocapitalize="characters" inputmode="text">' +
+      '<button class="pk-big" id="pk-go">CARI</button><button class="btn" style="width:100%;padding:12px" id="pk-back">Kembali</button></div>');
+    var i = $('#pk-in'); i.focus();
+    var go = function () { if (i.value.trim()) Picker.lookup(i.value); };
+    $('#pk-go').onclick = go;
+    i.onkeydown = function (e) { if (e.key === 'Enter') go(); };
+    $('#pk-back').onclick = function () { Picker.home(); };
+  },
+
+  scan: function () {
+    Picker.shell('<div id="pk-reader"></div><div id="pk-scan-err"></div>' +
+      '<div class="row" style="margin-top:10px"><button class="btn grow" style="padding:14px" id="pk-torch">Senter</button><button class="btn grow" style="padding:14px" id="pk-cancel">Batal</button></div>' +
+      '<p class="muted" style="text-align:center;font-size:12px">Arahkan kamera ke barcode resi. Jarak ±15–20 cm.</p>' +
+      '<button class="btn" style="width:100%;padding:12px" id="pk-manual">Ketik resi manual</button>');
+    $('#pk-cancel').onclick = function () { Picker.home(); };
+    $('#pk-manual').onclick = function () { Picker.stopScanner(); Picker.input(); };
+    var showErr = function (msg) { var b = $('#pk-scan-err'); if (b) b.innerHTML = '<div class="err-box">' + cameraHelp(msg) + '</div>'; };
+    loadScript(QR_LIB).then(function () {
+      var F = Html5QrcodeSupportedFormats;
+      var sc = new Html5Qrcode('pk-reader', { verbose: false, formatsToSupport: [F.CODE_128, F.CODE_39, F.CODE_93, F.QR_CODE, F.EAN_13, F.ITF, F.CODABAR, F.DATA_MATRIX], experimentalFeatures: { useBarCodeDetectorIfSupported: true } });
+      Picker.scanner = sc;
+      var done = false;
+      return sc.start({ facingMode: 'environment' },
+        { fps: 12, qrbox: function (w, h) { return { width: Math.floor(w * 0.9), height: Math.floor(Math.min(h * 0.45, w * 0.5)) }; }, aspectRatio: 1.333 },
+        function (text) { if (done) return; done = true; beep(true); if (navigator.vibrate) navigator.vibrate(80); Picker.stopScanner().then(function () { Picker.lookup(text); }); },
+        function () {});
+    }).then(function () {
+      $('#pk-torch').onclick = function () {
+        var on = !Picker.torch;
+        Picker.scanner.applyVideoConstraints({ advanced: [{ torch: on }] }).then(function () { Picker.torch = on; }).catch(function () { toast('Senter tidak didukung perangkat ini.', 'warn'); });
+      };
+    }).catch(function (e) {
+      var s = String(e && (e.name || e.message) || e);
+      showErr(/Permission|NotAllowed/i.test(s) ? 'Izin kamera ditolak. Izinkan akses kamera di browser, atau gunakan INPUT RESI.' : 'Kamera tidak dapat dibuka: ' + s + '. Gunakan INPUT RESI.');
+    });
+  },
+
+  stopScanner: function () {
+    var sc = Picker.scanner; Picker.scanner = null; Picker.torch = false;
+    if (sc && sc.isScanning) return sc.stop().catch(function () {});
+    return Promise.resolve();
+  },
+
+  lookup: function (raw) {
+    var resi = String(raw || '').replace(/\s+/g, '').toUpperCase();
+    if (!resi || Picker.busy) return;
+    Picker.busy = true;
+    Picker.shell('<div class="card" style="text-align:center;padding:30px"><div class="muted">Mencocokkan resi…</div><div class="pk-resi" style="margin-top:6px">' + esc(resi) + '</div></div>');
+    api('pickScan', { resi: resi, device: deviceInfo() }, { silent: true }).then(function (r) {
+      Picker.busy = false;
+      if (r.result !== 'VALID') { beep(false); return Picker.rejected(resi, r); }
+      beep(true);
+      Picker.cur = r;
+      Picker.order();
+    }).catch(function (e) { Picker.busy = false; beep(false); Picker.rejected(resi, { result: 'ERROR', message: e.message }); });
+  },
+
+  rejected: function (resi, r) {
+    var label = { NOT_FOUND: 'NOT FOUND', ALREADY_PICKED: 'ALREADY PICKED', PICKING_IN_PROGRESS: 'PICKING IN PROGRESS', PACKED: 'PACKED', CANCELLED: 'CANCELLED', EXCEPTION: 'EXCEPTION', NOT_READY: 'BELUM SIAP' }[r.result] || r.result;
+    var kind = ['ALREADY_PICKED', 'PACKED', 'NOT_READY'].indexOf(r.result) >= 0 ? 'warn' : 'err';
+    Picker.shell('<div class="pk-result ' + kind + '"><h2>' + esc(label) + '</h2><div class="mono" style="font-size:18px;margin-bottom:6px">' + esc(resi) + '</div><div>' + esc(r.message) + '</div></div>' +
+      '<button class="pk-big" id="b-scan">SCAN LAGI</button><button class="pk-big alt" id="b-home">KEMBALI</button>');
+    $('#b-scan').onclick = Picker.scan;
+    $('#b-home').onclick = function () { Picker.home(); };
+    if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+  },
+
+  order: function () {
+    var c = Picker.cur, checked = {};
+    c.checked.forEach(function (id) { checked[id] = true; });
+    var all = c.items.every(function (i) { return checked[i.id]; });
+    var nDone = c.items.filter(function (i) { return checked[i.id]; }).length;
+    var items = c.items.map(function (i) {
+      var on = !!checked[i.id];
+      return '<div class="pk-item ' + (on ? 'done' : '') + '"><div class="nm">' + esc(i.product_name) + '</div>' +
+        (i.variant ? '<div class="muted">Variasi: <b>' + esc(i.variant) + '</b></div>' : '') + (i.sku ? '<div class="muted mono" style="font-size:12px">SKU: ' + esc(i.sku) + '</div>' : '') +
+        '<div class="qty">Qty ' + i.quantity + '</div>' +
+        '<button class="pk-check" data-item="' + esc(i.id) + '">' + (on ? '✓ PICKED' : '☐ CHECK') + '</button>' +
+        '<div style="text-align:right;margin-top:6px"><a href="#" class="muted" style="font-size:12px" data-issue="' + esc(i.id) + '">Masalah dengan item ini?</a></div></div>';
+    }).join('');
+    Picker.shell('<div class="card"><div class="muted" style="font-size:11px;font-weight:700;letter-spacing:.08em">TRACKING NUMBER</div><div class="pk-resi">' + esc(c.order.tracking_number) + '</div>' +
+      '<div class="muted mono" style="font-size:12px">Order ' + esc(c.order.order_number) + '</div>' +
+      '<div class="row" style="margin-top:8px"><b style="font-size:17px">' + c.items.length + ' PRODUK</b><span class="muted">· total qty ' + c.totalQty + '</span><span class="right badge ' + (all ? 'b-COMPLETED' : 'b-PENDING') + '">' + nDone + '/' + c.items.length + '</span></div>' +
+      (c.order.buyer_note ? '<div class="warn-box" style="font-weight:500">Catatan pembeli: ' + esc(c.order.buyer_note) + '</div>' : '') +
+      (c.resumed ? '<div class="muted" style="font-size:12px;margin-top:6px">Melanjutkan picking sebelumnya.</div>' : '') + '</div>' + items +
+      '<button class="btn" style="width:100%;padding:12px;margin-top:8px" id="pk-release">Lepas order (kembalikan ke antrian)</button>',
+      '<button class="pk-big" style="margin:0;padding:18px;background:' + (all ? 'var(--ok)' : '#94a3b8') + '" id="pk-submit" ' + (all ? '' : 'disabled') + '>SUBMIT PICKING</button>' +
+      (all ? '' : '<div class="muted" style="text-align:center;font-size:12px;margin-top:4px">Semua item harus dikonfirmasi sebelum picking dapat diselesaikan.</div>'));
+    $$('[data-item]').forEach(function (b) { b.onclick = function () { Picker.toggle(b.getAttribute('data-item')); }; });
+    $$('[data-issue]').forEach(function (a) { a.onclick = function (e) { e.preventDefault(); Picker.issue(a.getAttribute('data-issue')); }; });
+    $('#pk-submit').onclick = Picker.submit;
+    $('#pk-release').onclick = Picker.release;
+  },
+
+  toggle: function (itemId) {
+    var c = Picker.cur;
+    var was = c.checked.indexOf(itemId) >= 0;
+    var y = window.scrollY;
+    c.checked = was ? c.checked.filter(function (x) { return x !== itemId; }) : c.checked.concat([itemId]);
+    Picker.order(); window.scrollTo(0, y);
+    if (navigator.vibrate) navigator.vibrate(30);
+    var sid = c.sessionId;
+    // kirim berurutan; server adalah sumber kebenaran
+    Picker.checkQueue = Picker.checkQueue.then(function () {
+      return api('pickCheck', { sessionId: sid, itemId: itemId, checked: !was }, { silent: true }).then(function (r) {
+        if (Picker.cur && Picker.cur.sessionId === sid) Picker.cur.serverChecked = r.checked;
+      }).catch(function (e) {
+        toast(e.message, 'err');
+        if (e.code === 'SESSION_CLOSED') return Picker.home('<div class="err-box">' + esc(e.message) + '</div>');
+        if (Picker.cur && Picker.cur.sessionId === sid) { Picker.cur.checked = was ? Picker.cur.checked.concat([itemId]) : Picker.cur.checked.filter(function (x) { return x !== itemId; }); Picker.order(); }
+      });
+    });
+  },
+
+  submit: function () {
+    var c = Picker.cur;
+    var b = $('#pk-submit'); b.disabled = true; b.textContent = 'Menyimpan…';
+    Picker.checkQueue.then(function () {
+      return api('pickSubmit', { sessionId: c.sessionId }, { silent: true });
+    }).then(function (r) {
+      beep(true); if (navigator.vibrate) navigator.vibrate(150);
+      Picker.home('<div class="pk-result ok"><h2>PICKING COMPLETED</h2><div class="mono">' + esc(r.tracking) + '</div><div>Durasi ' + fmtDur(r.durationSec) + '</div></div>');
+    }).catch(function (e) {
+      beep(false); toast(e.message, 'err');
+      if (e.code === 'SESSION_CLOSED') return Picker.home('<div class="err-box">' + esc(e.message) + '</div>');
+      if (e.code === 'INCOMPLETE' && Picker.cur) { Picker.cur.checked = Picker.cur.serverChecked || Picker.cur.checked.filter(function (id) { return (e.extra && e.extra.missing || []).indexOf(id) < 0; }); }
+      if (Picker.cur) Picker.order();
+    });
+  },
+
+  release: function () {
+    ask('Lepas order ini? Order kembali ke antrian picking dan centang akan direset.', 'Lepas order').then(function (y) {
+      if (!y) return;
+      api('pickRelease', { sessionId: Picker.cur.sessionId }).then(function () { toast('Order dilepas.', 'ok'); Picker.home(); }).catch(function (e) { if (e.code === 'SESSION_CLOSED') Picker.home(); });
+    });
+  },
+
+  issue: function (itemId) {
+    var it = Picker.cur.items.filter(function (i) { return i.id === itemId; })[0];
+    var opts = Object.keys(Picker.reasons).map(function (k) { return '<button class="btn" style="width:100%;padding:14px;margin:4px 0;justify-content:flex-start" data-r="' + k + '">' + esc(Picker.reasons[k]) + ' <span class="muted mono" style="font-size:11px">' + k + '</span></button>'; }).join('');
+    var m = modal('<h3>Laporkan masalah</h3><div class="muted" style="margin-bottom:8px">' + esc(it.product_name) + (it.variant ? ' — ' + esc(it.variant) : '') + '</div>' + opts +
+      '<label class="f">Catatan (opsional)</label><input class="in" style="width:100%" id="pk-note"><p class="muted" style="font-size:12px">Order akan berstatus EXCEPTION dan diteruskan ke Admin.</p><button class="btn" data-close style="width:100%">Batal</button>');
+    $$('[data-r]', m).forEach(function (b) {
+      b.onclick = function () {
+        var note = $('#pk-note', m).value, reason = b.getAttribute('data-r');
+        m.close();
+        ask('Laporkan "' + Picker.reasons[reason] + '"? Picking order ini akan dihentikan.', 'Laporkan', true).then(function (y) {
+          if (!y) return;
+          api('pickException', { sessionId: Picker.cur.sessionId, itemId: itemId, reason: reason, note: note }).then(function () {
+            Picker.home('<div class="pk-result warn"><h2>EXCEPTION</h2><div>Masalah dilaporkan ke Admin.</div></div>');
+          });
+        });
+      };
+    });
+  }
+};
+</script>
+
+  <script>
+/* ═════════════ PACKER — desktop + barcode scanner USB + webcam ═════════════ */
+/* IndexedDB: video tetap tersimpan walau halaman di-reload. Bila IndexedDB diblok browser → fallback memori (jangan tutup tab). */
+var IDB = {
+  db: null, mem: null,
+  open: function () {
+    if (IDB.db) return Promise.resolve(IDB.db);
+    if (IDB.mem) return Promise.reject(new Error('mem'));
+    return new Promise(function (res, rej) {
+      try {
+        var r = indexedDB.open('fms_packer', 1);
+        r.onupgradeneeded = function () { r.result.createObjectStore('videos', { keyPath: 'videoId' }); };
+        r.onsuccess = function () { IDB.db = r.result; res(IDB.db); };
+        r.onerror = function () { rej(r.error); };
+      } catch (e) { rej(e); }
+    }).catch(function (e) { IDB.mem = {}; toast('IndexedDB tidak tersedia — video hanya disimpan di memori. JANGAN tutup/reload halaman sebelum upload selesai.', 'warn', 10000); throw e; });
+  },
+  tx: function (mode, fn, memFn) {
+    return IDB.open().then(function (db) {
+      return new Promise(function (res, rej) {
+        var t = db.transaction('videos', mode), st = t.objectStore('videos'), out = fn(st);
+        t.oncomplete = function () { res(out && out.result !== undefined ? out.result : out); };
+        t.onerror = function () { rej(t.error); };
+      });
+    }, function () { return memFn(IDB.mem); });
+  },
+  all: function () { return IDB.tx('readonly', function (s) { return s.getAll(); }, function (m) { return Object.keys(m).map(function (k) { return m[k]; }); }); },
+  put: function (v) { return IDB.tx('readwrite', function (s) { s.put(v); }, function (m) { m[v.videoId] = v; }); },
+  del: function (id) { return IDB.tx('readwrite', function (s) { s.delete(id); }, function (m) { delete m[id]; }); }
+};
+
+var Packer = {
+  me: null, cfg: null, ws: null, home: null, cur: null,
+  stream: null, recorder: null, chunks: [], recStart: 0, mime: '', overlay: null, drawTimer: null, tickTimer: null, focusTimer: null,
+  queue: [], uploading: false, progress: {}, busy: false, todayCount: 0,
+
+  start: function (me) {
+    Packer.me = me; Packer.cfg = me.config; Packer.ws = me.workstation;
+    App.view = Packer;
+    document.body.className = 'dark';
+    window.addEventListener('beforeunload', Packer.onUnload);
+    window.addEventListener('online', function () { Packer.processQueue(); });
+    api('packHome').then(function (h) {
+      Packer.home = h; Packer.todayCount = h.todayCompleted;
+      if (!Packer.ws) Packer.chooseWs(); else Packer.layout();
+    });
+  },
+
+  stop: function () {
+    clearInterval(Packer.drawTimer); clearInterval(Packer.tickTimer); clearInterval(Packer.focusTimer);
+    if (Packer.stream) Packer.stream.getTracks().forEach(function (t) { t.stop(); });
+    Packer.stream = null;
+    window.removeEventListener('beforeunload', Packer.onUnload);
+  },
+
+  onUnload: function (e) {
+    var pending = Packer.queue.some(function (q) { return q.status !== 'closed'; });
+    if (Packer.recorder || Packer.cur || pending) { e.preventDefault(); e.returnValue = ''; }
+  },
+
+  chooseWs: function () {
+    var list = Packer.home.workstations;
+    $app().innerHTML = '<div class="login"><div class="card" style="background:#0f172a;border-color:#1e293b;width:min(100%,460px)"><h1 style="font-size:19px;margin:0 0 4px">Pilih Workstation</h1><div class="muted" style="margin-bottom:12px">' + esc(Packer.me.user.name) + '</div>' +
+      (list.length ? list.map(function (w) { return '<button class="btn" style="width:100%;padding:14px;margin:4px 0;justify-content:space-between" data-ws="' + esc(w.id) + '"><b class="mono">' + esc(w.code) + '</b><span class="muted">' + esc(w.name) + (w.location ? ' · ' + esc(w.location) : '') + '</span></button>'; }).join('')
+        : '<div class="err-box">Belum ada workstation aktif. Hubungi Admin.</div>') +
+      '<button class="btn ghost" style="margin-top:10px" id="ws-out">Logout</button></div></div>';
+    $$('[data-ws]').forEach(function (b) {
+      b.onclick = function () { api('packSetWorkstation', { workstationId: b.getAttribute('data-ws') }).then(function (r) { Packer.ws = r.workstation; Packer.layout(); }); };
+    });
+    $('#ws-out').onclick = App.logout;
+  },
+
+  layout: function () {
+    $app().innerHTML =
+      '<div class="pc"><div class="pc-head"><div class="logo" style="width:34px;height:34px;margin:0;font-size:14px">F</div>' +
+      '<div><div class="muted" style="font-size:11px;font-weight:700;letter-spacing:.1em">PACKING STATION</div><div style="font-weight:700">' + esc(Packer.me.user.name) + '</div></div>' +
+      '<div class="right row" style="gap:14px"><button class="ws" id="pc-ws" title="Ganti workstation">' + esc(Packer.ws.code) + '</button>' +
+      '<div style="text-align:center"><div style="font-size:20px;font-weight:800;line-height:1" id="pc-count">' + Packer.todayCount + '</div><div class="muted" style="font-size:10px">selesai hari ini</div></div>' +
+      '<span class="badge b-UPLOADING hidden" id="pc-qbadge"></span><button class="btn" id="pc-out">Logout</button></div></div>' +
+      '<div class="pc-body"><section>' +
+      '<div class="pc-cam" id="pc-cam"><canvas id="pc-canvas"></canvas><div id="pc-camtxt" style="position:absolute">Kamera aktif otomatis setelah resi valid.</div><div class="pc-rec hidden" id="pc-rec">● REC 00:00</div></div>' +
+      '<video id="pc-video" muted playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></video>' +
+      '<div class="row" style="margin-top:8px"><button class="btn sm" id="pc-camtest">Tes kamera</button><span class="muted" style="font-size:12px" id="pc-camstate"></span></div>' +
+      '<div class="pc-panel" style="margin-top:12px"><div class="row"><b>Antrian Upload Video</b><span class="muted" style="font-size:12px">Video disimpan di perangkat sampai upload sukses.</span></div><div id="pc-queue"><div class="muted" style="font-size:13px;padding:6px 0">Kosong.</div></div><div id="pc-srvpending"></div></div>' +
+      '</section><section>' +
+      '<div class="pc-panel"><label class="muted" style="font-size:11px;font-weight:700;letter-spacing:.1em">SCAN TRACKING NUMBER</label>' +
+      '<input class="pc-scan" id="pc-scan" autocomplete="off" spellcheck="false" placeholder="Scan / ketik resi lalu Enter">' +
+      '<div id="pc-msg"></div></div>' +
+      '<div class="pc-panel" style="margin-top:12px" id="pc-order"><div class="muted">Belum ada order aktif. Scan resi untuk memulai packing.</div></div>' +
+      '</section></div></div>';
+    var input = $('#pc-scan');
+    input.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); var v = input.value; input.value = ''; Packer.onScan(v); } };
+    $('#pc-out').onclick = function () { if (Packer.cur || Packer.recorder) return toast('Selesaikan / laporkan order aktif sebelum logout.', 'err'); Packer.stop(); App.logout(); };
+    $('#pc-ws').onclick = function () { if (Packer.cur) return toast('Tidak dapat ganti workstation saat ada order aktif.', 'err'); Packer.chooseWs(); };
+    $('#pc-camtest').onclick = function () { Packer.startCamera().then(function (ok) { if (ok) toast('Kamera OK.', 'ok'); }); };
+    clearInterval(Packer.focusTimer);
+    Packer.focusTimer = setInterval(function () {
+      var a = document.activeElement;
+      if (!modalOpen() && a !== input && !(a && /INPUT|TEXTAREA|SELECT/.test(a.tagName))) input.focus();
+    }, 700);
+    input.focus();
+    Packer.refreshQueue().then(Packer.processQueue);
+    Packer.renderServerPending();
+  },
+
+  msg: function (kind, title, text) {
+    var b = $('#pc-msg'); if (!b) return;
+    b.innerHTML = kind ? '<div class="pc-msg ' + kind + '"><h4>' + esc(title) + '</h4>' + (text ? '<div style="font-weight:500">' + esc(text) + '</div>' : '') + '</div>' : '';
+  },
+
+  /* ───────── kamera & rekaman ───────── */
+  startCamera: function () {
+    if (Packer.stream) return Promise.resolve(true);
+    var st = $('#pc-camstate'); if (st) st.textContent = 'Menyalakan kamera…';
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { if (st) st.textContent = 'Browser tidak mendukung kamera.'; return Promise.resolve(false); }
+    return navigator.mediaDevices.getUserMedia({ video: { width: { ideal: Packer.cfg.videoWidth }, height: { ideal: Packer.cfg.videoHeight }, frameRate: { ideal: 25, max: 30 } }, audio: false })
+      .then(function (s) {
+        Packer.stream = s;
+        var v = $('#pc-video'); v.srcObject = s;
+        return v.play().then(function () {
+          var c = $('#pc-canvas'), ctx = c.getContext('2d');
+          c.width = Packer.cfg.videoWidth; c.height = Packer.cfg.videoHeight;
+          $('#pc-camtxt').classList.add('hidden');
+          clearInterval(Packer.drawTimer);
+          Packer.drawTimer = setInterval(function () { Packer.draw(ctx, c, v); }, 40);
+          if (st) st.textContent = 'Kamera aktif · ' + (s.getVideoTracks()[0] && s.getVideoTracks()[0].label || '');
+          return true;
+        });
+      }).catch(function (e) {
+        var n = String(e && (e.name || e.message) || e);
+        var m = /NotAllowed|Permission/i.test(n) ? 'Izin kamera ditolak browser.' : /NotFound|Overconstrained|DevicesNotFound/i.test(n) ? 'Webcam tidak terdeteksi.' : 'Kamera error: ' + n;
+        if (st) st.innerHTML = cameraHelp(m);
+        Packer.camError = m;
+        return false;
+      });
+  },
+
+  draw: function (ctx, c, v) {
+    if (v.readyState >= 2) ctx.drawImage(v, 0, 0, c.width, c.height);
+    if (!Packer.cfg.overlay) return;
+    var fs = Math.max(14, Math.round(c.width / 42));
+    ctx.font = 'bold ' + fs + 'px ui-monospace, Menlo, Consolas, monospace';
+    ctx.textBaseline = 'top';
+    var line = function (text, x, y, bg) {
+      var w = ctx.measureText(text).width;
+      ctx.fillStyle = bg || 'rgba(0,0,0,.6)'; ctx.fillRect(x - 5, y - 4, w + 10, fs + 9);
+      ctx.fillStyle = '#fff'; ctx.fillText(text, x, y);
+    };
+    var info = Packer.overlay;
+    if (info) { line('RESI ' + info.resi, 12, 12, 'rgba(220,38,38,.85)'); line('ORDER ' + info.order, 12, 20 + fs); }
+    var ts = new Intl.DateTimeFormat('id-ID', { timeZone: Packer.cfg.tz, day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).format(new Date());
+    line(ts + ' ' + (Packer.cfg.tz === 'Asia/Jakarta' ? 'WIB' : Packer.cfg.tz === 'Asia/Makassar' ? 'WITA' : 'WIT'), 12, c.height - 2 * fs - 26);
+    line(Packer.me.user.name + ' · ' + (Packer.ws ? Packer.ws.code : '-'), 12, c.height - fs - 14);
+    if (Packer.recorder && Math.floor(Date.now() / 600) % 2 === 0) { ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(c.width - 24, 24, 10, 0, Math.PI * 2); ctx.fill(); }
+  },
+
+  pickMime: function () {
+    var c = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'];
+    if (typeof MediaRecorder === 'undefined') return '';
+    for (var i = 0; i < c.length; i++) if (MediaRecorder.isTypeSupported(c[i])) return c[i];
+    return '';
+  },
+
+  startRecording: function (resi, orderNumber) {
+    Packer.overlay = { resi: resi, order: orderNumber };
+    var src = Packer.cfg.overlay ? $('#pc-canvas').captureStream(25) : Packer.stream;
+    Packer.mime = Packer.pickMime();
+    var opts = { videoBitsPerSecond: Packer.cfg.videoKbps * 1000 };
+    if (Packer.mime) opts.mimeType = Packer.mime;
+    var rec = new MediaRecorder(src, opts);
+    Packer.chunks = [];
+    rec.ondataavailable = function (e) { if (e.data && e.data.size) Packer.chunks.push(e.data); };
+    rec.onerror = function () { toast('Recording error! Laporkan masalah RECORDING_ERROR.', 'err'); };
+    rec.start(1000);
+    Packer.recorder = rec;
+    Packer.recStart = Date.now();
+    var r = $('#pc-rec'); r.classList.remove('hidden');
+    clearInterval(Packer.tickTimer);
+    Packer.tickTimer = setInterval(function () {
+      var s = Math.floor((Date.now() - Packer.recStart) / 1000);
+      r.textContent = '● REC ' + ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + s % 60).slice(-2);
+    }, 500);
+  },
+
+  stopRecording: function () {
+    return new Promise(function (resolve) {
+      var rec = Packer.recorder;
+      clearInterval(Packer.tickTimer);
+      var r = $('#pc-rec'); if (r) r.classList.add('hidden');
+      if (!rec || rec.state === 'inactive') { Packer.recorder = null; return resolve(null); }
+      rec.onstop = function () {
+        var blob = new Blob(Packer.chunks, { type: (Packer.mime || 'video/webm').split(';')[0] });
+        Packer.chunks = []; Packer.recorder = null; Packer.overlay = null;
+        resolve(blob);
+      };
+      rec.stop();
+    });
+  },
+
+  /* ───────── scan / order ───────── */
+  onScan: function (raw) {
+    var resi = String(raw || '').replace(/\s+/g, '').toUpperCase();
+    if (!resi || Packer.busy) return;
+    if (Packer.cur) {
+      if (resi === String(Packer.cur.order.tracking_number).toUpperCase()) return Packer.finish();
+      beep(false);
+      return Packer.msg('warn', 'Selesaikan order aktif dulu', 'Sedang memproses ' + Packer.cur.order.tracking_number + '. Scan resi yang sama / klik SELESAI PACKING.');
+    }
+    Packer.busy = true;
+    Packer.msg('', '');
+    api('packScan', { resi: resi }, { silent: true }).then(function (r) {
+      if (r.result !== 'VALID') {
+        beep(false);
+        return Packer.msg(r.result === 'UPLOAD_PENDING' ? 'warn' : 'err', r.result.replace(/_/g, ' '), resi + ' — ' + r.message);
+      }
+      Packer.cur = r;
+      beep(true);
+      Packer.renderOrder();
+      return Packer.startCamera().then(function (ok) {
+        if (ok) {
+          Packer.startRecording(r.order.tracking_number, r.order.order_number);
+          Packer.msg('ok', r.resumed ? 'Dilanjutkan — rekaman baru dimulai' : 'Order valid — merekam', 'Masukkan & cek barang di depan kamera, lalu scan resi lagi atau klik SELESAI PACKING.');
+        } else {
+          Packer.msg('err', 'Camera Error — ' + (Packer.camError || ''), Packer.cfg.videoRequired ? 'Packing tidak dapat diselesaikan tanpa video. Perbaiki kamera lalu klik "Mulai rekam", atau laporkan masalah CAMERA_ERROR.' : 'Kamera tidak aktif. Anda dapat menyelesaikan tanpa video (mode darurat) dengan alasan.');
+        }
+        Packer.renderOrder();
+      });
+    }).catch(function (e) {
+      beep(false);
+      if (e.code === 'WORKSTATION_REQUIRED') { Packer.ws = null; return Packer.chooseWs(); }
+      Packer.msg('err', 'Gagal', e.message);
+    }).then(function () { Packer.busy = false; });
+  },
+
+  renderOrder: function () {
+    var box = $('#pc-order'); if (!box) return;
+    var c = Packer.cur;
+    if (!c) { box.innerHTML = '<div class="muted">Belum ada order aktif. Scan resi untuk memulai packing.</div>'; return; }
+    var o = c.order;
+    box.innerHTML =
+      '<div class="row"><div class="grow"><div class="muted" style="font-size:11px;font-weight:700;letter-spacing:.1em">NOMOR RESI</div><div class="mono" style="font-size:24px;font-weight:900">' + esc(o.tracking_number) + '</div></div>' + badge('PACKING_IN_PROGRESS') + '</div>' +
+      '<div class="kv" style="margin-top:8px;grid-template-columns:150px 1fr"><div>Order ID</div><div class="mono">' + esc(o.order_number) + '</div><div>Picker</div><div>' + esc(o.picker_name || '-') + '</div>' +
+      '<div>Picking selesai</div><div>' + esc(o.picking_completed_at || '-') + '</div><div>Total SKU</div><div><b>' + c.totalSku + '</b></div><div>Total quantity</div><div><b>' + c.totalQty + '</b></div>' +
+      (o.shipping_option ? '<div>Pengiriman</div><div>' + esc(o.shipping_option) + '</div>' : '') + '</div>' +
+      (o.buyer_note ? '<div class="pc-msg warn" style="margin-top:8px">Catatan pembeli: ' + esc(o.buyer_note) + '</div>' : '') +
+      '<ul class="pc-items">' + c.items.map(function (i) { return '<li><div><div style="font-weight:600">' + esc(i.product_name) + '</div>' + (i.variant ? '<div class="muted" style="font-size:13px">' + esc(i.variant) + '</div>' : '') + '</div><div class="q">×' + i.quantity + '</div></li>'; }).join('') + '</ul>' +
+      (Packer.recorder ? '<button class="pc-done" id="pc-finish">SELESAI PACKING</button>'
+        : '<button class="pc-done" id="pc-retrycam" style="background:#2563eb">Mulai rekam</button>' + (!Packer.cfg.videoRequired ? '<button class="btn" style="width:100%;margin-top:8px" id="pc-novideo">Selesai tanpa video (darurat)</button>' : '')) +
+      '<button class="btn" style="width:100%;margin-top:8px" id="pc-issue">Laporkan masalah / salah scan</button>';
+    var f = $('#pc-finish'); if (f) f.onclick = Packer.finish;
+    var rc = $('#pc-retrycam'); if (rc) rc.onclick = function () {
+      Packer.startCamera().then(function (ok) { if (ok && Packer.cur && !Packer.recorder) { Packer.startRecording(Packer.cur.order.tracking_number, Packer.cur.order.order_number); Packer.msg('ok', 'Merekam', 'Lanjutkan packing di depan kamera.'); Packer.renderOrder(); } });
+    };
+    var nv = $('#pc-novideo'); if (nv) nv.onclick = Packer.noVideo;
+    $('#pc-issue').onclick = Packer.issue;
+  },
+
+  finish: function () {
+    var c = Packer.cur;
+    if (!c || Packer.busy) return;
+    if (!Packer.recorder) { toast('Belum ada rekaman. Kamera harus aktif.', 'err'); return; }
+    if (Date.now() - Packer.recStart < Packer.cfg.minRecordingSeconds * 1000) { toast('Rekaman terlalu singkat. Tunjukkan proses packing di kamera.', 'err'); return; }
+    Packer.busy = true;
+    var start = Packer.recStart, end = Date.now();
+    Packer.stopRecording().then(function (blob) {
+      if (!blob || blob.size < 1000) throw { message: 'Rekaman kosong. Klik "Mulai rekam" untuk merekam ulang.' };
+      return api('packFinish', { sessionId: c.sessionId, recordingStart: start, recordingEnd: end, sizeBytes: blob.size, mimeType: blob.type }, { silent: true }).then(function (r) {
+        return IDB.put({ videoId: r.videoId, sessionId: c.sessionId, tracking: c.order.tracking_number, orderNumber: c.order.order_number, fileName: r.fileName, blob: blob, mime: blob.type, size: blob.size, createdAt: Date.now(), status: 'queued', attempts: 0 })
+          .then(function () { return r; });
+      });
+    }).then(function () {
+      beep(true);
+      Packer.msg('ok', 'Rekaman selesai', c.order.tracking_number + ' — video sedang diupload. Silakan scan resi berikutnya.');
+      Packer.cur = null; Packer.renderOrder();
+      return Packer.refreshQueue().then(Packer.processQueue);
+    }).catch(function (e) {
+      Packer.msg('err', 'Gagal menyimpan rekaman', e.message);
+      if (e.code === 'SESSION_CLOSED') { Packer.cur = null; }
+      Packer.renderOrder();
+    }).then(function () { Packer.busy = false; });
+  },
+
+  issue: function () {
+    var c = Packer.cur; if (!c) return;
+    var R = Packer.home.reasons;
+    var m = modal('<h3>Laporkan masalah — ' + esc(c.order.tracking_number) + '</h3>' +
+      Object.keys(R).map(function (k) { return '<button class="btn" style="width:100%;justify-content:flex-start;margin:3px 0;padding:10px" data-r="' + k + '">' + esc(R[k]) + ' <span class="muted mono" style="font-size:11px;margin-left:auto">' + k + '</span></button>'; }).join('') +
+      '<label class="f">Catatan</label><input class="in" style="width:100%" id="pc-note"><p class="muted" style="font-size:12px">Salah scan → order kembali ke antrian packing. Lainnya → order EXCEPTION ke Admin. Rekaman berjalan dibatalkan.</p><button class="btn" data-close>Batal</button>');
+    $$('[data-r]', m).forEach(function (b) {
+      b.onclick = function () {
+        var reason = b.getAttribute('data-r'), note = $('#pc-note', m).value;
+        m.close();
+        Packer.stopRecording().then(function () {
+          return api('packException', { sessionId: c.sessionId, reason: reason, note: note });
+        }).then(function (r) {
+          Packer.msg('warn', reason === 'WRONG_SCAN' ? 'Dibatalkan (salah scan)' : 'Exception dilaporkan', c.order.tracking_number + ' → ' + (r.status === 'EXCEPTION' ? 'diteruskan ke Admin' : 'kembali ke antrian packing') + '.');
+          Packer.cur = null; Packer.renderOrder();
+        }).catch(function () { Packer.renderOrder(); });
+      };
+    });
+  },
+
+  noVideo: function () {
+    var c = Packer.cur; if (!c) return;
+    promptText('Selesai tanpa video (darurat)', 'Alasan (wajib)', { min: 5, ok: 'Selesaikan', danger: true, html: '<div class="warn-box">Order akan PACKING COMPLETED tanpa bukti video dan otomatis dibuat exception untuk Admin.</div>' }).then(function (reason) {
+      if (!reason) return;
+      api('packCompleteNoVideo', { sessionId: c.sessionId, reason: reason }).then(function () {
+        Packer.todayCount++; $('#pc-count').textContent = Packer.todayCount;
+        Packer.msg('warn', 'PACKING COMPLETED tanpa video', c.order.tracking_number);
+        Packer.cur = null; Packer.renderOrder();
+      });
+    });
+  },
+
+  /* ───────── antrian upload (IndexedDB) ───────── */
+  refreshQueue: function () {
+    return IDB.all().then(function (all) {
+      Packer.queue = all.sort(function (a, b) { return a.createdAt - b.createdAt; });
+      Packer.renderQueue();
+      return all;
+    }).catch(function () { Packer.queue = []; Packer.renderQueue(); });
+  },
+
+  renderQueue: function () {
+    var box = $('#pc-queue'); if (!box) return;
+    var q = Packer.queue;
+    var pend = q.filter(function (x) { return x.status !== 'closed'; }).length;
+    var bd = $('#pc-qbadge'); if (bd) { bd.textContent = pend + ' upload'; bd.classList.toggle('hidden', !pend); }
+    if (!q.length) { box.innerHTML = '<div class="muted" style="font-size:13px;padding:6px 0">Kosong.</div>'; return; }
+    box.innerHTML = q.map(function (x) {
+      var p = Packer.progress[x.videoId] || 0;
+      var st = { queued: 'Menunggu', uploading: 'Mengupload ' + Math.round(p * 100) + '%', failed: 'Video gagal diupload. Silakan retry.', closed: 'Sesi ditutup' }[x.status] || x.status;
+      return '<div class="q-item"><span class="mono" style="min-width:150px">' + esc(x.tracking) + '</span><span class="muted">' + fmtBytes(x.size) + '</span>' +
+        '<div class="bar"><i style="width:' + Math.round(p * 100) + '%"></i></div><span style="min-width:120px;font-size:12px" class="' + (x.status === 'failed' || x.status === 'closed' ? '' : 'muted') + '">' + esc(st) + '</span>' +
+        (x.status === 'failed' || x.status === 'closed' ? '<button class="btn sm" data-retry="' + esc(x.videoId) + '">Retry</button>' : '') +
+        '<button class="btn sm" data-save="' + esc(x.videoId) + '" title="Simpan salinan lokal">⬇</button>' +
+        (x.status === 'closed' ? '<button class="btn sm" data-discard="' + esc(x.videoId) + '">Hapus lokal</button>' : '') + '</div>' +
+        (x.error ? '<div style="font-size:11px;color:#fca5a5;padding:0 0 4px">' + esc(x.error) + '</div>' : '');
+    }).join('');
+    $$('[data-retry]', box).forEach(function (b) { b.onclick = function () { Packer.retry(b.getAttribute('data-retry')); }; });
+    $$('[data-save]', box).forEach(function (b) { b.onclick = function () { Packer.saveLocal(b.getAttribute('data-save')); }; });
+    $$('[data-discard]', box).forEach(function (b) { b.onclick = function () { Packer.discard(b.getAttribute('data-discard')); }; });
+  },
+
+  renderServerPending: function () {
+    var box = $('#pc-srvpending'); if (!box || !Packer.home) return;
+    IDB.all().catch(function () { return []; }).then(function (local) {
+      var have = {}; local.forEach(function (x) { have[x.videoId] = true; });
+      var miss = Packer.home.pendingVideos.filter(function (v) { return !have[v.videoId]; });
+      box.innerHTML = miss.length ? '<div class="pc-msg warn" style="font-size:13px">Video berikut belum terupload dan file-nya tidak ada di perangkat ini: ' + miss.map(function (v) { return '<span class="mono">' + esc(v.tracking) + '</span>'; }).join(', ') + '. Upload dari perangkat asal, atau minta Admin melepas lock lalu packing ulang.</div>' : '';
+    });
+  },
+
+  blobToB64: function (blob) {
+    return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(String(r.result).split(',')[1] || ''); }; r.onerror = function () { rej(r.error); }; r.readAsDataURL(blob); });
+  },
+
+  processQueue: function () {
+    if (Packer.uploading) return;
+    var item = Packer.queue.filter(function (x) { return x.status === 'queued' || x.status === 'uploading'; })[0];
+    if (!item) return;
+    Packer.uploading = true;
+    item.status = 'uploading'; item.attempts = (item.attempts || 0) + 1; item.error = '';
+    var chunk = Packer.chunkSize || Packer.cfg.uploadChunkBytes;
+    var finish = function () { Packer.uploading = false; Packer.refreshQueue().then(Packer.processQueue); };
+    IDB.put(item).then(function () {
+      Packer.renderQueue();
+      return api('videoInit', { videoId: item.videoId }, { silent: true });
+    }).then(function (r) {
+      if (r.done) return true;
+      var offset = r.offset;
+      var step = function () {
+        if (offset >= item.size) return true;
+        var part = item.blob.slice(offset, Math.min(offset + chunk, item.size));
+        return Packer.blobToB64(part).then(function (b64) {
+          return api('videoChunk', { videoId: item.videoId, offset: offset, data: b64 }, { silent: true });
+        }).then(function (res) {
+          if (res.done) return true;
+          offset = res.received || offset + part.size;
+          Packer.progress[item.videoId] = offset / item.size; Packer.renderQueue();
+          return step();
+        }, function (e) {
+          // payload terlalu besar → perkecil potongan (tetap kelipatan 256 KB)
+          if (e.code === 'NETWORK' && chunk > 1024 * 1024) { chunk = chunk / 2; Packer.chunkSize = chunk; return api('videoInit', { videoId: item.videoId }, { silent: true }).then(function (r2) { if (r2.done) return true; offset = r2.offset; return step(); }); }
+          throw e;
+        });
+      };
+      return step();
+    }).then(function () {
+      delete Packer.progress[item.videoId];
+      Packer.todayCount++; var cnt = $('#pc-count'); if (cnt) cnt.textContent = Packer.todayCount;
+      toast('✓ PACKING COMPLETED — ' + item.tracking + ' (video tersimpan di Drive)', 'ok');
+      return IDB.del(item.videoId);
+    }).catch(function (e) {
+      var closed = ['SESSION_CLOSED', 'FORBIDDEN', 'NOT_FOUND'].indexOf(e.code) >= 0;
+      item.status = closed ? 'closed' : 'failed';
+      item.error = closed ? e.message : 'Video gagal diupload. Silakan retry. (' + (e.message || '') + ')';
+      if (!closed) api('videoFailed', { videoId: item.videoId, error: e.message }, { silent: true }).catch(function () {});
+      toast('Upload ' + item.tracking + ' gagal: ' + e.message, 'err');
+      return IDB.put(item).then(function () {
+        if (!closed && item.attempts < 5) setTimeout(function () { item.status = 'queued'; IDB.put(item).then(function () { Packer.refreshQueue().then(Packer.processQueue); }); }, 5000 * item.attempts);
+      });
+    }).then(finish, finish);
+  },
+
+  retry: function (id) {
+    var it = Packer.queue.filter(function (x) { return x.videoId === id; })[0]; if (!it) return;
+    it.status = 'queued'; it.attempts = 0; it.error = '';
+    IDB.put(it).then(Packer.refreshQueue).then(Packer.processQueue);
+  },
+  saveLocal: function (id) {
+    var it = Packer.queue.filter(function (x) { return x.videoId === id; })[0]; if (!it) return;
+    var a = document.createElement('a'); a.href = URL.createObjectURL(it.blob); a.download = it.fileName || (it.tracking + '_' + it.orderNumber + '.webm'); document.body.appendChild(a); a.click(); a.remove();
+  },
+  discard: function (id) {
+    ask('Hapus salinan lokal video ini? Pastikan sudah diunduh bila diperlukan sebagai bukti.', 'Hapus', true).then(function (y) { if (y) IDB.del(id).then(Packer.refreshQueue); });
+  }
+};
+</script>
+
+  <script>
+/* ═════════════ ADMIN — desktop (PRD §58) ═════════════ */
+var STATUSES = ['IMPORTED', 'READY_FOR_PICKING', 'PICKING_IN_PROGRESS', 'PICKING_COMPLETED', 'PACKING_IN_PROGRESS', 'PACKING_COMPLETED', 'EXCEPTION', 'CANCELLED'];
+var AUDIT_ACTIONS = ['LOGIN', 'LOGIN_FAILED', 'ACCOUNT_LOCKED', 'LOGOUT', 'SESSION_TIMEOUT', 'ACCESS_DENIED', 'CREATE_USER', 'UPDATE_USER', 'DISABLE_USER', 'ENABLE_USER', 'RESET_PASSWORD', 'CHANGE_PASSWORD',
+  'CHANGE_CONFIGURATION', 'IMPORT_ORDER', 'ORDER_RESI_ASSIGNED', 'ORDER_CANCELLED', 'ORDER_STATUS_CHANGED', 'START_PICKING', 'COMPLETE_PICKING', 'RELEASE_PICKING', 'START_PACKING', 'FINISH_RECORDING',
+  'VIDEO_UPLOADED', 'COMPLETE_PACKING', 'LOCK_TAKEOVER', 'ADMIN_RELEASE_LOCK', 'SCAN_REJECTED', 'REPORT_EXCEPTION', 'RESOLVE_EXCEPTION', 'SELECT_WORKSTATION', 'PURGE_VIDEO', 'RUN_RETENTION', 'ARCHIVE_ORDERS'];
+
+function tbl(heads, rows, empty) {
+  return '<div class="tablewrap"><table class="t"><thead><tr>' + heads.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr></thead><tbody>' +
+    (rows.length ? rows.join('') : '<tr><td colspan="' + heads.length + '" class="muted" style="padding:18px;text-align:center">' + (empty || 'Tidak ada data.') + '</td></tr>') + '</tbody></table></div>';
+}
+function importBadge(s) { return '<span class="badge b-' + (s === 'COMPLETED' ? 'COMPLETED' : 'PENDING') + '">' + esc(String(s).replace(/_/g, ' ')) + '</span>'; }
+function stat(v, l) { return '<div class="stat"><div class="v">' + esc(v) + '</div><div class="l">' + esc(l) + '</div></div>'; }
+function opt(v, l, sel) { return '<option value="' + esc(v) + '"' + (String(v) === String(sel) ? ' selected' : '') + '>' + esc(l === undefined ? v : l) + '</option>'; }
+
+var Admin = {
+  me: null, page: null, timer: null,
+  NAV: [['dashboard', 'Dashboard'], ['orders', 'Orders'], ['import', 'Import Orders'], ['monitoring', 'Fulfillment Monitoring'], ['videos', 'Videos'], ['exceptions', 'Exceptions'],
+    ['users', 'Users'], ['config', 'Configuration'], ['audit', 'Audit Logs'], ['settings', 'Settings']],
+
+  start: function (me) {
+    Admin.me = me; App.view = Admin;
+    var u = me.user;
+    $app().innerHTML = '<div class="adm"><nav class="side"><div class="brand">Fulfillment<br><span style="font-weight:500;color:#94a3b8;font-size:12px">Management System</span></div>' +
+      Admin.NAV.map(function (n) {
+        var s = '<a data-nav="' + n[0] + '">' + n[1] + '</a>';
+        if (n[0] === 'users') s += [['ALL', 'All Users'], ['ADMIN', 'Admin'], ['PICKER', 'Picker'], ['PACKER', 'Packer'], ['ACTIVE', 'Active Users'], ['INACTIVE', 'Inactive Users'], ['ADD', '+ Add User']]
+          .map(function (x) { return '<a class="sub" data-nav="users" data-arg="' + x[0] + '">' + x[1] + '</a>'; }).join('');
+        return s;
+      }).join('') + '<a id="adm-out">Logout</a>' +
+      '<div class="me"><div style="color:#fff;font-weight:600">' + esc(u.name) + '</div><div>' + esc(u.username) + ' · ' + esc(u.role) + '</div></div></nav><main class="main" id="main"></main></div>';
+    $$('[data-nav]').forEach(function (a) { a.onclick = function () { Admin.go(a.getAttribute('data-nav'), a.getAttribute('data-arg')); }; });
+    $('#adm-out').onclick = function () { Admin.stop(); App.logout(); };
+    Admin.go('dashboard');
+  },
+  stop: function () { clearInterval(Admin.timer); },
+
+  go: function (page, arg) {
+    clearInterval(Admin.timer);
+    Admin.page = page;
+    $$('[data-nav]').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-nav') === page && (a.getAttribute('data-arg') || '') === (arg || '')); });
+    var el = $('#main');
+    el.innerHTML = '<div class="muted">Memuat…</div>';
+    Admin.pages[page](el, arg);
+  },
+  every: function (sec, fn) { clearInterval(Admin.timer); Admin.timer = setInterval(function () { if (!modalOpen() && document.visibilityState === 'visible') fn(); }, sec * 1000); },
+  isSuper: function () { return Admin.me.user.role === 'SUPER_ADMIN'; },
+  pages: {}
+};
+
+/* ───────── Dashboard (§35, §36) ───────── */
+Admin.pages.dashboard = function (el) {
+  var load = function () {
+    api('dashboard').then(function (d) {
+      if (Admin.page !== 'dashboard') return;
+      var c = d.cards, k = d.kpi;
+      el.innerHTML = '<div class="row"><h2>Dashboard</h2><span class="muted right">' + esc(d.today) + ' · auto-refresh 30 dtk</span></div>' +
+        '<div class="cards">' + stat(c.todayOrders, "Today's Orders") + stat(c.imported, 'Orders Imported (tanpa resi)') + stat(c.waitingPicking, 'Waiting for Picking') + stat(c.pickingInProgress, 'Picking in Progress') +
+        stat(c.pickingCompleted, 'Picking Completed') + stat(c.packingInProgress, 'Packing in Progress') + stat(c.packingCompletedToday, 'Packing Completed (hari ini)') + stat(c.exceptionsOpen, 'Exceptions (open)') +
+        stat(c.activePickers, 'Active Pickers') + stat(c.activePackers, 'Active Packers') + '</div>' +
+        '<h3 style="margin:6px 0 8px">KPI Operasional (hari ini)</h3><div class="cards">' + stat(k.totalOrders, 'Total Orders') + stat(k.totalItems, 'Total Items') +
+        stat(k.pickingProductivity, 'Picking Productivity (order/picker)') + stat(k.packingProductivity, 'Packing Productivity (order/packer)') +
+        stat(fmtDur(k.avgPickingSec), 'Average Picking Time') + stat(fmtDur(k.avgPackingSec), 'Average Packing Time') +
+        stat(k.dailyCompletionRate + '%', 'Daily Completion Rate') + stat(k.exceptionRate + '%', 'Exception Rate') + '</div>' +
+        '<div class="grid2"><div><h3 style="margin:6px 0 8px">Orders per Picker</h3>' + tbl(['Picker', 'Order', 'Rata-rata'], d.pickers.map(function (p) { return '<tr><td>' + esc(p.name) + '</td><td>' + p.orders + '</td><td>' + fmtDur(p.avgSec) + '</td></tr>'; })) + '</div>' +
+        '<div><h3 style="margin:6px 0 8px">Orders per Packer</h3>' + tbl(['Packer', 'Order', 'Rata-rata'], d.packers.map(function (p) { return '<tr><td>' + esc(p.name) + '</td><td>' + p.orders + '</td><td>' + fmtDur(p.avgSec) + '</td></tr>'; })) + '</div></div>' +
+        '<div class="grid2" style="margin-top:14px"><div><h3 style="margin:6px 0 8px">User online (15 menit)</h3>' + tbl(['User', 'Role', 'Terakhir aktif'], d.online.map(function (u) { return '<tr><td>' + esc(u.username) + '</td><td>' + badge(u.role) + '</td><td>' + esc(u.last_seen_at) + '</td></tr>'; })) + '</div>' +
+        '<div><h3 style="margin:6px 0 8px">Aktivitas terbaru</h3>' + tbl(['Waktu', 'User', 'Aksi', 'Resi'], d.recent.map(function (a) { return '<tr><td class="mono" style="font-size:12px">' + esc(a.timestamp.slice(11)) + '</td><td>' + esc(a.username) + '</td><td>' + esc(a.action) + '</td><td class="mono">' + esc(a.tracking_number) + '</td></tr>'; })) + '</div></div>';
+    }).catch(function () {});
+  };
+  load(); Admin.every(30, load);
+};
+
+/* ───────── Orders (§37, §38, §39) ───────── */
+Admin.pages.orders = function (el, preset) {
+  var F = Admin.orderFilter = Admin.orderFilter || { q: '', status: '', dateFrom: '', dateTo: '', dateField: 'created_at', picker: '', packer: '', page: 0 };
+  if (preset && STATUSES.indexOf(preset) >= 0) { F.status = preset; F.page = 0; }
+  el.innerHTML = '<h2>Orders</h2><form class="filters" id="of">' +
+    '<input class="in" name="q" placeholder="Resi / Order ID / SKU / produk / nama" style="width:280px" value="' + esc(F.q) + '">' +
+    '<select class="in" name="status">' + opt('', 'Semua status', F.status) + STATUSES.map(function (s) { return opt(s, s.replace(/_/g, ' '), F.status); }).join('') + '</select>' +
+    '<select class="in" name="dateField">' + opt('created_at', 'Tgl import', F.dateField) + opt('order_date', 'Tgl order', F.dateField) + opt('picking_completed_at', 'Tgl picking', F.dateField) + opt('packing_completed_at', 'Tgl packing', F.dateField) + '</select>' +
+    '<input class="in" type="date" name="dateFrom" value="' + esc(F.dateFrom) + '"><span class="muted">s/d</span><input class="in" type="date" name="dateTo" value="' + esc(F.dateTo) + '">' +
+    '<input class="in" name="picker" placeholder="Picker" style="width:110px" value="' + esc(F.picker) + '"><input class="in" name="packer" placeholder="Packer" style="width:110px" value="' + esc(F.packer) + '">' +
+    '<button class="btn pri">Cari</button><button class="btn" type="button" id="of-reset">Reset</button></form><div id="ol"></div>';
+  var f = $('#of');
+  f.onsubmit = function (e) { e.preventDefault(); ['q', 'status', 'dateFrom', 'dateTo', 'dateField', 'picker', 'packer'].forEach(function (k) { F[k] = f[k].value; }); F.page = 0; load(); };
+  $('#of-reset').onclick = function () { Admin.orderFilter = null; Admin.pages.orders(el); };
+  var load = function () {
+    $('#ol').innerHTML = '<div class="muted">Memuat…</div>';
+    api('ordersList', F).then(function (r) {
+      var chips = Object.keys(r.counts).map(function (s) { return badge(s) + ' <b>' + r.counts[s] + '</b>'; }).join(' &nbsp; ');
+      var pages = Math.max(1, Math.ceil(r.total / r.limit));
+      $('#ol').innerHTML = '<div class="row" style="margin-bottom:8px"><span class="muted">' + r.total + ' order</span><span>' + chips + '</span><span class="right"></span>' +
+        '<button class="btn sm" id="pp" ' + (r.page ? '' : 'disabled') + '>‹</button><span class="muted">Hal ' + (r.page + 1) + '/' + pages + '</span><button class="btn sm" id="pn" ' + (r.page + 1 < pages ? '' : 'disabled') + '>›</button></div>' +
+        tbl(['Tracking Number', 'Order ID', 'Order Date', 'Picker', 'Picking Time', 'Packer', 'Packing Time', 'Video', 'Current Status'], r.rows.map(function (o) {
+          return '<tr class="click" data-id="' + esc(o.id) + '"><td class="mono">' + (esc(o.tracking_number) || '<span class="muted">(belum ada resi)</span>') + '</td><td class="mono">' + esc(o.order_number) + '</td><td>' + esc(o.order_date) + '</td>' +
+            '<td>' + esc(o.picker_name) + (o.locked_by_name && o.status === 'PICKING_IN_PROGRESS' ? ' <span class="muted">(lock)</span>' : '') + '</td><td>' + esc(o.picking_completed_at) + (o.picking_duration ? '<div class="muted">' + fmtDur(o.picking_duration) + '</div>' : '') + '</td>' +
+            '<td>' + esc(o.packer_name) + (o.workstation_code ? ' <span class="muted">' + esc(o.workstation_code) + '</span>' : '') + '</td><td>' + esc(o.packing_completed_at) + (o.packing_duration ? '<div class="muted">' + fmtDur(o.packing_duration) + '</div>' : '') + '</td>' +
+            '<td>' + (o.video_url ? '<a href="' + esc(o.video_url) + '" target="_blank" onclick="event.stopPropagation()">▶ video</a>' : '') + '</td><td>' + badge(o.status) + (o.archived ? ' <span class="badge">ARSIP</span>' : '') + '</td></tr>';
+        }), 'Tidak ada order sesuai filter.');
+      $('#pp').onclick = function () { F.page--; load(); };
+      $('#pn').onclick = function () { F.page++; load(); };
+      $$('[data-id]', $('#ol')).forEach(function (tr) { tr.onclick = function () { Admin.orderDetail(tr.getAttribute('data-id'), load); }; });
+    }).catch(function (e) { $('#ol').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; });
+  };
+  load();
+};
+
+Admin.orderDetail = function (id, onChange) {
+  var m = modal('<div class="muted">Memuat detail order…</div>', { wide: true });
+  api('orderDetail', { id: id }).then(function (d) {
+    var o = d.order;
+    var kv = function (pairs) { return '<div class="kv">' + pairs.map(function (p) { return '<div>' + p[0] + '</div><div>' + (p[2] ? p[1] : esc(p[1] || '-')) + '</div>'; }).join('') + '</div>'; };
+    var vids = d.videos.map(function (v) {
+      return '<div class="card" style="margin:6px 0;padding:10px"><div class="row">' + badge(v.upload_status) + '<span class="mono">' + esc(v.file_name) + '</span><span class="muted">' + fmtBytes(v.size_bytes) + ' · ' + fmtDur(v.duration) + ' · ' + esc(v.packer_name) + ' · ' + esc(v.workstation_code) + '</span>' +
+        (v.view_url && v.upload_status === 'UPLOADED' ? '<a class="right" href="' + esc(v.view_url) + '" target="_blank">Buka di Drive</a>' : '') + '</div>' +
+        (v.preview_url ? '<iframe src="' + esc(v.preview_url) + '" style="width:100%;aspect-ratio:16/9;border:0;border-radius:8px;margin-top:8px;background:#000" allow="autoplay"></iframe>' : '') +
+        (v.last_error ? '<div class="muted" style="font-size:12px">' + esc(v.last_error) + '</div>' : '') + (v.purged_at ? '<div class="muted" style="font-size:12px">Dihapus otomatis (retensi) ' + esc(v.purged_at) + '</div>' : '') + '</div>';
+    }).join('') || '<div class="muted">Belum ada video.</div>';
+    var canRelease = ['PICKING_IN_PROGRESS', 'PACKING_IN_PROGRESS'].indexOf(o.status) >= 0 && d.store === 'DATA';
+    var canCancel = ['IMPORTED', 'READY_FOR_PICKING', 'PICKING_COMPLETED', 'EXCEPTION'].indexOf(o.status) >= 0 && d.store === 'DATA';
+    m.innerHTML = '<div class="row"><h3 style="margin:0">Order ' + esc(o.order_number) + '</h3>' + badge(o.status) + (d.store !== 'DATA' ? '<span class="badge">ARSIP</span>' : '') +
+      '<span class="right"></span>' + (canRelease ? '<button class="btn" id="od-rel">Lepas lock</button>' : '') + (canCancel ? '<button class="btn err" id="od-can">Batalkan order</button>' : '') + '<button class="btn" data-close>Tutup</button></div>' +
+      '<div class="grid2" style="margin-top:12px"><div><h4>Order Information</h4>' + kv([['Tracking Number', '<b class="mono">' + esc(o.tracking_number || '-') + '</b>', 1], ['Order ID', o.order_number], ['Marketplace', o.marketplace], ['Tanggal order', o.order_date], ['Kirim sebelum', o.ship_by],
+        ['Pengiriman', o.shipping_option], ['Penerima', o.customer_name], ['Username pembeli', o.buyer_username], ['Catatan pembeli', o.buyer_note], ['Diimport', o.created_at], ['Lock', o.locked_by_name ? o.locked_by_name + ' s/d ' + o.lock_expires_at : '-']]) + '</div>' +
+      '<div><h4>Picking Information</h4>' + kv([['Picker', o.picker_name], ['Mulai', o.picking_started_at], ['Selesai', o.picking_completed_at], ['Durasi', fmtDur(o.picking_duration)]]) +
+      '<h4>Packing Information</h4>' + kv([['Packer', o.packer_name], ['Workstation', o.workstation_code], ['Mulai', o.packing_started_at], ['Selesai', o.packing_completed_at], ['Durasi', fmtDur(o.packing_duration)]]) + '</div></div>' +
+      '<h4>Order Items (' + d.items.length + ')</h4>' + tbl(['#', 'Produk', 'Variasi', 'SKU (ref)', 'Qty'], d.items.map(function (i) { return '<tr><td>' + esc(i.line_no) + '</td><td>' + esc(i.product_name) + '</td><td>' + esc(i.variant) + '</td><td class="mono">' + esc(i.sku) + '</td><td><b>' + esc(i.quantity) + '</b></td></tr>'; })) +
+      '<h4>Video Evidence</h4>' + vids +
+      '<div class="grid2"><div><h4>Sesi Picking</h4>' + tbl(['Picker', 'Status', 'Mulai', 'Selesai', 'Device'], d.picking.map(function (s) { return '<tr><td>' + esc(s.picker_name) + '</td><td>' + badge(s.status) + '</td><td>' + esc(s.started_at) + '</td><td>' + esc(s.completed_at) + '</td><td style="font-size:11px">' + esc(s.device) + '</td></tr>'; })) + '</div>' +
+      '<div><h4>Sesi Packing</h4>' + tbl(['Packer', 'WS', 'Status', 'Mulai', 'Selesai'], d.packing.map(function (s) { return '<tr><td>' + esc(s.packer_name) + '</td><td>' + esc(s.workstation_code) + '</td><td>' + badge(s.status) + '</td><td>' + esc(s.started_at) + '</td><td>' + esc(s.completed_at) + (s.no_video_reason ? '<div class="muted">Tanpa video: ' + esc(s.no_video_reason) + '</div>' : '') + '</td></tr>'; })) + '</div></div>' +
+      '<h4>Exceptions</h4>' + tbl(['Waktu', 'Tipe', 'Alasan', 'Status', 'Catatan', 'Pelapor'], d.exceptions.map(function (e) { return '<tr><td>' + esc(e.created_at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.reason) + '</td><td>' + badge(e.status) + '</td><td>' + esc(e.note) + (e.resolution ? '<div class="muted">→ ' + esc(e.resolution) + '</div>' : '') + '</td><td>' + esc(e.reported_by_name) + '</td></tr>'; })) +
+      '<h4>Audit Trail</h4>' + Admin.auditTable(d.audit);
+    $$('[data-close]', m).forEach(function (b) { b.onclick = m.close; });
+    var rel = $('#od-rel', m); if (rel) rel.onclick = function () {
+      promptText('Lepas lock order', 'Alasan', { min: 3, ok: 'Lepas lock' }).then(function (note) {
+        if (!note) return; api('orderReleaseLock', { orderId: o.id, note: note }).then(function (r) { toast('Lock dilepas → ' + r.status, 'ok'); m.close(); Admin.orderDetail(id, onChange); if (onChange) onChange(); });
+      });
+    };
+    var can = $('#od-can', m); if (can) can.onclick = function () {
+      promptText('Batalkan order', 'Alasan pembatalan', { min: 3, ok: 'Batalkan order', danger: true }).then(function (note) {
+        if (!note) return; api('orderCancel', { orderId: o.id, note: note }).then(function () { toast('Order dibatalkan.', 'ok'); m.close(); Admin.orderDetail(id, onChange); if (onChange) onChange(); });
+      });
+    };
+  }).catch(function (e) { m.innerHTML = '<div class="err-box">' + esc(e.message) + '</div><button class="btn" style="margin-top:10px" id="x">Tutup</button>'; $('#x', m).onclick = m.close; });
+};
+
+Admin.auditTable = function (rows) {
+  var pj = function (s) { if (!s) return ''; try { return '<pre class="json">' + esc(JSON.stringify(JSON.parse(s), null, 1)) + '</pre>'; } catch (e) { return esc(s); } };
+  return tbl(['Timestamp', 'User', 'Role', 'Action', 'Order / Resi', 'Old Value', 'New Value', 'Session'], rows.map(function (a) {
+    return '<tr><td class="mono" style="font-size:12px;white-space:nowrap">' + esc(a.timestamp) + '</td><td>' + esc(a.username) + '</td><td>' + badge(a.role) + '</td><td><b>' + esc(a.action) + '</b><div class="muted" style="font-size:11px">' + esc(a.entity_type) + '</div></td>' +
+      '<td class="mono" style="font-size:12px">' + esc(a.order_number) + '<div>' + esc(a.tracking_number) + '</div></td><td>' + pj(a.old_value) + '</td><td>' + pj(a.new_value) + '</td><td class="mono" style="font-size:10px">' + esc((a.session_id || '').slice(0, 8)) + '</td></tr>';
+  }));
+};
+
+/* ───────── Import (§14–§17) ───────── */
+Admin.pages.import = function (el) {
+  var cfg = Admin.me.config;
+  el.innerHTML = '<h2>Import Orders</h2><div class="card"><div class="row"><input type="file" id="imf" accept=".xlsx,.csv"><button class="btn pri" id="imb" disabled>Import</button></div>' +
+    '<p class="muted" style="margin:8px 0 0;font-size:13px">File export Shopee (sheet <b>orders</b>). Format: ' + esc(cfg.allowedImport) + ' · maks ' + cfg.maxImportMb + ' MB. Order tanpa No. Resi masuk sebagai IMPORTED dan otomatis READY FOR PICKING saat file berikutnya berisi resinya. SKU diabaikan — item dikenali dari Nama Produk + Nama Variasi.</p></div>' +
+    '<div id="imr"></div><h3>Riwayat import</h3><div id="imh"></div>';
+  var f = $('#imf'), b = $('#imb');
+  f.onchange = function () { b.disabled = !f.files.length; };
+  b.onclick = function () {
+    var file = f.files[0]; if (!file) return;
+    var ext = file.name.split('.').pop().toLowerCase();
+    if (cfg.allowedImport.split(',').indexOf(ext) < 0) return toast('Format .' + ext + ' tidak diizinkan.', 'err');
+    if (file.size > cfg.maxImportMb * 1048576) return toast('Ukuran file melebihi batas ' + cfg.maxImportMb + ' MB.', 'err');
+    b.disabled = true; b.textContent = 'Memproses…';
+    $('#imr').innerHTML = '<div class="card" style="margin-top:12px">Mengupload & memvalidasi ' + esc(file.name) + '… (file xlsx dikonversi di Google Drive, bisa 10–60 detik)</div>';
+    var r = new FileReader();
+    r.onload = function () {
+      api('importOrders', { filename: file.name, base64: String(r.result).split(',')[1] }, { silent: true }).then(function (S) {
+        $('#imr').innerHTML = Admin.importResult(S); hist(); f.value = '';
+      }).catch(function (e) { $('#imr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; }).then(function () { b.disabled = false; b.textContent = 'Import'; });
+    };
+    r.readAsDataURL(file);
+  };
+  var hist = function () {
+    api('importsList').then(function (h) {
+      $('#imh').innerHTML = tbl(['Waktu', 'File', 'Oleh', 'Baris', 'Order', 'Sukses', 'Duplikat', 'Ditolak (baris)', 'Status'], h.batches.map(function (x) {
+        return '<tr class="click" data-b="' + esc(x.id) + '"><td>' + esc(x.uploaded_at) + '</td><td>' + esc(x.filename) + '</td><td>' + esc(x.uploaded_by_name) + '</td><td>' + esc(x.total_rows) + '</td><td>' + esc(x.total_orders) + '</td><td>' + esc(x.successful_orders) + '</td><td>' + esc(x.duplicate_orders) + '</td><td>' + esc(x.rejected_rows) + '</td><td>' + importBadge(x.status) + '</td></tr>';
+      }));
+      $$('[data-b]', $('#imh')).forEach(function (tr) {
+        tr.onclick = function () { api('importDetail', { id: tr.getAttribute('data-b') }).then(function (d) { var s = d.summary || {}; var S = s.summary || {}; S.errors = s.errors || []; S.warnings = s.warnings || []; S.filename = d.filename; modal(Admin.importResult(S) + '<button class="btn" data-close style="margin-top:10px">Tutup</button>', { wide: true }); }); };
+      });
+    });
+  };
+  hist();
+};
+
+Admin.importResult = function (S) {
+  var list = function (arr) { return arr.map(function (e) { return '<div>' + (e.row ? 'Row ' + e.row + ' — ' : '') + (e.orderNumber ? '<span class="mono">' + esc(e.orderNumber) + '</span>: ' : '') + esc(e.message) + '</div>'; }).join(''); };
+  return '<div class="card" style="margin-top:12px"><div class="row"><h3 style="margin:0">Hasil import ' + esc(S.filename || '') + '</h3>' + (S.status ? importBadge(S.status) : '') + '</div>' +
+    '<div class="cards" style="margin-top:10px">' + stat(S.totalRows, 'Total Rows Imported') + stat(S.totalOrders, 'Total Orders') + stat(S.totalSku, 'Total SKU') + stat(S.totalQuantity, 'Total Quantity') +
+    stat(S.successfulOrders, 'Successful Orders') + stat(S.rejectedRows, 'Rejected Rows') + stat(S.duplicateOrders, 'Duplicate Orders') + stat((S.errors || []).length + (S.errorsTruncated ? '+' : ''), 'Validation Errors') + '</div>' +
+    '<div class="cards">' + stat(S.newOrders, 'Order baru') + stat(S.newReady, 'Baru — READY FOR PICKING') + stat(S.newAwaitingResi, 'Baru — menunggu resi (IMPORTED)') + stat(S.resiAssigned + (S.resiChanged || 0), 'Resi baru diisi → siap picking') + stat(S.cancelledOrders, 'Batal di Shopee') + '</div>' +
+    ((S.errors || []).length ? '<h4 style="color:var(--err)">Validation Errors</h4><div class="err-box" style="font-weight:500;max-height:260px;overflow:auto">' + list(S.errors) + '</div>' : '') +
+    ((S.warnings || []).length ? '<h4 style="color:var(--warn)">Peringatan</h4><div class="warn-box" style="font-weight:500;max-height:260px;overflow:auto">' + list(S.warnings) + '</div>' : '') + '</div>';
+};
+
+/* ───────── Monitoring (§37, §65) ───────── */
+Admin.pages.monitoring = function (el) {
+  var load = function () {
+    api('monitoring').then(function (d) {
+      if (Admin.page !== 'monitoring') return;
+      el.innerHTML = '<div class="row"><h2>Fulfillment Monitoring</h2><span class="muted right">auto-refresh 15 dtk</span></div>' +
+        '<div class="card" style="margin-bottom:12px"><b>User online:</b> ' + (d.online.map(function (u) { return badge(u.role) + ' ' + esc(u.username); }).join(' &nbsp; ') || '<span class="muted">tidak ada</span>') + '</div>' +
+        tbl(['Tracking Number', 'Order ID', 'Status', 'Dipegang', 'Lock s/d', 'Picker', 'Picking', 'Packer', 'Packing', ''], d.rows.map(function (o) {
+          var locked = ['PICKING_IN_PROGRESS', 'PACKING_IN_PROGRESS'].indexOf(o.status) >= 0;
+          return '<tr class="click" data-id="' + esc(o.id) + '"><td class="mono">' + esc(o.tracking_number) + '</td><td class="mono">' + esc(o.order_number) + '</td><td>' + badge(o.status) + '</td>' +
+            '<td>' + esc(o.locked_by_name) + '</td><td>' + esc(o.lock_expires_at) + (o.lockExpired ? ' <span class="badge b-FAILED">EXPIRED</span>' : '') + '</td>' +
+            '<td>' + esc(o.picker_name) + '</td><td>' + esc(o.picking_completed_at || o.picking_started_at) + '</td><td>' + esc(o.packer_name) + ' ' + esc(o.workstation_code) + '</td><td>' + esc(o.packing_completed_at || o.packing_started_at) + '</td>' +
+            '<td>' + (locked ? '<button class="btn sm" data-rel="' + esc(o.id) + '">Lepas lock</button>' : '') + '</td></tr>';
+        }), 'Tidak ada order dalam proses hari ini.') +
+        '<h3>Video belum terupload</h3>' + tbl(['Resi', 'Packer', 'WS', 'Rekam', 'Ukuran', 'Status', 'Error'], d.pendingVideos.map(function (v) { return '<tr><td class="mono">' + esc(v.tracking_number) + '</td><td>' + esc(v.packer_name) + '</td><td>' + esc(v.workstation_code) + '</td><td>' + esc(v.recording_start) + '</td><td>' + fmtBytes(v.size_bytes) + '</td><td>' + badge(v.upload_status) + '</td><td style="font-size:12px">' + esc(v.last_error) + '</td></tr>'; }), 'Semua video sudah terupload.');
+      $$('[data-id]', el).forEach(function (tr) { tr.onclick = function () { Admin.orderDetail(tr.getAttribute('data-id'), load); }; });
+      $$('[data-rel]', el).forEach(function (b) {
+        b.onclick = function (e) {
+          e.stopPropagation();
+          promptText('Lepas lock order', 'Alasan', { min: 3, ok: 'Lepas lock' }).then(function (note) { if (note) api('orderReleaseLock', { orderId: b.getAttribute('data-rel'), note: note }).then(function () { toast('Lock dilepas.', 'ok'); load(); }); });
+        };
+      });
+    }).catch(function () {});
+  };
+  load(); Admin.every(15, load);
+};
+
+/* ───────── Videos ───────── */
+Admin.pages.videos = function (el) {
+  el.innerHTML = '<h2>Videos</h2><form class="filters" id="vf"><input class="in" name="q" placeholder="Resi / Order ID (persis)" style="width:240px"><input class="in" type="date" name="date">' +
+    '<select class="in" name="status">' + opt('', 'Semua status') + ['UPLOADED', 'PENDING', 'UPLOADING', 'FAILED', 'PURGED'].map(function (s) { return opt(s); }).join('') + '</select><button class="btn pri">Cari</button></form>' +
+    '<p class="muted" style="font-size:12px;margin:0 0 8px">Video tersimpan privat di Drive akun pemilik. Untuk memutar, browser harus login ke akun pemilik atau email Anda diberi akses ke folder video.</p><div id="vl"></div>';
+  var f = $('#vf');
+  var load = function () {
+    api('videosList', { q: f.q.value, date: f.date.value, status: f.status.value }).then(function (r) {
+      $('#vl').innerHTML = '<div class="muted" style="margin-bottom:6px">' + r.total + ' video</div>' + tbl(['Rekam', 'Resi', 'Order ID', 'Packer', 'WS', 'Durasi', 'Ukuran', 'Status', ''], r.videos.map(function (v) {
+        return '<tr><td>' + esc(v.recording_start) + '</td><td class="mono">' + esc(v.tracking_number) + '</td><td class="mono">' + esc(v.order_number) + '</td><td>' + esc(v.packer_name) + '</td><td>' + esc(v.workstation_code) + '</td><td>' + fmtDur(v.duration) + '</td><td>' + fmtBytes(v.size_bytes) + '</td><td>' + badge(v.upload_status) + '</td>' +
+          '<td>' + (v.preview_url ? '<button class="btn sm" data-play="' + esc(v.preview_url) + '" data-t="' + esc(v.tracking_number) + '" data-view="' + esc(v.view_url) + '">▶ Putar</button>' : '') + ' <a href="#" data-oid="' + esc(v.order_id) + '">order</a></td></tr>';
+      }));
+      $$('[data-play]', $('#vl')).forEach(function (b) {
+        b.onclick = function () { modal('<div class="row"><h3 style="margin:0">Video ' + esc(b.getAttribute('data-t')) + '</h3><a class="right" target="_blank" href="' + esc(b.getAttribute('data-view')) + '">Buka di Drive</a><button class="btn" data-close>Tutup</button></div><iframe src="' + esc(b.getAttribute('data-play')) + '" style="width:100%;aspect-ratio:16/9;border:0;margin-top:10px;background:#000;border-radius:8px" allow="autoplay"></iframe>', { wide: true }); };
+      });
+      $$('[data-oid]', $('#vl')).forEach(function (a) { a.onclick = function (e) { e.preventDefault(); Admin.orderDetail(a.getAttribute('data-oid')); }; });
+    });
+  };
+  f.onsubmit = function (e) { e.preventDefault(); load(); };
+  f.date.value = todayStr();
+  load();
+};
+
+/* ───────── Exceptions (§43) ───────── */
+Admin.pages.exceptions = function (el, st) {
+  st = st || 'OPEN';
+  el.innerHTML = '<h2>Exceptions</h2><div class="tabs">' + [['OPEN', 'Open'], ['RESOLVED', 'Resolved'], ['LOGGED', 'Log scan ditolak'], ['ALL', 'Semua']].map(function (t) { return '<a data-st="' + t[0] + '" class="' + (t[0] === st ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div><div id="el"></div>';
+  $$('[data-st]', el).forEach(function (a) { a.onclick = function () { Admin.pages.exceptions(el, a.getAttribute('data-st')); }; });
+  api('exceptionsList', { status: st }).then(function (r) {
+    $('#el').innerHTML = '<div class="muted" style="margin-bottom:6px">' + r.total + ' exception</div>' + tbl(['Waktu', 'Tipe', 'Alasan', 'Tahap', 'Resi', 'Catatan', 'Pelapor', 'Status', ''], r.rows.map(function (e) {
+      return '<tr><td style="white-space:nowrap">' + esc(e.created_at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.reason) + '</td><td>' + esc(e.stage) + '</td><td class="mono">' + (e.order_id ? '<a href="#" data-oid="' + esc(e.order_id) + '">' + esc(e.tracking_number || e.order_number) + '</a>' : esc(e.tracking_number)) + '</td>' +
+        '<td>' + esc(e.note) + (e.resolution ? '<div class="muted">→ ' + esc(e.resolution) + ' (' + esc(e.resolved_by_name) + ')</div>' : '') + '</td><td>' + esc(e.reported_by_name) + '</td><td>' + badge(e.status) + '</td>' +
+        '<td>' + (e.status === 'OPEN' ? '<button class="btn sm pri" data-res="' + esc(e.id) + '">Selesaikan</button>' : '') + '</td></tr>';
+    }));
+    $$('[data-oid]', $('#el')).forEach(function (a) { a.onclick = function (ev) { ev.preventDefault(); Admin.orderDetail(a.getAttribute('data-oid')); }; });
+    $$('[data-res]', $('#el')).forEach(function (b) {
+      b.onclick = function () {
+        var m = modal('<h3>Selesaikan exception</h3><label class="f">Tindakan</label><select class="in" id="xa" style="width:100%">' +
+          opt('REPICK', 'Picking ulang (order → READY FOR PICKING)') + opt('TO_PACKING', 'Kembalikan ke antrian packing (→ PICKING COMPLETED)') + opt('CANCEL', 'Batalkan order (→ CANCELLED)') + opt('CLOSE', 'Tutup saja (status order tidak diubah)') + '</select>' +
+          '<label class="f">Catatan penyelesaian</label><textarea class="in" id="xn" rows="3" style="width:100%"></textarea><div class="row" style="margin-top:12px"><button class="btn pri" id="xok">Simpan</button><button class="btn" data-close>Batal</button></div>');
+        $('#xok', m).onclick = function () { api('exceptionResolve', { id: b.getAttribute('data-res'), action: $('#xa', m).value, resolution: $('#xn', m).value }).then(function () { toast('Exception diselesaikan.', 'ok'); m.close(); Admin.pages.exceptions(el, st); }); };
+      };
+    });
+  });
+};
+
+/* ───────── Users (§7–§11, §58) ───────── */
+Admin.pages.users = function (el, filter) {
+  if (filter === 'ADD') { filter = 'ALL'; setTimeout(function () { Admin.userForm(null, function () { Admin.pages.users(el, 'ALL'); }); }, 0); }
+  filter = filter || 'ALL';
+  api('usersList').then(function (r) {
+    var rows = r.users.filter(function (u) {
+      return filter === 'ALL' || (filter === 'ADMIN' && (u.role === 'ADMIN' || u.role === 'SUPER_ADMIN')) || u.role === filter || u.status === filter;
+    });
+    var can = function (u) { return r.manageableRoles.indexOf(u.role) >= 0 && u.id !== Admin.me.user.id; };
+    el.innerHTML = '<div class="row"><h2>Users</h2><button class="btn pri right" id="ua">+ Add User</button></div><div class="tabs">' +
+      [['ALL', 'All Users'], ['ADMIN', 'Admin'], ['PICKER', 'Picker'], ['PACKER', 'Packer'], ['ACTIVE', 'Active'], ['INACTIVE', 'Inactive']].map(function (t) { return '<a data-f="' + t[0] + '" class="' + (t[0] === filter ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div>' +
+      tbl(['Nama', 'Username', 'Email', 'Role', 'Status', 'Last Login', 'Dibuat', ''], rows.map(function (u) {
+        return '<tr><td><b>' + esc(u.name) + '</b>' + (u.mustChangePassword ? '<div class="muted" style="font-size:11px">wajib ganti password</div>' : '') + '</td><td class="mono">' + esc(u.username) + '</td><td>' + esc(u.email) + '</td><td>' + badge(u.role) + '</td>' +
+          '<td>' + badge(u.status) + (u.locked ? ' <span class="badge b-FAILED">TERKUNCI</span>' : '') + '</td><td>' + esc(u.last_login) + '</td><td style="font-size:12px">' + esc(u.created_at) + '<div class="muted">' + esc(u.created_by) + '</div></td>' +
+          '<td style="white-space:nowrap">' + (can(u) ? '<button class="btn sm" data-edit="' + u.id + '">Edit</button> <button class="btn sm" data-tog="' + u.id + '">' + (u.status === 'ACTIVE' ? 'Nonaktifkan' : 'Aktifkan') + '</button> <button class="btn sm" data-rp="' + u.id + '">Reset password</button>' + (u.locked ? ' <button class="btn sm" data-ul="' + u.id + '">Buka kunci</button>' : '') : (u.id === Admin.me.user.id ? '<span class="muted">akun Anda</span>' : '')) + '</td></tr>';
+      }));
+    var byId = {}; r.users.forEach(function (u) { byId[u.id] = u; });
+    var reload = function () { Admin.pages.users(el, filter); };
+    $$('[data-f]', el).forEach(function (a) { a.onclick = function () { Admin.pages.users(el, a.getAttribute('data-f')); }; });
+    $('#ua').onclick = function () { Admin.userForm(null, reload, r.manageableRoles); };
+    $$('[data-edit]', el).forEach(function (b) { b.onclick = function () { Admin.userForm(byId[b.getAttribute('data-edit')], reload, r.manageableRoles); }; });
+    $$('[data-tog]', el).forEach(function (b) {
+      b.onclick = function () {
+        var u = byId[b.getAttribute('data-tog')], to = u.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        ask((to === 'INACTIVE' ? 'Nonaktifkan ' : 'Aktifkan ') + u.name + '?' + (to === 'INACTIVE' ? ' Semua sesi login user ini akan dicabut seketika.' : ''), to === 'INACTIVE' ? 'Nonaktifkan' : 'Aktifkan', to === 'INACTIVE')
+          .then(function (y) { if (y) api('usersUpdate', { id: u.id, status: to }).then(function () { toast('Status diubah.', 'ok'); reload(); }); });
+      };
+    });
+    $$('[data-rp]', el).forEach(function (b) {
+      b.onclick = function () {
+        var u = byId[b.getAttribute('data-rp')];
+        ask('Reset password ' + u.name + '? Password sementara akan dibuat, user wajib menggantinya saat login, dan semua sesinya dicabut.', 'Reset').then(function (y) {
+          if (y) api('usersResetPassword', { id: u.id }).then(function (x) { Admin.showTempPassword(x.username, x.tempPassword); });
+        });
+      };
+    });
+    $$('[data-ul]', el).forEach(function (b) { b.onclick = function () { api('usersUpdate', { id: b.getAttribute('data-ul'), unlock: true }).then(function () { toast('Kunci dibuka.', 'ok'); reload(); }); }; });
+    Admin.manageableRoles = r.manageableRoles;
+  });
+};
+
+Admin.showTempPassword = function (username, pw) {
+  modal('<h3>Password sementara</h3><p>Berikan kepada user <b>' + esc(username) + '</b>. Password ini hanya ditampilkan sekali dan wajib diganti saat login pertama.</p>' +
+    '<div class="mono" style="font-size:24px;font-weight:800;background:#f1f5f9;border-radius:10px;padding:14px;text-align:center;user-select:all">' + esc(pw) + '</div><button class="btn pri" data-close style="margin-top:12px">Sudah dicatat</button>', { sticky: true });
+};
+
+Admin.userForm = function (u, onDone, roles) {
+  roles = roles || Admin.manageableRoles || ['PICKER', 'PACKER'];
+  var m = modal('<h3>' + (u ? 'Edit user' : 'Add User') + '</h3><form id="uf">' +
+    '<label class="f">Nama lengkap</label><input class="in" name="name" style="width:100%" required value="' + esc(u ? u.name : '') + '">' +
+    (u ? '<label class="f">Username</label><div class="mono">' + esc(u.username) + '</div>' : '<label class="f">Username</label><input class="in" name="username" style="width:100%" required autocapitalize="off" placeholder="mis. picker.andi">') +
+    '<label class="f">Email (opsional)</label><input class="in" name="email" type="email" style="width:100%" value="' + esc(u ? u.email : '') + '">' +
+    '<label class="f">Role</label><select class="in" name="role" style="width:100%">' + roles.map(function (r) { return opt(r, r, u ? u.role : 'PICKER'); }).join('') + '</select>' +
+    (u ? '' : '<label class="f">Status</label><select class="in" name="status" style="width:100%">' + opt('ACTIVE') + opt('INACTIVE') + '</select>' +
+      '<label class="f">Initial password (kosongkan = dibuat otomatis)</label><input class="in" name="password" type="text" style="width:100%" autocomplete="off">') +
+    '<div class="row" style="margin-top:14px"><button class="btn pri">Simpan</button><button class="btn" type="button" data-close>Batal</button></div></form>');
+  var f = $('#uf', m);
+  f.onsubmit = function (e) {
+    e.preventDefault();
+    var p = u ? api('usersUpdate', { id: u.id, name: f.name.value, email: f.email.value, role: f.role.value })
+      : api('usersCreate', { name: f.name.value, username: f.username.value, email: f.email.value, role: f.role.value, status: f.status.value, password: f.password.value });
+    p.then(function (r) { m.close(); toast('User disimpan.', 'ok'); if (r.tempPassword) Admin.showTempPassword(r.user.username, r.tempPassword); else if (!u) Admin.showTempPassword(r.user.username, '(password yang Anda isi)'); if (onDone) onDone(); });
+  };
+};
+
+/* ───────── Configuration (§6, §12, §13) ───────── */
+Admin.pages.config = function (el, tab) {
+  tab = tab || 'drive';
+  var tabs = [['drive', 'Google Drive'], ['operational', 'Operational'], ['video', 'Video & Kamera'], ['security', 'Security'], ['workstation', 'Workstation'], ['roles', 'Role Matrix']];
+  if (Admin.isSuper()) tabs.push(['system', 'Sistem']);
+  el.innerHTML = '<h2>Configuration</h2><div class="tabs">' + tabs.map(function (t) { return '<a data-t="' + t[0] + '" class="' + (t[0] === tab ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div><div id="cfg"></div>';
+  $$('[data-t]', el).forEach(function (a) { a.onclick = function () { Admin.pages.config(el, a.getAttribute('data-t')); }; });
+  var box = $('#cfg');
+  if (tab === 'workstation') return Admin.workstations(box);
+  if (tab === 'roles') return api('rolesMatrix').then(function (r) {
+    box.innerHTML = tbl(['Fitur'].concat(r.roles), r.rows.map(function (x) { return '<tr><td>' + esc(x[0]) + '</td>' + x.slice(1).map(function (v) { return '<td style="text-align:center">' + (v ? '✅' : '—') + '</td>'; }).join('') + '</tr>'; })) +
+      '<p class="muted" style="font-size:12px">Hak akses ditegakkan di server pada setiap panggilan (PRD §41). Menu yang disembunyikan di layar bukan kontrol keamanan.</p>';
+  });
+  if (tab === 'system') return Admin.system(box);
+  api('settingsGet').then(function (r) {
+    var items = r.items.filter(function (i) { return i.group === tab; });
+    box.innerHTML = '<form class="card" id="sf" style="max-width:720px">' + items.map(function (i) {
+      var dis = i.editable ? '' : ' disabled';
+      var input = i.type === 'bool' ? '<select class="in" name="' + i.key + '"' + dis + '>' + opt('true', 'Ya', i.value) + opt('false', 'Tidak', i.value) + '</select>'
+        : i.type === 'enum' ? '<select class="in" name="' + i.key + '"' + dis + '>' + i.values.map(function (v) { return opt(v, v, i.value); }).join('') + '</select>'
+        : '<input class="in" name="' + i.key + '" style="width:' + (i.type === 'int' ? '140px' : '100%') + '" ' + (i.type === 'int' ? 'type="number" min="' + i.min + '" max="' + i.max + '"' : '') + ' value="' + esc(i.value) + '"' + dis + '>';
+      return '<label class="f">' + esc(i.label) + (i.superOnly ? ' <span class="badge b-SUPER_ADMIN">SUPER ADMIN</span>' : '') + '</label>' + input + '<div class="muted mono" style="font-size:11px">' + i.key + ' · default ' + esc(i.def || '-') + '</div>';
+    }).join('') + '<div class="row" style="margin-top:14px"><button class="btn pri">Simpan perubahan</button>' + (tab === 'drive' ? '<button class="btn" type="button" id="dt">Tes koneksi Drive</button>' : '') + '</div><div id="dtr"></div></form>';
+    var f = $('#sf');
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      var ch = {};
+      items.forEach(function (i) { if (i.editable && String(f[i.key].value) !== String(i.value)) ch[i.key] = f[i.key].value; });
+      if (!Object.keys(ch).length) return toast('Tidak ada perubahan.', 'warn');
+      api('settingsUpdate', { changes: ch }).then(function (x) { toast('Tersimpan: ' + x.changed.join(', '), 'ok'); Admin.pages.config(el, tab); api('me').then(function (me) { Admin.me = me; App.me = me; }); });
+    };
+    var dt = $('#dt'); if (dt) dt.onclick = function () {
+      $('#dtr').innerHTML = '<div class="muted">Menguji…</div>';
+      api('driveTest').then(function (d) {
+        $('#dtr').innerHTML = '<div class="' + (d.writable ? 'ok-box' : 'err-box') + '" style="font-weight:500">' + (d.writable ? '✓ Folder dapat ditulis.' : '✗ ' + esc(d.error || 'Folder belum dikonfigurasi.')) +
+          '<div>Akun pemilik: ' + esc(d.account) + '</div>' + (d.folderName ? '<div>Folder: <a target="_blank" href="' + esc(d.folderUrl) + '">' + esc(d.folderName) + '</a></div>' : '') + (d.storageLimitGb ? '<div>Kuota: ' + d.storageUsedGb + ' / ' + d.storageLimitGb + ' GB</div>' : '') + '</div>';
+      });
+    };
+  });
+};
+
+Admin.workstations = function (box) {
+  api('workstationsList').then(function (r) {
+    box.innerHTML = '<div class="row" style="margin-bottom:8px"><button class="btn pri" id="wa">+ Tambah workstation</button></div>' + tbl(['Kode', 'Nama', 'Lokasi', 'Status', 'Dibuat', ''], r.workstations.map(function (w) {
+      return '<tr><td class="mono"><b>' + esc(w.workstation_code) + '</b></td><td>' + esc(w.workstation_name) + '</td><td>' + esc(w.location) + '</td><td>' + badge(w.status) + '</td><td>' + esc(w.created_at) + '</td><td><button class="btn sm" data-w="' + esc(w.id) + '">Edit</button></td></tr>';
+    }));
+    var byId = {}; r.workstations.forEach(function (w) { byId[w.id] = w; });
+    var form = function (w) {
+      var m = modal('<h3>' + (w ? 'Edit' : 'Tambah') + ' workstation</h3><form id="wf"><label class="f">Kode</label><input class="in mono" name="workstation_code" style="width:100%" value="' + esc(w ? w.workstation_code : 'PACKING-0' + (r.workstations.length + 1)) + '">' +
+        '<label class="f">Nama</label><input class="in" name="workstation_name" style="width:100%" value="' + esc(w ? w.workstation_name : '') + '"><label class="f">Lokasi</label><input class="in" name="location" style="width:100%" value="' + esc(w ? w.location : '') + '">' +
+        '<label class="f">Status</label><select class="in" name="status">' + opt('ACTIVE', 'ACTIVE', w && w.status) + opt('INACTIVE', 'INACTIVE', w && w.status) + '</select><div class="row" style="margin-top:12px"><button class="btn pri">Simpan</button><button class="btn" type="button" data-close>Batal</button></div></form>');
+      var f = $('#wf', m);
+      f.onsubmit = function (e) { e.preventDefault(); api('workstationsSave', { id: w ? w.id : '', workstation_code: f.workstation_code.value, workstation_name: f.workstation_name.value, location: f.location.value, status: f.status.value }).then(function () { m.close(); toast('Workstation disimpan.', 'ok'); Admin.workstations(box); }); };
+    };
+    $('#wa').onclick = function () { form(null); };
+    $$('[data-w]', box).forEach(function (b) { b.onclick = function () { form(byId[b.getAttribute('data-w')]); }; });
+  });
+};
+
+Admin.system = function (box) {
+  api('systemInfo').then(function (s) {
+    box.innerHTML = '<div class="card"><h4 style="margin-top:0">Database (Google Sheets)</h4>' + s.stores.map(function (x) { return '<div><span class="mono" style="display:inline-block;min-width:160px">' + esc(x.key) + '</span><a target="_blank" href="' + esc(x.url) + '">buka</a></div>'; }).join('') +
+      '<h4>Trigger</h4>' + (s.triggers.map(function (t) { return '<div class="mono">' + esc(t.handler) + ' · ' + esc(t.type) + '</div>'; }).join('') || '<div class="err-box">Belum ada trigger. Jalankan installTriggers() dari editor.</div>') +
+      '<h4>Maintenance terakhir</h4><div class="mono" style="font-size:12px">' + esc(s.lastMaintenance || '-') + '</div>' +
+      '<div class="row" style="margin-top:12px"><button class="btn" id="rp">Jalankan retensi video sekarang</button><button class="btn" id="ra">Jalankan arsip sekarang</button></div><div id="rr"></div></div>';
+    $('#rp').onclick = function () { ask('Hapus PERMANEN video yang melewati masa retensi sekarang?', 'Jalankan', true).then(function (y) { if (y) api('runPurgeNow').then(function (r) { $('#rr').innerHTML = '<div class="ok-box">' + esc(JSON.stringify(r)) + '</div>'; }); }); };
+    $('#ra').onclick = function () { api('runArchiveNow').then(function (r) { $('#rr').innerHTML = '<div class="ok-box">' + esc(JSON.stringify(r)) + '</div>'; }); };
+  });
+};
+
+/* ───────── Audit Logs (§40) ───────── */
+Admin.pages.audit = function (el) {
+  var F = { q: '', action: '', year: '', page: 0 };
+  el.innerHTML = '<h2>Audit Logs</h2><form class="filters" id="af"><input class="in" name="q" placeholder="Resi / Order ID / username (persis)" style="width:260px"><select class="in" name="action">' + opt('', 'Semua aksi') + AUDIT_ACTIONS.map(function (a) { return opt(a); }).join('') + '</select>' +
+    '<select class="in" name="year"></select><button class="btn pri">Cari</button></form><div id="al"></div>';
+  var f = $('#af');
+  var load = function () {
+    api('auditList', F).then(function (r) {
+      if (!f.year.options.length) f.year.innerHTML = (r.years.length ? r.years : [r.year]).map(function (y) { return opt(y, y, r.year); }).join('');
+      var pages = Math.max(1, Math.ceil(r.total / (r.limit || 100)));
+      $('#al').innerHTML = '<div class="row" style="margin-bottom:8px"><span class="muted">' + r.total + ' entri · append-only</span><span class="right"></span><button class="btn sm" id="ap" ' + (F.page ? '' : 'disabled') + '>‹</button><span class="muted">Hal ' + (F.page + 1) + '/' + pages + '</span><button class="btn sm" id="an" ' + (F.page + 1 < pages ? '' : 'disabled') + '>›</button></div>' + Admin.auditTable(r.rows);
+      $('#ap').onclick = function () { F.page--; load(); };
+      $('#an').onclick = function () { F.page++; load(); };
+    });
+  };
+  f.onsubmit = function (e) { e.preventDefault(); F.q = f.q.value; F.action = f.action.value; F.year = f.year.value; F.page = 0; load(); };
+  load();
+};
+
+/* ───────── Settings (akun sendiri) ───────── */
+Admin.pages.settings = function (el) {
+  el.innerHTML = '<h2>Settings</h2><div class="card" style="max-width:460px;margin-bottom:14px"><div class="kv"><div>Nama</div><div>' + esc(Admin.me.user.name) + '</div><div>Username</div><div>' + esc(Admin.me.user.username) + '</div><div>Role</div><div>' + badge(Admin.me.user.role) + '</div></div></div><div id="cpbox"></div>';
+  App.showChangePassword(false, $('#cpbox'));
+};
+</script>
+
+  <script>App.start();</script>
+</body>
+</html>
