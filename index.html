@@ -1,130 +1,297 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><title>Fulfillment Management System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><title>Meirista Fulfillment System</title>
   <meta charset="utf-8">
   <meta name="theme-color" content="#0f172a">
-  <style>
-:root{--bg:#f1f5f9;--card:#fff;--fg:#0f172a;--muted:#64748b;--line:#e2e8f0;--pri:#2563eb;--pri2:#1d4ed8;--ok:#16a34a;--warn:#d97706;--err:#dc2626;--side:#0f172a;--radius:12px}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#28302b;--ink-2:#323b35;--ink-3:#3c463f;--ink-line:rgba(255,255,255,.09);--sage:#a7b5a9;--sage-2:#7d8c80;
+  --bg:#f7f6f1;--card:#fff;--line:#e8e5dc;--line-2:#f1efe8;--fg:#1d2420;--muted:#78807a;
+  --acc:#e8693a;--acc-2:#d4572a;--acc-soft:#fcece3;--acc-ink:#b0461d;
+  --ok:#3b8a58;--ok-soft:#e6f2ea;--warn:#b7821c;--warn-soft:#fbf2dd;--err:#c9443a;--err-soft:#fbe7e4;--info:#3c6fa8;--info-soft:#e7eff8;
+  --r:14px;--shadow:0 1px 2px rgba(29,36,32,.04),0 6px 20px rgba(29,36,32,.05);
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
-a{color:var(--pri)}
-.hidden{display:none!important}
-.muted{color:var(--muted)}
-.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.grow{flex:1}
-.right{margin-left:auto}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:600;white-space:nowrap}
-.btn:hover{background:#f8fafc}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.pri:hover{background:var(--pri2)}
+a{color:var(--acc-ink);text-decoration:none}a:hover{text-decoration:underline}
+h1,h2,h3,h4{letter-spacing:-.025em;margin:0}
+.hidden{display:none!important}.muted{color:var(--muted)}.mono{font-family:var(--mono);letter-spacing:-.01em}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.grow{flex:1}.right{margin-left:auto}
+.ic{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+/* tombol: umpan balik instan */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:38px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:0 14px;cursor:pointer;font-weight:600;font-size:13.5px;white-space:nowrap;transition:background .12s,border-color .12s,transform .06s,box-shadow .12s;position:relative;user-select:none}
+.btn:hover{background:#faf9f5;border-color:#dcd8cc}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 2px 8px rgba(232,105,58,.25)}.btn.pri:hover{background:var(--acc-2);border-color:var(--acc-2)}
 .btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
 .btn.err{background:var(--err);border-color:var(--err);color:#fff}
-.btn.ghost{background:transparent;border-color:transparent}
-.btn.sm{padding:4px 8px;font-size:12px}
-input.in,select.in,textarea.in{border:1px solid #cbd5e1;border-radius:8px;padding:8px 10px;background:#fff;min-width:0}
-input.in:focus,select.in:focus,textarea.in:focus{outline:2px solid #93c5fd;border-color:var(--pri)}
-label.f{display:block;margin:10px 0 4px;font-weight:600;font-size:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
-.badge{display:inline-block;border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;background:#e2e8f0;color:#334155}
-.b-IMPORTED{background:#e2e8f0;color:#334155}.b-READY_FOR_PICKING{background:#dbeafe;color:#1e40af}
-.b-PICKING_IN_PROGRESS{background:#fef3c7;color:#92400e}.b-PICKING_COMPLETED{background:#e0e7ff;color:#3730a3}
-.b-PACKING_IN_PROGRESS{background:#ffedd5;color:#9a3412}.b-PACKING_COMPLETED{background:#dcfce7;color:#166534}
-.b-EXCEPTION{background:#fee2e2;color:#991b1b}.b-CANCELLED{background:#f1f5f9;color:#64748b;text-decoration:line-through}
-.b-ACTIVE,.b-UPLOADED,.b-RESOLVED,.b-COMPLETED{background:#dcfce7;color:#166534}.b-INACTIVE,.b-FAILED,.b-OPEN{background:#fee2e2;color:#991b1b}
-.b-PENDING,.b-UPLOADING,.b-LOGGED{background:#fef3c7;color:#92400e}.b-PURGED{background:#f1f5f9;color:#64748b}
-.b-SUPER_ADMIN{background:#fae8ff;color:#86198f}.b-ADMIN{background:#ede9fe;color:#5b21b6}.b-PICKER{background:#dbeafe;color:#1e40af}.b-PACKER{background:#ffedd5;color:#9a3412}
-table.t{width:100%;border-collapse:collapse;font-size:13px}
-table.t th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:1px solid var(--line);padding:8px 8px;background:#f8fafc;position:sticky;top:0}
-table.t td{border-bottom:1px solid var(--line);padding:7px 8px;vertical-align:top}
-table.t tr.click{cursor:pointer}table.t tr.click:hover td{background:#f8fafc}
-.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;max-height:70vh}
-/* toast & modal */
-#toasts{position:fixed;z-index:9999;top:12px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;width:min(92vw,520px)}
-.toast{padding:12px 14px;border-radius:10px;color:#fff;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.18);background:#0f172a}
-.toast.ok{background:var(--ok)}.toast.err{background:var(--err)}.toast.warn{background:var(--warn)}
-.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal{background:#fff;color:var(--fg);border-radius:14px;max-width:min(96vw,640px);width:100%;max-height:92vh;overflow:auto;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
-.modal.wide{max-width:min(96vw,1100px)}
-.modal h3{margin:0 0 10px}
-/* login */
-.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
-.login .card{width:min(100%,380px);padding:24px}
-.login h1{font-size:20px;margin:0 0 2px}
-.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;margin-bottom:12px}
-.err-box{background:#fee2e2;color:#991b1b;border-radius:8px;padding:10px 12px;margin-top:10px;font-weight:600}
-.ok-box{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 12px;margin-top:10px;font-weight:600}
-.warn-box{background:#fef3c7;color:#92400e;border-radius:8px;padding:10px 12px;margin-top:10px;font-weight:600}
+.btn.ghost{background:transparent;border-color:transparent}.btn.ghost:hover{background:rgba(0,0,0,.04)}
+.btn.sm{height:30px;padding:0 10px;font-size:12.5px;border-radius:8px}
+.btn.busy{color:transparent!important;pointer-events:none}
+.btn.busy::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-color:rgba(0,0,0,.25);border-top-color:var(--acc);animation:spin .6s linear infinite}
+.btn.pri.busy::after,.btn.ok.busy::after,.btn.err.busy::after{border-color:rgba(255,255,255,.4);border-top-color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:22px;height:22px;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--acc);animation:spin .6s linear infinite;display:inline-block}
+input.in,select.in,textarea.in{height:40px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;min-width:0;transition:border-color .12s,box-shadow .12s;outline:none}
+textarea.in{height:auto;padding:10px 12px}
+input.in:focus,select.in:focus,textarea.in:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(232,105,58,.12)}
+label.f{display:block;margin:14px 0 6px;font-weight:600;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px 3px 8px;font-size:11px;font-weight:700;letter-spacing:.02em;white-space:nowrap;background:#efede6;color:#4e5751}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75}
+.b-IMPORTED{background:#efede6;color:#5d655f}.b-READY_FOR_PICKING{background:var(--info-soft);color:var(--info)}
+.b-PICKING_IN_PROGRESS{background:var(--warn-soft);color:var(--warn)}.b-PICKING_COMPLETED{background:#ece9f8;color:#5b4fa8}
+.b-PACKING_IN_PROGRESS{background:var(--acc-soft);color:var(--acc-ink)}.b-PACKING_COMPLETED{background:var(--ok-soft);color:var(--ok)}
+.b-EXCEPTION{background:var(--err-soft);color:var(--err)}.b-CANCELLED{background:#f0efea;color:#9aa19c;text-decoration:line-through}
+.b-ACTIVE,.b-UPLOADED,.b-RESOLVED,.b-COMPLETED{background:var(--ok-soft);color:var(--ok)}.b-INACTIVE,.b-FAILED,.b-OPEN{background:var(--err-soft);color:var(--err)}
+.b-PENDING,.b-UPLOADING,.b-LOGGED{background:var(--warn-soft);color:var(--warn)}.b-PURGED{background:#f0efea;color:#8a918c}
+.b-SUPER_ADMIN{background:#f6e6ef;color:#9b3a6c}.b-ADMIN{background:#ece9f8;color:#5b4fa8}.b-PICKER{background:var(--info-soft);color:var(--info)}.b-PACKER{background:var(--acc-soft);color:var(--acc-ink)}
+table.t{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+table.t th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line);padding:11px 12px;background:#fbfaf6;position:sticky;top:0;z-index:1}
+table.t td{border-bottom:1px solid var(--line-2);padding:10px 12px;vertical-align:top}
+table.t tr:last-child td{border-bottom:0}
+table.t tr.click{cursor:pointer}table.t tr.click:hover td{background:#fcfbf8}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:#fff;max-height:70vh;box-shadow:var(--shadow)}
+/* progress global & toast & modal */
+#topbar{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--acc),#f3a37f);z-index:10000;transition:width .25s ease,opacity .3s;opacity:0;box-shadow:0 0 8px rgba(232,105,58,.5)}
+#topbar.on{opacity:1;width:80%;transition:width 8s cubic-bezier(.1,.7,.2,1),opacity .1s}
+#topbar.done{opacity:0;width:100%;transition:width .15s,opacity .35s .15s}
+#toasts{position:fixed;z-index:9999;top:14px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;width:min(92vw,440px)}
+.toast{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;color:#fff;font-weight:600;font-size:13.5px;box-shadow:0 12px 32px rgba(0,0,0,.18);background:var(--ink);animation:tin .18s ease-out}
+.toast.ok{background:#2f6e47}.toast.err{background:#a8352c}.toast.warn{background:#8f6614}
+@keyframes tin{from{transform:translateY(-8px);opacity:0}}
+.modal-bg{position:fixed;inset:0;background:rgba(29,36,32,.5);backdrop-filter:blur(2px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .12s}
+@keyframes fade{from{opacity:0}}
+.modal{background:#fff;color:var(--fg);border-radius:18px;max-width:min(96vw,620px);width:100%;max-height:92vh;overflow:auto;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,.25);animation:pop .16s ease-out}
+@keyframes pop{from{transform:translateY(8px) scale(.98);opacity:.6}}
+.modal.wide{max-width:min(96vw,1120px)}
+.modal h3{margin:0 0 12px;font-size:18px}
+.err-box,.ok-box,.warn-box,.info-box{border-radius:10px;padding:11px 13px;margin-top:10px;font-weight:600;font-size:13px;display:flex;gap:8px;align-items:flex-start}
+.err-box{background:var(--err-soft);color:var(--err)}.ok-box{background:var(--ok-soft);color:var(--ok)}.warn-box{background:var(--warn-soft);color:#8a6312}.info-box{background:var(--info-soft);color:var(--info)}
+/* brand */
+.brand{display:flex;align-items:center;gap:12px}
+.brand .mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(140deg,#f07a4b,#d9562a);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-weight:800;font-size:20px;letter-spacing:-.04em;box-shadow:0 6px 16px rgba(232,105,58,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.brand .word{font-weight:800;font-size:18px;letter-spacing:-.03em;color:#fff;line-height:1.1}
+.brand .tag{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);font-weight:700;margin-top:3px}
+.brand.sm .mark{width:34px;height:34px;border-radius:10px;font-size:17px}.brand.sm .word{font-size:16px}.brand.sm .tag{font-size:8.5px}
+.brand.dark .word{color:var(--fg)}.brand.dark .tag{color:var(--muted)}
+/* ───────── AUTH (login / ganti password) ───────── */
+.auth{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:100vh}
+.auth-art{background:var(--ink);color:#eef1ec;padding:40px 64px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.auth-art::before{content:'';position:absolute;inset:0;background:radial-gradient(1200px 600px at 110% -10%,rgba(232,105,58,.14),transparent 55%),radial-gradient(900px 500px at -20% 120%,rgba(167,181,169,.08),transparent 60%);pointer-events:none}
+.auth-art::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);-webkit-mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);pointer-events:none}
+.auth-art>*{position:relative;z-index:1}
+.art-mid{margin:auto 0;padding:48px 0;max-width:520px}
+.auth-art .eb{color:#f3a37f;display:inline-flex;align-items:center;gap:8px;background:rgba(232,105,58,.1);border:1px solid rgba(232,105,58,.25);padding:6px 12px;border-radius:999px;font-size:10.5px}
+.auth-art h1{font-size:clamp(34px,3.6vw,50px);line-height:1.1;letter-spacing:-.04em;font-weight:700;margin:22px 0 0}
+.auth-art h1 em{font-style:normal;background:linear-gradient(90deg,#f39066,#e8693a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.auth-art p.lead{color:var(--sage);font-size:15.5px;line-height:1.75;margin:18px 0 0}
+.flow{list-style:none;padding:0;margin:38px 0 0;position:relative}
+.flow::before{content:'';position:absolute;left:21px;top:22px;bottom:22px;width:1px;background:linear-gradient(var(--ink-line),rgba(232,105,58,.45),var(--ink-line))}
+.flow li{display:flex;gap:16px;align-items:flex-start;padding:10px 0}
+.flow .node{width:44px;height:44px;border-radius:12px;background:#2f3832;border:1px solid var(--ink-line);display:flex;align-items:center;justify-content:center;color:#dfe5df;flex-shrink:0;position:relative}
+.flow li:nth-child(3) .node{color:#f3a37f;border-color:rgba(232,105,58,.35)}
+.flow .node .ic{width:19px;height:19px}
+.flow .k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--sage-2);font-weight:700;margin-top:2px}
+.flow .v{font-weight:700;font-size:14.5px;color:#f3f5f2}
+.flow .d{font-size:12.5px;color:var(--sage);margin-top:1px}
+.auth-art .foot{display:flex;align-items:center;gap:10px;color:var(--sage-2);font-size:12px}
+.auth-art .foot .sep{width:4px;height:4px;border-radius:50%;background:var(--sage-2);opacity:.5}
+.auth-art .foot .ic{width:14px;height:14px}
+.auth-form{display:flex;flex-direction:column;justify-content:center;padding:48px clamp(24px,6vw,88px);position:relative;background:var(--bg)}
+.auth-form .box{width:100%;max-width:420px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:20px;padding:36px 34px;box-shadow:0 1px 2px rgba(29,36,32,.04),0 24px 48px -12px rgba(29,36,32,.12)}
+.auth-form .mobile-brand{display:none;margin-bottom:22px}
+.auth-form h2{font-size:27px;font-weight:700;letter-spacing:-.035em;margin:10px 0 8px}
+.auth-form .sub{color:var(--muted);margin-bottom:6px;font-size:13.5px}
+.auth-form label.f{margin-top:18px}
+.auth-form input.in{height:50px;width:100%;font-size:15px;padding:0 15px;border-radius:12px;background:#fcfbf8}
+.auth-form input.in:focus{background:#fff}
+.pw{position:relative}.pw input.in{padding-right:52px}
+.pw .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:transparent;color:var(--muted);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pw .eye:hover{background:var(--line-2);color:var(--fg)}
+.cta{width:100%;height:52px;margin-top:26px;border:0;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 22px;cursor:pointer;box-shadow:0 8px 20px -6px rgba(232,105,58,.55);transition:background .12s,transform .06s,box-shadow .12s;position:relative}
+.cta:hover{background:var(--acc-2)}.cta:active{transform:scale(.985)}
+.cta:disabled{opacity:.7}
+.cta.busy span,.cta.busy .ic{visibility:hidden}.cta.busy::after{content:'';position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .6s linear infinite}
+.auth-help{border-top:1px solid var(--line-2);margin-top:26px;padding-top:20px;display:flex;gap:12px;color:var(--muted);font-size:12.5px;line-height:1.5}
+.auth-help .ic{color:var(--ok);margin-top:1px}
+.auth-help b{display:block;color:#3d4640;font-weight:600}
+.auth-tag{position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.24em;color:#b2b6af;font-weight:700}
+@media (max-width:900px){
+  .auth{grid-template-columns:1fr}
+  .auth-art{display:none}
+  .auth-form{padding:28px 16px 70px;justify-content:flex-start;min-height:100vh}
+  .auth-form .box{padding:28px 22px;border-radius:18px}
+  .auth-form .mobile-brand{display:block}
+}
 /* ───────── ADMIN ───────── */
-.adm{display:flex;min-height:100vh}
-.side{width:230px;background:var(--side);color:#cbd5e1;padding:14px 10px;flex-shrink:0;position:sticky;top:0;height:100vh;overflow:auto}
-.side .brand{color:#fff;font-weight:800;padding:4px 8px 14px;font-size:15px}
-.side a{display:block;color:#cbd5e1;text-decoration:none;padding:8px 10px;border-radius:8px;margin:1px 0;font-weight:500;cursor:pointer}
-.side a:hover{background:#1e293b;color:#fff}.side a.on{background:#2563eb;color:#fff}
-.side .sub{padding-left:22px;font-size:13px}
-.side .me{border-top:1px solid #1e293b;margin-top:14px;padding:12px 8px 0;font-size:12px}
-.main{flex:1;min-width:0;padding:20px 24px}
-.main h2{margin:0 0 14px;font-size:20px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px}
-.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-.stat .v{font-size:26px;font-weight:800;line-height:1.1}.stat .l{color:var(--muted);font-size:12px;font-weight:600}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px;flex-wrap:wrap}
-.tabs a{padding:8px 12px;cursor:pointer;border-bottom:2px solid transparent;font-weight:600;color:var(--muted)}
-.tabs a.on{border-color:var(--pri);color:var(--pri)}
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
-.kv{display:grid;grid-template-columns:170px 1fr;gap:4px 12px;font-size:13px}.kv div:nth-child(odd){color:var(--muted)}
-pre.json{white-space:pre-wrap;word-break:break-all;font-size:11px;margin:0;max-width:420px}
-@media (max-width:900px){.adm{flex-direction:column}.side{width:auto;height:auto;position:static}.grid2{grid-template-columns:1fr}.main{padding:14px}}
+.adm{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh}
+.side{background:var(--ink);color:var(--sage);padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column}
+.side .brand{padding:0 8px 26px}
+.side .sec{font-size:10px;letter-spacing:.18em;font-weight:700;color:var(--sage-2);padding:10px 12px 8px}
+.side a.nv{display:flex;align-items:center;gap:11px;color:var(--sage);padding:9px 12px;border-radius:10px;margin:1px 0;font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:none;transition:background .12s,color .12s}
+.side a.nv:hover{background:rgba(255,255,255,.05);color:#eef1ec}
+.side a.nv.on{background:rgba(232,105,58,.15);color:#fff}.side a.nv.on .ic{color:var(--acc)}
+.side a.sub{padding:6px 12px 6px 41px;font-size:12.5px;font-weight:500}
+.side .me{margin-top:auto;border-top:1px solid var(--ink-line);padding:16px 6px 0;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--acc-soft);color:var(--acc-ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.side .me .avatar{background:rgba(232,105,58,.18);color:#f3a37f}
+.side .me .n{color:#eef1ec;font-weight:700;font-size:13px;line-height:1.2}.side .me .r{font-size:11px;color:var(--sage-2)}
+.side .me button{margin-left:auto;background:transparent;border:0;color:var(--sage);cursor:pointer;padding:8px;border-radius:8px}.side .me button:hover{background:rgba(255,255,255,.06);color:#fff}
+.main{min-width:0;padding:30px 34px 50px}
+.ph{display:flex;align-items:flex-end;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.ph h2{font-size:26px;font-weight:700;letter-spacing:-.035em;margin-top:6px}
+.ph .act{margin-left:auto;display:flex;gap:8px;align-items:center}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.stat .chip{width:34px;height:34px;border-radius:10px;background:var(--acc-soft);color:var(--acc);display:flex;align-items:center;justify-content:center}
+.stat .chip .ic{width:17px;height:17px}
+.stat .v{font-size:27px;font-weight:800;line-height:1;letter-spacing:-.035em}.stat .l{color:var(--muted);font-size:12.5px;font-weight:600}
+.stat.hl{background:var(--ink);border-color:var(--ink);color:#fff}.stat.hl .l{color:var(--sage)}.stat.hl .chip{background:rgba(232,105,58,.2)}
+.sect{font-size:15px;font-weight:700;margin:26px 0 12px;letter-spacing:-.02em}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tabs{display:inline-flex;gap:3px;background:#efede5;border-radius:11px;padding:3px;margin-bottom:16px;flex-wrap:wrap}
+.tabs a{padding:7px 14px;cursor:pointer;border-radius:8px;font-weight:600;font-size:13px;color:var(--muted);text-decoration:none}
+.tabs a:hover{color:var(--fg)}.tabs a.on{background:#fff;color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px;box-shadow:var(--shadow)}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:13px}.kv>div:nth-child(odd){color:var(--muted)}
+pre.json{white-space:pre-wrap;word-break:break-all;font-size:11px;margin:0;max-width:420px;font-family:var(--mono);color:#4e5751}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.loading{display:flex;gap:12px;align-items:center;color:var(--muted);padding:30px 0}
+@media (max-width:900px){.adm{grid-template-columns:1fr}.side{position:static;height:auto}.grid2{grid-template-columns:1fr}.main{padding:18px}}
 /* ───────── PICKER (mobile 360–480) ───────── */
-.pk{max-width:480px;margin:0 auto;min-height:100vh;padding:12px 12px 120px}
-.pk-head{display:flex;align-items:center;gap:8px;padding:4px 0 12px}
-.pk-title{font-weight:800;letter-spacing:.06em;font-size:15px}
-.pk-big{display:block;width:100%;padding:26px 16px;font-size:22px;font-weight:800;border-radius:16px;border:0;margin:12px 0;color:#fff;background:var(--pri);cursor:pointer;letter-spacing:.04em}
-.pk-big.alt{background:#0f172a}
-.pk-big:active{transform:scale(.99)}
-.pk-resi{font-size:26px;font-weight:800;word-break:break-all;font-family:ui-monospace,Menlo,Consolas,monospace}
-.pk-item{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
-.pk-item.done{border-color:var(--ok);background:#f0fdf4}
-.pk-item .nm{font-weight:700;font-size:15px}
-.pk-item .qty{font-size:30px;font-weight:900;margin:4px 0}
-.pk-check{width:100%;padding:16px;font-size:18px;font-weight:800;border-radius:12px;border:2px solid var(--pri);background:#fff;color:var(--pri);cursor:pointer}
-.pk-item.done .pk-check{background:var(--ok);border-color:var(--ok);color:#fff}
-.pk-foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+body.pk-body{background:var(--bg)}
+.pk{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:130px}
+.pk-bar{background:var(--ink);padding:14px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+.pk-bar .avatar{width:34px;height:34px;background:rgba(232,105,58,.2);color:#f3a37f;margin-left:auto}
+.pk-bar .icon-btn{background:transparent;border:0;color:var(--sage);width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pk-bar .icon-btn:active{background:rgba(255,255,255,.08)}
+.pk-hero{background:var(--ink);color:#eef1ec;padding:6px 20px 28px;border-radius:0 0 26px 26px;position:relative;overflow:hidden}
+.pk-hero::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;border:34px solid rgba(255,255,255,.03);right:-120px;top:-90px}
+.pk-hero .hi{font-size:22px;font-weight:700;letter-spacing:-.03em;margin-top:6px}
+.pk-hero .dt{color:var(--sage);font-size:13px}
+.pk-kpi{display:flex;gap:10px;margin-top:18px}
+.pk-kpi>div{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--ink-line);border-radius:14px;padding:12px 14px}
+.pk-kpi .v{font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1.1}.pk-kpi .l{font-size:11.5px;color:var(--sage);font-weight:600}
+.pk-wrap{padding:18px 16px}
+.pk-action{width:100%;display:flex;align-items:center;gap:16px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:18px;padding:18px;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);transition:transform .06s,box-shadow .12s}
+.pk-action:active{transform:scale(.98)}
+.pk-action .t{width:54px;height:54px;border-radius:15px;background:var(--acc-soft);color:var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pk-action .t .ic{width:26px;height:26px}
+.pk-action .h{font-size:17px;font-weight:700;letter-spacing:-.02em}.pk-action .d{font-size:12.5px;color:var(--muted)}
+.pk-action .go{margin-left:auto;color:var(--muted)}
+.pk-action.primary{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 10px 24px rgba(232,105,58,.3)}
+.pk-action.primary .t{background:rgba(255,255,255,.18);color:#fff}.pk-action.primary .d,.pk-action.primary .go{color:rgba(255,255,255,.85)}
+.pk-list{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.pk-list .li{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line-2);cursor:pointer}
+.pk-list .li:last-child{border-bottom:0}.pk-list .li:active{background:#faf9f5}
+.pk-sec{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--muted);margin:22px 4px 10px;text-transform:uppercase}
+.pk-order{background:var(--ink);color:#eef1ec;border-radius:20px;padding:18px;position:relative;overflow:hidden}
+.pk-order .resi{font-family:var(--mono);font-size:24px;font-weight:700;letter-spacing:-.01em;word-break:break-all;margin-top:4px}
+.pk-order .eyebrow{color:var(--sage)}
+.pk-order .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;background:rgba(255,255,255,.08);color:#e3e8e3}
+.prog{height:7px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:16px}
+.prog i{display:block;height:100%;background:var(--acc);border-radius:9px;transition:width .25s ease}
+.prog-l{display:flex;justify-content:space-between;font-size:12px;color:var(--sage);margin-top:7px;font-weight:600}
+.pk-item{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--shadow);transition:border-color .15s,background .15s}
+.pk-item.done{border-color:#9fcdb0;background:#f6fbf7}
+.pk-item .top{display:flex;gap:12px;align-items:flex-start}
+.pk-item .no{width:28px;height:28px;border-radius:8px;background:var(--line-2);color:var(--muted);font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pk-item.done .no{background:var(--ok);color:#fff}
+.pk-item .nm{font-weight:700;font-size:14.5px;line-height:1.4;letter-spacing:-.01em}
+.pk-item .var{display:inline-block;margin-top:6px;background:var(--acc-soft);color:var(--acc-ink);font-weight:700;font-size:12px;border-radius:7px;padding:3px 9px}
+.pk-item .sku{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:6px}
+.pk-item .qty{display:flex;align-items:baseline;gap:6px;margin:14px 0 12px}
+.pk-item .qty b{font-size:34px;font-weight:800;letter-spacing:-.04em;line-height:1}.pk-item .qty span{color:var(--muted);font-weight:600;font-size:13px}
+.pk-check{width:100%;height:54px;border-radius:14px;border:1.5px dashed #d6d2c6;background:#fbfaf6;color:#4e5751;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:transform .06s}
+.pk-check:active{transform:scale(.98)}
+.pk-check .box{width:22px;height:22px;border-radius:7px;border:2px solid #b9b4a6}
+.pk-item.done .pk-check{background:var(--ok);border:1.5px solid var(--ok);color:#fff}
+.pk-item .issue{display:flex;justify-content:flex-end;margin-top:10px}
+.pk-item .issue a{font-size:12.5px;color:var(--muted);display:inline-flex;gap:5px;align-items:center;font-weight:600}
+.pk-foot{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:6}
 .pk-foot .inner{max-width:480px;margin:0 auto}
-.pk-result{border-radius:16px;padding:22px 16px;color:#fff;text-align:center;margin:14px 0}
-.pk-result h2{margin:0 0 6px;font-size:24px;letter-spacing:.03em}
-.pk-result.err{background:var(--err)}.pk-result.warn{background:var(--warn)}.pk-result.ok{background:var(--ok)}
-#pk-reader{width:100%;border-radius:14px;overflow:hidden;background:#000}
-#pk-reader video{width:100%!important}
-/* ───────── PACKER (desktop, dark) ───────── */
-body.dark{background:#0b1220;color:#e2e8f0}
+.pk-submit{width:100%;height:58px;border:0;border-radius:16px;background:var(--acc);color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;box-shadow:0 8px 22px rgba(232,105,58,.3);position:relative;transition:transform .06s}
+.pk-submit:active{transform:scale(.985)}
+.pk-submit:disabled{background:#d9d6cd;color:#8c918b;box-shadow:none;cursor:not-allowed}
+.pk-submit.busy{color:transparent}.pk-submit.busy::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .6s linear infinite}
+.pk-hint{text-align:center;font-size:12px;color:var(--muted);margin-top:7px}
+.pk-ghost{width:100%;height:48px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:700;color:#4e5751;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-top:10px}
+.pk-ghost:active{transform:scale(.98)}
+.pk-result{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px 20px 22px;text-align:center;box-shadow:var(--shadow);margin-bottom:14px;animation:pop .2s ease-out}
+.pk-result .ring{width:74px;height:74px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center}
+.pk-result .ring .ic{width:34px;height:34px;stroke-width:2.5}
+.pk-result.ok .ring{background:var(--ok-soft);color:var(--ok)}.pk-result.err .ring{background:var(--err-soft);color:var(--err)}.pk-result.warn .ring{background:var(--warn-soft);color:var(--warn)}
+.pk-result h2{font-size:21px;font-weight:800;letter-spacing:-.02em}
+.pk-result .r{font-family:var(--mono);font-weight:700;margin:6px 0 4px;font-size:15px}
+.pk-result p{color:var(--muted);margin:6px 0 0}
+.pk-input{width:100%;height:62px;border:1.5px solid var(--line);border-radius:16px;background:#fff;font-family:var(--mono);font-size:21px;font-weight:700;padding:0 18px;text-transform:uppercase;outline:none;letter-spacing:.02em}
+.pk-input:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(232,105,58,.12)}
+.pk-scanbox{position:relative;border-radius:22px;overflow:hidden;background:#111;min-height:280px}
+.pk-scanbox::after{content:'';position:absolute;inset:18% 9%;border:3px solid rgba(255,255,255,.85);border-radius:16px;pointer-events:none;box-shadow:0 0 0 999px rgba(0,0,0,.25)}
+#pk-reader{width:100%}#pk-reader video{width:100%!important;display:block}
+#pk-reader img,#pk-reader__dashboard_section_csr{display:none!important}
+.pk-skel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px 20px;text-align:center;box-shadow:var(--shadow)}
+.pk-tbl{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:14px 0 12px;box-shadow:var(--shadow)}
+.pk-tbl-h{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;font-weight:700;font-size:13.5px;border-bottom:1px solid var(--line)}
+.pk-tbl-h span:last-child{font-size:12px;background:var(--warn-soft);color:var(--warn);padding:3px 10px;border-radius:999px}.pk-tbl-h span.ok{background:var(--ok-soft);color:var(--ok)}
+.pk-tbl table{width:100%;border-collapse:collapse;table-layout:fixed}
+.pk-tbl th{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 10px;background:#fbfaf6;border-bottom:1px solid var(--line);font-weight:700}
+.pk-tbl th:first-child{width:34px}.pk-tbl th:nth-child(3){width:52px}.pk-tbl th:nth-child(4){width:62px}
+.pk-tbl th.c,.pk-tbl td.qty,.pk-tbl td.ck{text-align:center}
+.pk-tbl td{padding:13px 10px;border-bottom:1px solid var(--line-2);vertical-align:middle;transition:background .12s}
+.pk-tbl tbody tr{cursor:pointer}.pk-tbl tbody tr:active td{background:#f6f4ee}
+.pk-tbl tr:last-child td{border-bottom:0}
+.pk-tbl td.no{color:var(--muted);font-weight:700;font-size:12px;vertical-align:top;padding-top:15px}
+.pk-tbl .nm{font-weight:600;font-size:13.5px;line-height:1.4;word-break:break-word}
+.pk-tbl .var{display:inline-block;margin-top:5px;background:var(--acc-soft);color:var(--acc-ink);font-weight:700;font-size:11px;border-radius:6px;padding:2px 7px}
+.pk-tbl .sku{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:4px}
+.pk-tbl td.qty{font-size:21px;font-weight:800;letter-spacing:-.03em}
+.cb{width:32px;height:32px;border-radius:9px;border:2px solid #c9c4b6;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#fff;transition:background .12s,border-color .12s,transform .08s}
+.cb .ic{width:18px;height:18px;stroke-width:3}
+.pk-tbl tr:active .cb{transform:scale(.9)}
+.pk-tbl tr.done td{background:#f3f9f5}.pk-tbl tr.done .cb{background:var(--ok);border-color:var(--ok)}.pk-tbl tr.done .nm{color:#46634f}.pk-tbl tr.done td.qty{color:var(--ok)}
+.pk-tbl-f{font-size:11.5px;color:var(--muted);padding:10px 14px;border-top:1px solid var(--line);background:#fbfaf6}
+/* ───────── PACKER (desktop, gelap) ───────── */
+body.dark{background:#1f2622;color:#e6ebe6}
 .pc{min-height:100vh;display:flex;flex-direction:column}
-.pc-head{display:flex;align-items:center;gap:14px;padding:10px 18px;background:#020617;border-bottom:1px solid #1e293b}
-.pc-head .ws{background:#1e293b;color:#fcd34d;font-weight:800;border-radius:8px;padding:6px 10px;font-family:ui-monospace,Menlo,Consolas,monospace;cursor:pointer;border:0}
-.pc-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(380px,1fr);gap:16px;padding:16px;flex:1}
-.pc-cam{position:relative;background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:#64748b}
+.pc-head{display:flex;align-items:center;gap:16px;padding:12px 22px;background:var(--ink);border-bottom:1px solid var(--ink-line)}
+.pc-head .who{border-left:1px solid var(--ink-line);padding-left:16px}
+.pc-head .who .n{font-weight:700;color:#fff;font-size:14px}.pc-head .who .r{font-size:10.5px;letter-spacing:.14em;color:var(--sage-2);font-weight:700}
+.pc-head .ws{background:rgba(232,105,58,.15);color:#f3a37f;font-weight:700;border-radius:9px;padding:7px 12px;font-family:var(--mono);cursor:pointer;border:1px solid rgba(232,105,58,.3);font-size:13px}
+.pc-head .cnt{text-align:center;padding:0 6px}.pc-head .cnt .v{font-size:21px;font-weight:800;line-height:1;color:#fff}.pc-head .cnt .l{font-size:10px;color:var(--sage-2);font-weight:600}
+.pc-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(400px,1fr);gap:18px;padding:18px 22px;flex:1}
+.pc-cam{position:relative;background:#0c100e;border-radius:18px;overflow:hidden;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;color:var(--sage-2);border:1px solid var(--ink-line)}
 .pc-cam canvas{width:100%;height:100%;object-fit:contain}
-.pc-rec{position:absolute;top:12px;right:12px;background:#dc2626;color:#fff;font-weight:800;border-radius:8px;padding:4px 10px;font-family:ui-monospace,Menlo,Consolas,monospace}
-.pc-panel{background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:14px}
-.pc-scan{width:100%;font-size:24px;padding:14px;border-radius:12px;border:2px solid #334155;background:#020617;color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em}
-.pc-scan:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.3)}
-.pc-msg{border-radius:12px;padding:12px 14px;margin-top:10px;font-weight:600}
-.pc-msg.ok{background:#14532d;color:#bbf7d0}.pc-msg.err{background:#7f1d1d;color:#fecaca}.pc-msg.warn{background:#78350f;color:#fde68a}
-.pc-msg h4{margin:0 0 2px;font-size:17px}
-.pc-items{list-style:none;padding:0;margin:8px 0 0}
-.pc-items li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #1e293b}
-.pc-items .q{font-size:22px;font-weight:900;color:#fcd34d;min-width:56px;text-align:right}
-.pc-done{width:100%;padding:18px;font-size:20px;font-weight:900;border-radius:12px;border:0;background:#16a34a;color:#fff;cursor:pointer;margin-top:12px;letter-spacing:.04em}
-.pc-done:disabled{opacity:.4;cursor:not-allowed}
-body.dark .btn{background:#1e293b;border-color:#334155;color:#e2e8f0}
-body.dark .btn.pri{background:var(--pri);border-color:var(--pri)}
-body.dark .muted{color:#94a3b8}
-.q-item{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #1e293b;font-size:13px}
-.bar{height:6px;background:#1e293b;border-radius:4px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:#3b82f6}
-@media (max-width:1000px){.pc-body{grid-template-columns:1fr}}
+.pc-rec{position:absolute;top:14px;right:14px;background:#c9443a;color:#fff;font-weight:700;border-radius:9px;padding:5px 11px;font-family:var(--mono);font-size:13px}
+.pc-panel{background:var(--ink);border:1px solid var(--ink-line);border-radius:18px;padding:18px}
+.pc-panel .eyebrow{color:var(--sage-2)}
+.pc-scan{width:100%;font-size:24px;height:64px;padding:0 18px;border-radius:14px;border:1.5px solid var(--ink-3);background:#1a201d;color:#fff;font-family:var(--mono);letter-spacing:.04em;margin-top:10px;outline:none}
+.pc-scan:focus{border-color:var(--acc);box-shadow:0 0 0 4px rgba(232,105,58,.18)}
+.pc-msg{border-radius:13px;padding:13px 15px;margin-top:12px;font-weight:600;font-size:13.5px;animation:pop .15s ease-out}
+.pc-msg.ok{background:rgba(59,138,88,.18);color:#a8dcb9;border:1px solid rgba(59,138,88,.35)}.pc-msg.err{background:rgba(201,68,58,.16);color:#f3b2ab;border:1px solid rgba(201,68,58,.35)}.pc-msg.warn{background:rgba(183,130,28,.16);color:#f1d08c;border:1px solid rgba(183,130,28,.35)}
+.pc-msg h4{margin:0 0 3px;font-size:16px;color:#fff}
+.pc-items{list-style:none;padding:0;margin:12px 0 0}
+.pc-items li{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--ink-line)}
+.pc-items .q{font-size:24px;font-weight:800;color:#f3a37f;min-width:60px;text-align:right;letter-spacing:-.03em}
+.pc-done{width:100%;height:60px;font-size:18px;font-weight:800;border-radius:14px;border:0;background:var(--acc);color:#fff;cursor:pointer;margin-top:14px;letter-spacing:.03em;box-shadow:0 8px 22px rgba(232,105,58,.25);transition:transform .06s}
+.pc-done:active{transform:scale(.985)}.pc-done:disabled{opacity:.4;cursor:not-allowed}
+body.dark .btn{background:var(--ink-2);border-color:var(--ink-3);color:#e6ebe6}body.dark .btn:hover{background:var(--ink-3)}
+body.dark .btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}
+body.dark .muted{color:var(--sage-2)}
+body.dark .kv>div:nth-child(odd){color:var(--sage-2)}
+.q-item{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--ink-line);font-size:13px}
+.bar{height:6px;background:var(--ink-3);border-radius:4px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:var(--acc)}
+@media (max-width:1050px){.pc-body{grid-template-columns:1fr}}
 </style>
 
 </head>
@@ -132,7 +299,7 @@ body.dark .muted{color:#94a3b8}
   <div id="app"><div class="login"><div class="muted">Memuat…</div></div></div>
   <script>window.FMS_API_URL = "https://script.google.com/macros/s/AKfycbw6tf9kZ1pjB1IBbQ42RtsJR_uOTVMHI1bXdGYOnbkplBJGruJB1G_YI6aG8G56fSBp9w/exec";</script>
   <script>
-/* ═════════════ JsCommon — transport API, sesi, util UI ═════════════ */
+/* ═════════════ JsCommon — transport API, sesi, ikon, util UI ═════════════ */
 var Store = {
   get: function (k) { try { return window.localStorage.getItem(k); } catch (e) { return Store._m[k] || null; } },
   set: function (k, v) { try { window.localStorage.setItem(k, v); } catch (e) { Store._m[k] = v; } },
@@ -140,20 +307,76 @@ var Store = {
   _m: {}
 };
 
+/* ───────── ikon (gaya lucide, stroke) ───────── */
+var ICONS = {
+  package: '<path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/>',
+  scan: '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" x2="17" y1="12" y2="12"/>',
+  video: '<path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  arrowRight: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+  arrowLeft: '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  chevron: '<path d="m9 18 6-6-6-6"/>',
+  eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff: '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  grid: '<rect width="7" height="7" x="3" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="3" rx="1.5"/><rect width="7" height="7" x="14" y="14" rx="1.5"/><rect width="7" height="7" x="3" y="14" rx="1.5"/>',
+  list: '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
+  upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
+  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  alertCircle: '<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  sliders: '<line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/>',
+  file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+  user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>',
+  keyboard: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>',
+  undo: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
+  truck: '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62L18.3 9.38a1 1 0 0 0-.78-.38H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+  plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+  play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+  lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  monitor: '<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>'
+};
+function icon(name, cls) { return '<svg class="ic ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || '') + '</svg>'; }
+var APP_NAME = 'Meirista Fulfillment System';
+function brand(cls) { return '<div class="brand ' + (cls || '') + '"><div class="mark">M</div><div class="bt"><div class="word">Meirista</div><div class="tag">Fulfillment System</div></div></div>'; }
+function initials(name) { return String(name || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase(); }
+
 var App = {
   token: Store.get('fms_token'),
   me: null,
   view: null,
 
+  /** Buka seketika dari cache sesi; validasi ke server berjalan di belakang. */
   start: function () {
     if (!App.token) return App.showLogin();
-    api('me', {}, { silent: true }).then(function (me) { App.enter(me); }).catch(function (e) {
-      if (['UNAUTHENTICATED', 'SESSION_EXPIRED', 'INACTIVE', 'MUST_CHANGE_PASSWORD'].indexOf(e.code) < 0) App.showLogin(e.message);
+    var cached = null;
+    try { cached = JSON.parse(Store.get('fms_me') || 'null'); } catch (e) { cached = null; }
+    if (cached && cached.user) App.enter(cached);
+    else $app().innerHTML = '<div class="loading" style="justify-content:center;min-height:100vh"><span class="spinner"></span>Memuat ruang kerja…</div>';
+    api('me', {}, { silent: true, quiet: !!cached }).then(function (me) {
+      var roleChanged = !cached || cached.user.role !== me.user.role || cached.user.mustChangePassword !== me.user.mustChangePassword;
+      App.remember(me);
+      if (roleChanged) App.enter(me); else { App.me = me; if (App.view && App.view.refreshMe) App.view.refreshMe(me); }
+    }).catch(function (e) {
+      if (['UNAUTHENTICATED', 'SESSION_EXPIRED', 'INACTIVE', 'MUST_CHANGE_PASSWORD'].indexOf(e.code) < 0 && !cached) App.showLogin(e.message);
     });
   },
 
+  remember: function (me) { App.me = me; try { Store.set('fms_me', JSON.stringify(me)); } catch (e) {} },
+
   enter: function (me) {
-    App.me = me;
+    App.remember(me);
+    if (App.view && App.view.stop) try { App.view.stop(); } catch (e) {}
     document.body.className = '';
     if (me.user.mustChangePassword) return App.showChangePassword(true);
     var r = me.user.role;
@@ -162,80 +385,135 @@ var App = {
     return Admin.start(me);
   },
 
+  authShell: function (formHtml) {
+    var flow = [['upload', 'Import pesanan', 'Export Shopee divalidasi otomatis, tanpa duplikat'], ['scan', 'Picking terverifikasi', 'Scan resi & checklist setiap item'],
+      ['video', 'Packing berbukti video', 'Rekaman otomatis tersimpan di Google Drive'], ['shield', 'Audit trail lengkap', 'Setiap aksi tercatat per pengguna']];
+    $app().innerHTML = '<div class="auth"><section class="auth-art"><div class="art-top">' + brand() + '</div>' +
+      '<div class="art-mid"><div class="eyebrow eb">Sistem operasional gudang</div>' +
+      '<h1>Pesanan rapi,<br>pengiriman <em>pasti.</em></h1>' +
+      '<p class="lead">Satu sistem terpadu untuk mengendalikan setiap pesanan — dari rak gudang hingga paket siap kirim.</p>' +
+      '<ol class="flow">' + flow.map(function (f, i) { return '<li><div class="node">' + icon(f[0]) + '</div><div><div class="k">Tahap ' + (i + 1) + '</div><div class="v">' + f[1] + '</div><div class="d">' + f[2] + '</div></div></li>'; }).join('') + '</ol></div>' +
+      '<div class="foot"><span>© ' + new Date().getFullYear() + ' Meirista</span><span class="sep"></span>' + icon('lock') + '<span>Akses individual · tercatat di audit trail</span></div></section>' +
+      '<section class="auth-form"><div class="box">' + formHtml + '</div><div class="auth-tag">' + APP_NAME.toUpperCase() + '</div></section></div>';
+  },
+
   showLogin: function (msg) {
     if (App.view && App.view.stop) try { App.view.stop(); } catch (e) {}
     App.view = null;
     document.body.className = '';
-    $app().innerHTML =
-      '<div class="login"><form class="card" id="lf" autocomplete="on">' +
-      '<div class="logo">F</div><h1>Fulfillment Management System</h1><div class="muted" style="margin-bottom:8px">Silakan login dengan akun Anda.</div>' +
-      '<label class="f">Username / Email</label><input class="in" style="width:100%" name="identifier" autocomplete="username" autocapitalize="off" required>' +
-      '<label class="f">Password</label><input class="in" style="width:100%" type="password" name="password" autocomplete="current-password" required>' +
-      '<button class="btn pri" style="width:100%;margin-top:16px;padding:11px" type="submit">LOGIN</button>' +
-      (msg ? '<div class="err-box">' + esc(msg) + '</div>' : '') + '<div id="lerr"></div></form></div>';
+    App.authShell('<form id="lf" autocomplete="on"><div class="mobile-brand">' + brand('dark') + '</div><div class="eyebrow">Selamat datang</div><h2>Masuk ke akun Anda</h2><div class="sub">Gunakan username dan password yang diberikan administrator gudang.</div>' +
+      '<label class="f">Username</label><input class="in" name="identifier" placeholder="Masukkan username" autocomplete="username" autocapitalize="off" spellcheck="false" required>' +
+      '<label class="f">Password</label><div class="pw"><input class="in" type="password" name="password" placeholder="Masukkan password" autocomplete="current-password" required><button type="button" class="eye" tabindex="-1" aria-label="Tampilkan password">' + icon('eye') + '</button></div>' +
+      '<div id="lerr">' + (msg ? '<div class="err-box">' + icon('alertCircle') + '<span>' + esc(msg) + '</span></div>' : '') + '</div>' +
+      '<button class="cta" type="submit"><span>Masuk</span>' + icon('arrowRight') + '</button>' +
+      '<div class="auth-help">' + icon('shield') + '<div>Lupa password atau belum memiliki akun?<b>Hubungi administrator gudang — reset dilakukan oleh Admin.</b></div></div></form>');
     var f = document.getElementById('lf');
+    App.bindEye(f);
     f.identifier.focus();
     f.onsubmit = function (ev) {
       ev.preventDefault();
-      var b = f.querySelector('button'); b.disabled = true; b.textContent = 'Memproses…';
+      var b = f.querySelector('.cta'); b.classList.add('busy'); b.disabled = true;
+      $('#lerr').innerHTML = '';
       api('login', { identifier: f.identifier.value, password: f.password.value, device: deviceInfo() }, { silent: true })
         .then(function (r) { App.token = r.token; Store.set('fms_token', r.token); App.enter(r.me); })
-        .catch(function (e) { document.getElementById('lerr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; b.disabled = false; b.textContent = 'LOGIN'; f.password.value = ''; f.password.focus(); });
+        .catch(function (e) { $('#lerr').innerHTML = '<div class="err-box">' + icon('alertCircle') + '<span>' + esc(e.message) + '</span></div>'; b.classList.remove('busy'); b.disabled = false; f.password.value = ''; f.password.focus(); });
     };
+  },
+
+  bindEye: function (root) {
+    $$('.pw', root).forEach(function (w) {
+      var i = $('input', w), b = $('.eye', w);
+      b.onclick = function () { var show = i.type === 'password'; i.type = show ? 'text' : 'password'; b.innerHTML = icon(show ? 'eyeOff' : 'eye'); i.focus(); };
+    });
   },
 
   showChangePassword: function (forced, container) {
     var min = (App.me && App.me.config.passwordMinLength) || 8;
-    var html = '<form class="card" id="cpf" style="max-width:420px">' +
-      (forced ? '<div class="logo">F</div><h1 style="font-size:19px;margin:0">Ganti Password</h1><div class="warn-box">Anda wajib mengganti password sebelum menggunakan aplikasi.</div>' : '<h3 style="margin-top:0">Ganti Password</h3>') +
-      '<label class="f">Password lama</label><input class="in" style="width:100%" type="password" name="o" autocomplete="current-password" required>' +
-      '<label class="f">Password baru (min. ' + min + ' karakter, huruf + angka)</label><input class="in" style="width:100%" type="password" name="n" autocomplete="new-password" required>' +
-      '<label class="f">Ulangi password baru</label><input class="in" style="width:100%" type="password" name="n2" autocomplete="new-password" required>' +
-      '<div class="row" style="margin-top:14px"><button class="btn pri" type="submit">Simpan</button>' + (forced ? '<button class="btn ghost" type="button" id="cplo">Logout</button>' : '') + '</div><div id="cperr"></div></form>';
-    if (container) container.innerHTML = html; else $app().innerHTML = '<div class="login">' + html + '</div>';
+    var pw = function (name, ph, ac) { return '<div class="pw"><input class="in" ' + (container ? 'style="width:100%"' : '') + ' type="password" name="' + name + '" placeholder="' + ph + '" autocomplete="' + ac + '" required><button type="button" class="eye" tabindex="-1">' + icon('eye') + '</button></div>'; };
+    var html = '<form id="cpf">' + (forced ? '<div class="eyebrow">Keamanan akun</div><h2>Buat password baru</h2><div class="sub">Demi keamanan, ganti password sementara Anda sebelum mulai bekerja.</div>' : '') +
+      '<label class="f">Password lama</label>' + pw('o', 'Password saat ini', 'current-password') +
+      '<label class="f">Password baru</label>' + pw('n', 'Min. ' + min + ' karakter, huruf + angka', 'new-password') +
+      '<label class="f">Ulangi password baru</label>' + pw('n2', 'Ketik ulang password baru', 'new-password') +
+      '<div id="cperr"></div>' + (forced ? '<button class="cta" type="submit"><span>Simpan & lanjutkan</span>' + icon('arrowRight') + '</button><div class="auth-help"><a href="#" id="cplo">Keluar dan login dengan akun lain</a></div>'
+        : '<div class="row" style="margin-top:18px"><button class="btn pri" type="submit">Simpan password</button></div>') + '</form>';
+    if (container) container.innerHTML = '<div class="card" style="max-width:460px">' + html + '</div>';
+    else App.authShell(html);
     var f = document.getElementById('cpf');
-    if (forced) document.getElementById('cplo').onclick = App.logout;
+    App.bindEye(f);
+    if (forced) document.getElementById('cplo').onclick = function (e) { e.preventDefault(); App.logout(); };
     f.onsubmit = function (ev) {
       ev.preventDefault();
-      var out = document.getElementById('cperr');
-      if (f.n.value !== f.n2.value) { out.innerHTML = '<div class="err-box">Konfirmasi password tidak sama.</div>'; return; }
+      var out = document.getElementById('cperr'), b = f.querySelector('button[type=submit]');
+      if (f.n.value !== f.n2.value) { out.innerHTML = '<div class="err-box">' + icon('alertCircle') + '<span>Konfirmasi password tidak sama.</span></div>'; return; }
+      b.classList.add('busy');
       api('changePassword', { oldPassword: f.o.value, newPassword: f.n.value }, { silent: true })
-        .then(function (me) { toast('Password berhasil diganti.', 'ok'); if (forced) App.enter(me); else { f.reset(); out.innerHTML = '<div class="ok-box">Password berhasil diganti. Sesi di perangkat lain telah dikeluarkan.</div>'; } })
-        .catch(function (e) { out.innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; });
+        .then(function (me) { toast('Password berhasil diganti.', 'ok'); if (forced) App.enter(me); else { App.remember(me); f.reset(); out.innerHTML = '<div class="ok-box">' + icon('check') + '<span>Password diganti. Sesi di perangkat lain telah dikeluarkan.</span></div>'; } })
+        .catch(function (e) { out.innerHTML = '<div class="err-box">' + icon('alertCircle') + '<span>' + esc(e.message) + '</span></div>'; })
+        .then(function () { b.classList.remove('busy'); });
     };
   },
 
   logout: function () {
-    var go = function () { App.token = null; Store.del('fms_token'); App.showLogin(); };
-    api('logout', {}, { silent: true }).then(go, go);
+    var tok = App.token;
+    App.token = null; Store.del('fms_token'); Store.del('fms_me');
+    App.showLogin();
+    // pencabutan sesi di server berjalan di belakang — layar login tampil seketika
+    if (tok) apiWith(tok, 'logout', {}, { silent: true, quiet: true }).catch(function () {});
   }
 };
 
-/** Panggil server. Mengembalikan Promise data; error {code,message}. */
-function api(name, args, opts) {
+/* ───────── transport ───────── */
+var Net = { pending: 0 };
+function netStart(quiet) {
+  if (quiet) return;
+  Net.pending++;
+  var b = document.getElementById('topbar');
+  if (!b) { b = document.createElement('div'); b.id = 'topbar'; document.body.appendChild(b); }
+  b.className = ''; void b.offsetWidth; b.className = 'on';
+}
+function netEnd(quiet) {
+  if (quiet) return;
+  Net.pending = Math.max(0, Net.pending - 1);
+  var b = document.getElementById('topbar');
+  if (b && !Net.pending) b.className = 'done';
+}
+
+function api(name, args, opts) { return apiWith(App.token, name, args, opts); }
+
+/** Panggil server. Mengembalikan Promise data; error {code,message}. opts: silent (tanpa toast), quiet (tanpa progress bar). */
+function apiWith(token, name, args, opts) {
   opts = opts || {};
+  netStart(opts.quiet);
   return new Promise(function (resolve, reject) {
     var done = function (raw) {
+      netEnd(opts.quiet);
       var r;
       try { r = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (e) { r = { ok: false, code: 'BAD_RESPONSE', message: 'Respon server tidak valid.' }; }
       if (r && r.ok) return resolve(r.data);
       var err = { code: r && r.code || 'ERROR', message: r && r.message || 'Terjadi kesalahan.', extra: r && r.extra };
-      if (['UNAUTHENTICATED', 'SESSION_EXPIRED', 'INACTIVE'].indexOf(err.code) >= 0 && name !== 'login') {
-        App.token = null; Store.del('fms_token');
+      if (['UNAUTHENTICATED', 'SESSION_EXPIRED', 'INACTIVE'].indexOf(err.code) >= 0 && name !== 'login' && name !== 'logout') {
+        App.token = null; Store.del('fms_token'); Store.del('fms_me');
         App.showLogin(err.message);
       } else if (err.code === 'MUST_CHANGE_PASSWORD') {
-        api('me').then(function (me) { App.me = me; App.showChangePassword(true); });
+        api('me').then(function (me) { App.remember(me); App.showChangePassword(true); });
       } else if (!opts.silent) toast(err.message, 'err');
       reject(err);
     };
     var fail = function (e) { done({ ok: false, code: 'NETWORK', message: 'Koneksi ke server gagal: ' + (e && e.message || e) }); };
     if (window.google && google.script && google.script.run) {
-      google.script.run.withSuccessHandler(done).withFailureHandler(fail).api(name, App.token, args || {});
+      google.script.run.withSuccessHandler(done).withFailureHandler(fail).api(name, token, args || {});
     } else {
-      fetch(window.FMS_API_URL, { method: 'POST', body: JSON.stringify({ fn: name, token: App.token, args: args || {} }) })
+      fetch(window.FMS_API_URL, { method: 'POST', body: JSON.stringify({ fn: name, token: token, args: args || {} }) })
         .then(function (r) { return r.text(); }).then(done, fail);
     }
   });
+}
+
+/** Tombol langsung masuk status sibuk; kembali normal setelah promise selesai. */
+function busy(btn, promise) {
+  if (btn) { btn.classList.add('busy'); btn.disabled = true; }
+  var end = function () { if (btn) { btn.classList.remove('busy'); btn.disabled = false; } };
+  return promise.then(function (v) { end(); return v; }, function (e) { end(); throw e; });
 }
 
 /* ───────── util ───────── */
@@ -248,13 +526,15 @@ function fmtDur(sec) { sec = Number(sec); if (!sec && sec !== 0 || isNaN(sec)) r
 function fmtBytes(n) { n = Number(n) || 0; return n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
 function deviceInfo() { var u = navigator.userAgent; var m = u.match(/\(([^)]+)\)/); return ((m ? m[1] : '') + ' | ' + (u.match(/(Chrome|Firefox|Safari|Edg)\/[\d.]+/) || [''])[0]).slice(0, 180); }
 function todayStr() { var d = new Date(Date.now() + 7 * 3600000); return d.toISOString().slice(0, 10); }
+function todayLong() { try { return new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', timeZone: (App.me && App.me.config.tz) || 'Asia/Jakarta' }).format(new Date()); } catch (e) { return todayStr(); } }
+function greet() { var h = Number(new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hour12: false, timeZone: 'Asia/Jakarta' }).format(new Date())); return h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 19 ? 'Selamat sore' : 'Selamat malam'; }
 
 function toast(msg, kind, ms) {
   var box = document.getElementById('toasts');
   if (!box) { box = document.createElement('div'); box.id = 'toasts'; document.body.appendChild(box); }
   var t = document.createElement('div');
   t.className = 'toast ' + (kind || '');
-  t.textContent = msg;
+  t.innerHTML = icon(kind === 'ok' ? 'check' : kind === 'err' ? 'alertCircle' : kind === 'warn' ? 'alert' : 'zap') + '<span>' + esc(msg) + '</span>';
   box.appendChild(t);
   setTimeout(function () { t.remove(); }, ms || (kind === 'err' ? 6000 : 3500));
 }
@@ -279,7 +559,7 @@ function promptText(title, label, opts) {
   opts = opts || {};
   return new Promise(function (resolve) {
     var m = modal('<h3>' + esc(title) + '</h3>' + (opts.html || '') + '<label class="f">' + esc(label) + '</label><textarea class="in" rows="3" style="width:100%" id="pt"></textarea>' +
-      '<div class="row" style="margin-top:12px"><button class="btn ' + (opts.danger ? 'err' : 'pri') + '" id="pok">' + esc(opts.ok || 'OK') + '</button><button class="btn" data-close>Batal</button></div>', { onClose: function () { resolve(null); } });
+      '<div class="row" style="margin-top:16px"><button class="btn ' + (opts.danger ? 'err' : 'pri') + '" id="pok">' + esc(opts.ok || 'OK') + '</button><button class="btn" data-close>Batal</button></div>', { onClose: function () { resolve(null); } });
     var t = $('#pt', m); t.focus();
     $('#pok', m).onclick = function () { var v = t.value.trim(); if ((opts.min || 0) > v.length) { toast('Wajib diisi (min. ' + opts.min + ' karakter).', 'err'); return; } resolve(v); m.close(); };
   });
@@ -289,7 +569,7 @@ function promptText(title, label, opts) {
 function ask(msg, okLabel, danger) {
   return new Promise(function (resolve) {
     var answered = false;
-    var m = modal('<h3>Konfirmasi</h3><p>' + esc(msg) + '</p><div class="row" style="margin-top:12px"><button class="btn ' + (danger ? 'err' : 'pri') + '" id="ask-ok" style="padding:12px 18px">' + esc(okLabel || 'Ya') + '</button><button class="btn" data-close style="padding:12px 18px">Batal</button></div>',
+    var m = modal('<h3>Konfirmasi</h3><p style="color:#4e5751;margin:0">' + esc(msg) + '</p><div class="row" style="margin-top:20px"><button class="btn ' + (danger ? 'err' : 'pri') + '" id="ask-ok" style="height:44px;padding:0 20px">' + esc(okLabel || 'Ya') + '</button><button class="btn" data-close style="height:44px;padding:0 20px">Batal</button></div>',
       { onClose: function () { if (!answered) resolve(false); } });
     $('#ask-ok', m).onclick = function () { answered = true; m.close(); resolve(true); };
   });
@@ -324,45 +604,77 @@ function loadScript(src) {
 var QR_LIB = 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js';
 
 var Picker = {
-  me: null, cur: null, scanner: null, busy: false, checkQueue: Promise.resolve(), reasons: {},
+  me: null, cur: null, scanner: null, busy: false, checkQueue: Promise.resolve(), reasons: {}, last: null,
 
   start: function (me) {
     Picker.me = me;
     App.view = Picker;
+    document.body.className = 'pk-body';
+    try { Picker.last = JSON.parse(Store.get('fms_pick_home') || 'null'); } catch (e) { Picker.last = null; }
+    if (Picker.last) Picker.reasons = Picker.last.reasons || {};
+    loadScript(QR_LIB).catch(function () {}); // pramuat pemindai agar SCAN RESI langsung terbuka
     Picker.home();
   },
   stop: function () { Picker.stopScanner(); },
 
-  shell: function (inner, foot) {
-    $app().innerHTML = '<div class="pk"><div class="pk-head"><div class="grow"><div class="pk-title">FULFILLMENT PICKER</div><div class="muted" style="font-size:12px">' + esc(Picker.me.user.name) + '</div></div>' +
-      '<button class="btn sm" id="pk-out">Logout</button></div>' + inner + '</div>' + (foot ? '<div class="pk-foot"><div class="inner">' + foot + '</div></div>' : '');
-    $('#pk-out').onclick = function () { var go = function () { Picker.stopScanner(); App.logout(); }; if (!Picker.cur) return go(); ask('Order sedang dipicking. Tetap logout? Order tetap terkunci atas nama Anda sampai lock habis.', 'Logout').then(function (y) { if (y) go(); }); };
+  bar: function () {
+    return '<div class="pk-bar">' + brand('sm') + '<div class="avatar">' + esc(initials(Picker.me.user.name)) + '</div>' +
+      '<button class="icon-btn" id="pk-out" aria-label="Logout">' + icon('logout') + '</button></div>';
   },
 
-  home: function (notice) {
+  shell: function (inner, foot, hero) {
+    $app().innerHTML = '<div class="pk">' + Picker.bar() + (hero || '') + '<div class="pk-wrap">' + inner + '</div></div>' +
+      (foot ? '<div class="pk-foot"><div class="inner">' + foot + '</div></div>' : '');
+    $('#pk-out').onclick = function () {
+      var go = function () { Picker.stopScanner(); App.logout(); };
+      if (!Picker.cur) return go();
+      ask('Order sedang dipicking. Tetap logout? Order tetap terkunci atas nama Anda sampai lock habis.', 'Logout').then(function (y) { if (y) go(); });
+    };
+    window.scrollTo(0, 0);
+  },
+
+  /* ───────── beranda ───────── */
+  home: function (notice, data) {
     Picker.cur = null;
     Picker.stopScanner();
-    Picker.shell('<div id="pk-notice">' + (notice || '') + '</div>' +
-      '<button class="pk-big" id="b-scan">SCAN RESI</button><button class="pk-big alt" id="b-input">INPUT RESI</button>' +
-      '<div class="card" style="margin-top:8px"><div class="row"><div class="grow muted">Selesai hari ini</div><div style="font-size:24px;font-weight:800" id="pk-done">…</div></div><div id="pk-active"></div></div>');
+    if (data) Picker.saveHome(data);
+    var h = Picker.last || { todayCompleted: '–', active: [] };
+    var first = String(Picker.me.user.name || '').split(' ')[0];
+    var hero = '<div class="pk-hero"><div class="dt">' + esc(todayLong()) + '</div><div class="hi">' + greet() + ', ' + esc(first) + '</div>' +
+      '<div class="pk-kpi"><div><div class="v" id="pk-done">' + h.todayCompleted + '</div><div class="l">Selesai hari ini</div></div>' +
+      '<div><div class="v" id="pk-hold">' + (h.active ? h.active.length : '–') + '</div><div class="l">Sedang dipegang</div></div></div></div>';
+    Picker.shell((notice || '') +
+      '<button class="pk-action primary" id="b-scan"><div class="t">' + icon('scan') + '</div><div><div class="h">Scan Resi</div><div class="d">Arahkan kamera ke barcode resi</div></div><div class="go">' + icon('chevron') + '</div></button>' +
+      '<button class="pk-action" id="b-input"><div class="t">' + icon('keyboard') + '</div><div><div class="h">Input Manual</div><div class="d">Ketik nomor resi bila barcode rusak</div></div><div class="go">' + icon('chevron') + '</div></button>' +
+      '<div id="pk-active">' + Picker.activeHtml(h.active) + '</div>', null, hero);
     $('#b-scan').onclick = Picker.scan;
     $('#b-input').onclick = Picker.input;
-    api('pickHome', {}, { silent: true }).then(function (h) {
-      Picker.reasons = h.reasons;
-      var d = $('#pk-done'); if (d) d.textContent = h.todayCompleted;
-      var box = $('#pk-active');
-      if (box && h.active.length) {
-        box.innerHTML = '<div class="warn-box" style="font-weight:500">Order yang masih Anda pegang (ketuk untuk lanjut):' +
-          h.active.map(function (a) { return '<div><a href="#" data-resi="' + esc(a.tracking_number) + '" class="mono">' + esc(a.tracking_number) + '</a></div>'; }).join('') + '</div>';
-        $$('[data-resi]', box).forEach(function (el) { el.onclick = function (e) { e.preventDefault(); Picker.lookup(el.getAttribute('data-resi')); }; });
-      }
+    Picker.bindActive();
+    if (!data) api('pickHome', {}, { silent: true, quiet: !!Picker.last }).then(function (d) {
+      Picker.saveHome(d);
+      var a = $('#pk-done'); if (!a) return;
+      a.textContent = d.todayCompleted; $('#pk-hold').textContent = d.active.length;
+      $('#pk-active').innerHTML = Picker.activeHtml(d.active); Picker.bindActive();
     }).catch(function () {});
   },
 
+  saveHome: function (d) { Picker.last = d; Picker.reasons = d.reasons || Picker.reasons; try { Store.set('fms_pick_home', JSON.stringify(d)); } catch (e) {} },
+
+  activeHtml: function (list) {
+    if (!list || !list.length) return '';
+    return '<div class="pk-sec">Lanjutkan picking</div><div class="pk-list">' + list.map(function (a) {
+      return '<div class="li" data-resi="' + esc(a.tracking_number) + '"><div class="avatar" style="width:38px;height:38px;border-radius:11px;background:var(--warn-soft);color:var(--warn)">' + icon('clock') + '</div>' +
+        '<div><div class="mono" style="font-weight:700">' + esc(a.tracking_number) + '</div><div class="muted" style="font-size:12px">Mulai ' + esc(String(a.started_at).slice(11, 16)) + '</div></div><div style="margin-left:auto;color:var(--muted)">' + icon('chevron') + '</div></div>';
+    }).join('') + '</div>';
+  },
+  bindActive: function () { $$('[data-resi]').forEach(function (el) { el.onclick = function () { Picker.lookup(el.getAttribute('data-resi')); }; }); },
+
+  /* ───────── input manual ───────── */
   input: function () {
-    Picker.shell('<div class="card"><label class="f" style="margin-top:0">Nomor resi</label>' +
-      '<input class="in mono" id="pk-in" style="width:100%;font-size:20px;padding:14px;text-transform:uppercase" autocomplete="off" autocapitalize="characters" inputmode="text">' +
-      '<button class="pk-big" id="pk-go">CARI</button><button class="btn" style="width:100%;padding:12px" id="pk-back">Kembali</button></div>');
+    Picker.shell('<button class="btn ghost" id="pk-back" style="padding-left:4px">' + icon('arrowLeft') + 'Kembali</button>' +
+      '<h2 style="font-size:22px;margin:10px 0 4px">Input resi manual</h2><div class="muted" style="margin-bottom:16px">Ketik nomor resi persis seperti di label paket.</div>' +
+      '<input class="pk-input" id="pk-in" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="SPXID…">' +
+      '<button class="pk-submit" id="pk-go" style="margin-top:14px">' + icon('search') + 'Cari pesanan</button>');
     var i = $('#pk-in'); i.focus();
     var go = function () { if (i.value.trim()) Picker.lookup(i.value); };
     $('#pk-go').onclick = go;
@@ -370,31 +682,33 @@ var Picker = {
     $('#pk-back').onclick = function () { Picker.home(); };
   },
 
+  /* ───────── kamera ───────── */
   scan: function () {
-    Picker.shell('<div id="pk-reader"></div><div id="pk-scan-err"></div>' +
-      '<div class="row" style="margin-top:10px"><button class="btn grow" style="padding:14px" id="pk-torch">Senter</button><button class="btn grow" style="padding:14px" id="pk-cancel">Batal</button></div>' +
-      '<p class="muted" style="text-align:center;font-size:12px">Arahkan kamera ke barcode resi. Jarak ±15–20 cm.</p>' +
-      '<button class="btn" style="width:100%;padding:12px" id="pk-manual">Ketik resi manual</button>');
+    Picker.shell('<button class="btn ghost" id="pk-cancel" style="padding-left:4px">' + icon('arrowLeft') + 'Kembali</button>' +
+      '<div class="pk-scanbox" style="margin-top:8px"><div id="pk-reader"></div><div id="pk-scan-wait" class="loading" style="position:absolute;inset:0;justify-content:center;color:#cfd6d0"><span class="spinner"></span>Membuka kamera…</div></div>' +
+      '<div id="pk-scan-err"></div><p class="muted" style="text-align:center;font-size:12.5px;margin:12px 0">Posisikan barcode resi di dalam bingkai, jarak ±15–20 cm.</p>' +
+      '<div class="row" style="gap:10px"><button class="pk-ghost grow" style="margin:0" id="pk-torch">' + icon('zap') + 'Senter</button><button class="pk-ghost grow" style="margin:0" id="pk-manual">' + icon('keyboard') + 'Ketik manual</button></div>');
     $('#pk-cancel').onclick = function () { Picker.home(); };
     $('#pk-manual').onclick = function () { Picker.stopScanner(); Picker.input(); };
-    var showErr = function (msg) { var b = $('#pk-scan-err'); if (b) b.innerHTML = '<div class="err-box">' + cameraHelp(msg) + '</div>'; };
+    var showErr = function (msg) { var w = $('#pk-scan-wait'); if (w) w.remove(); var b = $('#pk-scan-err'); if (b) b.innerHTML = '<div class="err-box">' + icon('alertCircle') + '<span>' + cameraHelp(msg) + '</span></div>'; };
     loadScript(QR_LIB).then(function () {
       var F = Html5QrcodeSupportedFormats;
       var sc = new Html5Qrcode('pk-reader', { verbose: false, formatsToSupport: [F.CODE_128, F.CODE_39, F.CODE_93, F.QR_CODE, F.EAN_13, F.ITF, F.CODABAR, F.DATA_MATRIX], experimentalFeatures: { useBarCodeDetectorIfSupported: true } });
       Picker.scanner = sc;
       var done = false;
       return sc.start({ facingMode: 'environment' },
-        { fps: 12, qrbox: function (w, h) { return { width: Math.floor(w * 0.9), height: Math.floor(Math.min(h * 0.45, w * 0.5)) }; }, aspectRatio: 1.333 },
+        { fps: 12, qrbox: function (w, h) { return { width: Math.floor(w * 0.82), height: Math.floor(Math.min(h * 0.6, w * 0.5)) }; }, aspectRatio: 1.333 },
         function (text) { if (done) return; done = true; beep(true); if (navigator.vibrate) navigator.vibrate(80); Picker.stopScanner().then(function () { Picker.lookup(text); }); },
         function () {});
     }).then(function () {
+      var w = $('#pk-scan-wait'); if (w) w.remove();
       $('#pk-torch').onclick = function () {
         var on = !Picker.torch;
         Picker.scanner.applyVideoConstraints({ advanced: [{ torch: on }] }).then(function () { Picker.torch = on; }).catch(function () { toast('Senter tidak didukung perangkat ini.', 'warn'); });
       };
     }).catch(function (e) {
       var s = String(e && (e.name || e.message) || e);
-      showErr(/Permission|NotAllowed/i.test(s) ? 'Izin kamera ditolak. Izinkan akses kamera di browser, atau gunakan INPUT RESI.' : 'Kamera tidak dapat dibuka: ' + s + '. Gunakan INPUT RESI.');
+      showErr(/Permission|NotAllowed/i.test(s) ? 'Izin kamera ditolak. Izinkan akses kamera di browser, atau gunakan Input Manual.' : 'Kamera tidak dapat dibuka: ' + s + '. Gunakan Input Manual.');
     });
   },
 
@@ -404,11 +718,12 @@ var Picker = {
     return Promise.resolve();
   },
 
+  /* ───────── cocokkan resi ───────── */
   lookup: function (raw) {
     var resi = String(raw || '').replace(/\s+/g, '').toUpperCase();
     if (!resi || Picker.busy) return;
     Picker.busy = true;
-    Picker.shell('<div class="card" style="text-align:center;padding:30px"><div class="muted">Mencocokkan resi…</div><div class="pk-resi" style="margin-top:6px">' + esc(resi) + '</div></div>');
+    Picker.shell('<div class="pk-skel"><span class="spinner" style="width:34px;height:34px"></span><div class="muted" style="margin-top:14px">Mencocokkan resi…</div><div class="mono" style="font-size:20px;font-weight:700;margin-top:4px">' + esc(resi) + '</div></div>');
     api('pickScan', { resi: resi, device: deviceInfo() }, { silent: true }).then(function (r) {
       Picker.busy = false;
       if (r.result !== 'VALID') { beep(false); return Picker.rejected(resi, r); }
@@ -418,39 +733,45 @@ var Picker = {
     }).catch(function (e) { Picker.busy = false; beep(false); Picker.rejected(resi, { result: 'ERROR', message: e.message }); });
   },
 
+  result: function (kind, ic, title, resi, msg) {
+    return '<div class="pk-result ' + kind + '"><div class="ring">' + icon(ic) + '</div><h2>' + esc(title) + '</h2>' + (resi ? '<div class="r">' + esc(resi) + '</div>' : '') + (msg ? '<p>' + esc(msg) + '</p>' : '') + '</div>';
+  },
+
   rejected: function (resi, r) {
-    var label = { NOT_FOUND: 'NOT FOUND', ALREADY_PICKED: 'ALREADY PICKED', PICKING_IN_PROGRESS: 'PICKING IN PROGRESS', PACKED: 'PACKED', CANCELLED: 'CANCELLED', EXCEPTION: 'EXCEPTION', NOT_READY: 'BELUM SIAP' }[r.result] || r.result;
-    var kind = ['ALREADY_PICKED', 'PACKED', 'NOT_READY'].indexOf(r.result) >= 0 ? 'warn' : 'err';
-    Picker.shell('<div class="pk-result ' + kind + '"><h2>' + esc(label) + '</h2><div class="mono" style="font-size:18px;margin-bottom:6px">' + esc(resi) + '</div><div>' + esc(r.message) + '</div></div>' +
-      '<button class="pk-big" id="b-scan">SCAN LAGI</button><button class="pk-big alt" id="b-home">KEMBALI</button>');
+    var label = { NOT_FOUND: 'Resi tidak ditemukan', ALREADY_PICKED: 'Sudah dipicking', PICKING_IN_PROGRESS: 'Sedang diproses', PACKED: 'Sudah dipacking', CANCELLED: 'Order dibatalkan', EXCEPTION: 'Dalam penanganan Admin', NOT_READY: 'Belum siap dipicking' }[r.result] || 'Gagal';
+    var kind = ['ALREADY_PICKED', 'PACKED', 'NOT_READY', 'PICKING_IN_PROGRESS'].indexOf(r.result) >= 0 ? 'warn' : 'err';
+    Picker.shell(Picker.result(kind, kind === 'warn' ? 'alert' : 'x', label, resi, r.message) +
+      '<button class="pk-submit" id="b-scan">' + icon('scan') + 'Scan resi lain</button><button class="pk-ghost" id="b-home">' + icon('arrowLeft') + 'Kembali ke beranda</button>');
     $('#b-scan').onclick = Picker.scan;
     $('#b-home').onclick = function () { Picker.home(); };
     if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
   },
 
+  /* ───────── checklist ───────── */
   order: function () {
     var c = Picker.cur, checked = {};
     c.checked.forEach(function (id) { checked[id] = true; });
-    var all = c.items.every(function (i) { return checked[i.id]; });
     var nDone = c.items.filter(function (i) { return checked[i.id]; }).length;
-    var items = c.items.map(function (i) {
+    var all = nDone === c.items.length;
+    var rows = c.items.map(function (i, n) {
       var on = !!checked[i.id];
-      return '<div class="pk-item ' + (on ? 'done' : '') + '"><div class="nm">' + esc(i.product_name) + '</div>' +
-        (i.variant ? '<div class="muted">Variasi: <b>' + esc(i.variant) + '</b></div>' : '') + (i.sku ? '<div class="muted mono" style="font-size:12px">SKU: ' + esc(i.sku) + '</div>' : '') +
-        '<div class="qty">Qty ' + i.quantity + '</div>' +
-        '<button class="pk-check" data-item="' + esc(i.id) + '">' + (on ? '✓ PICKED' : '☐ CHECK') + '</button>' +
-        '<div style="text-align:right;margin-top:6px"><a href="#" class="muted" style="font-size:12px" data-issue="' + esc(i.id) + '">Masalah dengan item ini?</a></div></div>';
+      return '<tr class="' + (on ? 'done' : '') + '" data-item="' + esc(i.id) + '"><td class="no">' + (n + 1) + '</td>' +
+        '<td><div class="nm">' + esc(i.product_name) + '</div>' + (i.variant ? '<span class="var">' + esc(i.variant) + '</span>' : '') + (i.sku ? '<div class="sku">' + esc(i.sku) + '</div>' : '') + '</td>' +
+        '<td class="qty">' + i.quantity + '</td><td class="ck"><span class="cb" role="checkbox" aria-checked="' + on + '">' + (on ? icon('check') : '') + '</span></td></tr>';
     }).join('');
-    Picker.shell('<div class="card"><div class="muted" style="font-size:11px;font-weight:700;letter-spacing:.08em">TRACKING NUMBER</div><div class="pk-resi">' + esc(c.order.tracking_number) + '</div>' +
-      '<div class="muted mono" style="font-size:12px">Order ' + esc(c.order.order_number) + '</div>' +
-      '<div class="row" style="margin-top:8px"><b style="font-size:17px">' + c.items.length + ' PRODUK</b><span class="muted">· total qty ' + c.totalQty + '</span><span class="right badge ' + (all ? 'b-COMPLETED' : 'b-PENDING') + '">' + nDone + '/' + c.items.length + '</span></div>' +
-      (c.order.buyer_note ? '<div class="warn-box" style="font-weight:500">Catatan pembeli: ' + esc(c.order.buyer_note) + '</div>' : '') +
-      (c.resumed ? '<div class="muted" style="font-size:12px;margin-top:6px">Melanjutkan picking sebelumnya.</div>' : '') + '</div>' + items +
-      '<button class="btn" style="width:100%;padding:12px;margin-top:8px" id="pk-release">Lepas order (kembalikan ke antrian)</button>',
-      '<button class="pk-big" style="margin:0;padding:18px;background:' + (all ? 'var(--ok)' : '#94a3b8') + '" id="pk-submit" ' + (all ? '' : 'disabled') + '>SUBMIT PICKING</button>' +
-      (all ? '' : '<div class="muted" style="text-align:center;font-size:12px;margin-top:4px">Semua item harus dikonfirmasi sebelum picking dapat diselesaikan.</div>'));
-    $$('[data-item]').forEach(function (b) { b.onclick = function () { Picker.toggle(b.getAttribute('data-item')); }; });
-    $$('[data-issue]').forEach(function (a) { a.onclick = function (e) { e.preventDefault(); Picker.issue(a.getAttribute('data-issue')); }; });
+    Picker.shell('<div class="pk-order"><div class="eyebrow">Nomor resi</div><div class="resi">' + esc(c.order.tracking_number) + '</div>' +
+      '<div style="font-size:12px;color:var(--sage)">Order ' + esc(c.order.order_number) + (c.resumed ? ' · dilanjutkan' : '') + '</div>' +
+      '<div class="meta"><span class="pill">' + icon('package') + c.items.length + ' produk</span><span class="pill">' + c.totalQty + ' pcs</span>' + (c.order.shipping_option ? '<span class="pill">' + icon('truck') + esc(c.order.shipping_option) + '</span>' : '') + '</div>' +
+      '<div class="prog"><i style="width:' + Math.round(nDone / c.items.length * 100) + '%"></i></div><div class="prog-l"><span>Progres picking</span><span>' + nDone + ' / ' + c.items.length + ' item</span></div></div>' +
+      (c.order.buyer_note ? '<div class="warn-box">' + icon('alert') + '<span>Catatan pembeli: ' + esc(c.order.buyer_note) + '</span></div>' : '') +
+      '<div class="pk-tbl"><div class="pk-tbl-h"><span>Daftar item</span><span class="' + (all ? 'ok' : '') + '">' + nDone + '/' + c.items.length + ' dicentang</span></div>' +
+      '<table><thead><tr><th>#</th><th>Produk</th><th class="c">Qty</th><th class="c">Ambil</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<div class="pk-tbl-f">Ketuk baris untuk mencentang item yang sudah diambil sesuai qty.</div></div>' +
+      '<div class="row" style="gap:10px;margin-top:4px"><button class="pk-ghost grow" id="pk-issue">' + icon('flag') + 'Laporkan masalah</button><button class="pk-ghost grow" id="pk-release">' + icon('undo') + 'Lepas order</button></div>',
+      '<button class="pk-submit" id="pk-submit" ' + (all ? '' : 'disabled') + '>' + icon('check') + 'SUBMIT PICKING</button>' +
+      (all ? '' : '<div class="pk-hint">Semua item harus dikonfirmasi sebelum picking dapat diselesaikan.</div>'));
+    $$('tr[data-item]').forEach(function (tr) { tr.onclick = function () { Picker.toggle(tr.getAttribute('data-item')); }; });
+    $('#pk-issue').onclick = function () { Picker.issue(); };
     $('#pk-submit').onclick = Picker.submit;
     $('#pk-release').onclick = Picker.release;
   },
@@ -460,16 +781,15 @@ var Picker = {
     var was = c.checked.indexOf(itemId) >= 0;
     var y = window.scrollY;
     c.checked = was ? c.checked.filter(function (x) { return x !== itemId; }) : c.checked.concat([itemId]);
-    Picker.order(); window.scrollTo(0, y);
+    Picker.order(); window.scrollTo(0, y); // tampilan berubah seketika; server disinkronkan di belakang
     if (navigator.vibrate) navigator.vibrate(30);
     var sid = c.sessionId;
-    // kirim berurutan; server adalah sumber kebenaran
     Picker.checkQueue = Picker.checkQueue.then(function () {
-      return api('pickCheck', { sessionId: sid, itemId: itemId, checked: !was }, { silent: true }).then(function (r) {
+      return api('pickCheck', { sessionId: sid, itemId: itemId, checked: !was }, { silent: true, quiet: true }).then(function (r) {
         if (Picker.cur && Picker.cur.sessionId === sid) Picker.cur.serverChecked = r.checked;
       }).catch(function (e) {
         toast(e.message, 'err');
-        if (e.code === 'SESSION_CLOSED') return Picker.home('<div class="err-box">' + esc(e.message) + '</div>');
+        if (e.code === 'SESSION_CLOSED') return Picker.home('<div class="err-box">' + icon('alertCircle') + '<span>' + esc(e.message) + '</span></div>');
         if (Picker.cur && Picker.cur.sessionId === sid) { Picker.cur.checked = was ? Picker.cur.checked.concat([itemId]) : Picker.cur.checked.filter(function (x) { return x !== itemId; }); Picker.order(); }
       });
     });
@@ -477,15 +797,15 @@ var Picker = {
 
   submit: function () {
     var c = Picker.cur;
-    var b = $('#pk-submit'); b.disabled = true; b.textContent = 'Menyimpan…';
+    var b = $('#pk-submit'); b.disabled = true; b.classList.add('busy');
     Picker.checkQueue.then(function () {
       return api('pickSubmit', { sessionId: c.sessionId }, { silent: true });
     }).then(function (r) {
       beep(true); if (navigator.vibrate) navigator.vibrate(150);
-      Picker.home('<div class="pk-result ok"><h2>PICKING COMPLETED</h2><div class="mono">' + esc(r.tracking) + '</div><div>Durasi ' + fmtDur(r.durationSec) + '</div></div>');
+      Picker.home(Picker.result('ok', 'check', 'Picking selesai', r.tracking, 'Durasi ' + fmtDur(r.durationSec) + ' · siap untuk packing'), r.home);
     }).catch(function (e) {
       beep(false); toast(e.message, 'err');
-      if (e.code === 'SESSION_CLOSED') return Picker.home('<div class="err-box">' + esc(e.message) + '</div>');
+      if (e.code === 'SESSION_CLOSED') return Picker.home('<div class="err-box">' + icon('alertCircle') + '<span>' + esc(e.message) + '</span></div>');
       if (e.code === 'INCOMPLETE' && Picker.cur) { Picker.cur.checked = Picker.cur.serverChecked || Picker.cur.checked.filter(function (id) { return (e.extra && e.extra.missing || []).indexOf(id) < 0; }); }
       if (Picker.cur) Picker.order();
     });
@@ -494,23 +814,25 @@ var Picker = {
   release: function () {
     ask('Lepas order ini? Order kembali ke antrian picking dan centang akan direset.', 'Lepas order').then(function (y) {
       if (!y) return;
-      api('pickRelease', { sessionId: Picker.cur.sessionId }).then(function () { toast('Order dilepas.', 'ok'); Picker.home(); }).catch(function (e) { if (e.code === 'SESSION_CLOSED') Picker.home(); });
+      busy($('#pk-release'), api('pickRelease', { sessionId: Picker.cur.sessionId })).then(function () { toast('Order dilepas ke antrian.', 'ok'); Picker.home(); }).catch(function (e) { if (e.code === 'SESSION_CLOSED') Picker.home(); });
     });
   },
 
-  issue: function (itemId) {
-    var it = Picker.cur.items.filter(function (i) { return i.id === itemId; })[0];
-    var opts = Object.keys(Picker.reasons).map(function (k) { return '<button class="btn" style="width:100%;padding:14px;margin:4px 0;justify-content:flex-start" data-r="' + k + '">' + esc(Picker.reasons[k]) + ' <span class="muted mono" style="font-size:11px">' + k + '</span></button>'; }).join('');
-    var m = modal('<h3>Laporkan masalah</h3><div class="muted" style="margin-bottom:8px">' + esc(it.product_name) + (it.variant ? ' — ' + esc(it.variant) : '') + '</div>' + opts +
-      '<label class="f">Catatan (opsional)</label><input class="in" style="width:100%" id="pk-note"><p class="muted" style="font-size:12px">Order akan berstatus EXCEPTION dan diteruskan ke Admin.</p><button class="btn" data-close style="width:100%">Batal</button>');
+  issue: function () {
+    var items = Picker.cur.items;
+    var m = modal('<h3>Laporkan masalah</h3><label class="f" style="margin-top:0">Item bermasalah</label><select class="in" id="pk-iitem" style="width:100%">' +
+      items.map(function (i, n) { return '<option value="' + esc(i.id) + '">' + (n + 1) + '. ' + esc(i.product_name.slice(0, 60)) + (i.variant ? ' — ' + esc(i.variant) : '') + ' (×' + i.quantity + ')</option>'; }).join('') + '</select>' +
+      '<label class="f">Jenis masalah</label>' + Object.keys(Picker.reasons).map(function (k) { return '<button class="pk-ghost" style="justify-content:flex-start;padding:0 16px;margin-top:8px" data-r="' + k + '">' + icon('flag') + esc(Picker.reasons[k]) + '</button>'; }).join('') +
+      '<label class="f">Catatan (opsional)</label><input class="in" style="width:100%" id="pk-note"><p class="muted" style="font-size:12px">Order akan berstatus EXCEPTION dan diteruskan ke Admin.</p><button class="btn" data-close style="width:100%;height:44px">Batal</button>');
     $$('[data-r]', m).forEach(function (b) {
       b.onclick = function () {
-        var note = $('#pk-note', m).value, reason = b.getAttribute('data-r');
+        var note = $('#pk-note', m).value, reason = b.getAttribute('data-r'), itemId = $('#pk-iitem', m).value;
         m.close();
         ask('Laporkan "' + Picker.reasons[reason] + '"? Picking order ini akan dihentikan.', 'Laporkan', true).then(function (y) {
           if (!y) return;
+          var resi = Picker.cur && Picker.cur.order.tracking_number;
           api('pickException', { sessionId: Picker.cur.sessionId, itemId: itemId, reason: reason, note: note }).then(function () {
-            Picker.home('<div class="pk-result warn"><h2>EXCEPTION</h2><div>Masalah dilaporkan ke Admin.</div></div>');
+            Picker.home(Picker.result('warn', 'flag', 'Masalah dilaporkan', resi, 'Order diteruskan ke Admin untuk ditangani.'));
           });
         });
       };
@@ -581,7 +903,7 @@ var Packer = {
 
   chooseWs: function () {
     var list = Packer.home.workstations;
-    $app().innerHTML = '<div class="login"><div class="card" style="background:#0f172a;border-color:#1e293b;width:min(100%,460px)"><h1 style="font-size:19px;margin:0 0 4px">Pilih Workstation</h1><div class="muted" style="margin-bottom:12px">' + esc(Packer.me.user.name) + '</div>' +
+    $app().innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px"><div class="pc-panel" style="width:min(100%,480px);padding:26px">' + brand('sm') + '<h2 style="font-size:22px;margin:22px 0 4px;color:#fff">Pilih workstation</h2><div class="muted" style="margin-bottom:12px">' + esc(Packer.me.user.name) + '</div>' +
       (list.length ? list.map(function (w) { return '<button class="btn" style="width:100%;padding:14px;margin:4px 0;justify-content:space-between" data-ws="' + esc(w.id) + '"><b class="mono">' + esc(w.code) + '</b><span class="muted">' + esc(w.name) + (w.location ? ' · ' + esc(w.location) : '') + '</span></button>'; }).join('')
         : '<div class="err-box">Belum ada workstation aktif. Hubungi Admin.</div>') +
       '<button class="btn ghost" style="margin-top:10px" id="ws-out">Logout</button></div></div>';
@@ -593,18 +915,17 @@ var Packer = {
 
   layout: function () {
     $app().innerHTML =
-      '<div class="pc"><div class="pc-head"><div class="logo" style="width:34px;height:34px;margin:0;font-size:14px">F</div>' +
-      '<div><div class="muted" style="font-size:11px;font-weight:700;letter-spacing:.1em">PACKING STATION</div><div style="font-weight:700">' + esc(Packer.me.user.name) + '</div></div>' +
+      '<div class="pc"><div class="pc-head">' + brand('sm') + '<div class="who"><div class="r">PACKING STATION</div><div class="n">' + esc(Packer.me.user.name) + '</div></div>' +
       '<div class="right row" style="gap:14px"><button class="ws" id="pc-ws" title="Ganti workstation">' + esc(Packer.ws.code) + '</button>' +
-      '<div style="text-align:center"><div style="font-size:20px;font-weight:800;line-height:1" id="pc-count">' + Packer.todayCount + '</div><div class="muted" style="font-size:10px">selesai hari ini</div></div>' +
-      '<span class="badge b-UPLOADING hidden" id="pc-qbadge"></span><button class="btn" id="pc-out">Logout</button></div></div>' +
+      '<div class="cnt"><div class="v" id="pc-count">' + Packer.todayCount + '</div><div class="l">selesai hari ini</div></div>' +
+      '<span class="badge b-UPLOADING hidden" id="pc-qbadge"></span><button class="btn" id="pc-out">' + icon('logout') + 'Logout</button></div></div>' +
       '<div class="pc-body"><section>' +
       '<div class="pc-cam" id="pc-cam"><canvas id="pc-canvas"></canvas><div id="pc-camtxt" style="position:absolute">Kamera aktif otomatis setelah resi valid.</div><div class="pc-rec hidden" id="pc-rec">● REC 00:00</div></div>' +
       '<video id="pc-video" muted playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></video>' +
-      '<div class="row" style="margin-top:8px"><button class="btn sm" id="pc-camtest">Tes kamera</button><span class="muted" style="font-size:12px" id="pc-camstate"></span></div>' +
+      '<div class="row" style="margin-top:8px"><button class="btn sm" id="pc-camtest">' + icon('camera') + 'Tes kamera</button><span class="muted" style="font-size:12px" id="pc-camstate"></span></div>' +
       '<div class="pc-panel" style="margin-top:12px"><div class="row"><b>Antrian Upload Video</b><span class="muted" style="font-size:12px">Video disimpan di perangkat sampai upload sukses.</span></div><div id="pc-queue"><div class="muted" style="font-size:13px;padding:6px 0">Kosong.</div></div><div id="pc-srvpending"></div></div>' +
       '</section><section>' +
-      '<div class="pc-panel"><label class="muted" style="font-size:11px;font-weight:700;letter-spacing:.1em">SCAN TRACKING NUMBER</label>' +
+      '<div class="pc-panel"><div class="eyebrow">Scan tracking number</div>' +
       '<input class="pc-scan" id="pc-scan" autocomplete="off" spellcheck="false" placeholder="Scan / ketik resi lalu Enter">' +
       '<div id="pc-msg"></div></div>' +
       '<div class="pc-panel" style="margin-top:12px" id="pc-order"><div class="muted">Belum ada order aktif. Scan resi untuk memulai packing.</div></div>' +
@@ -951,7 +1272,8 @@ function tbl(heads, rows, empty) {
     (rows.length ? rows.join('') : '<tr><td colspan="' + heads.length + '" class="muted" style="padding:18px;text-align:center">' + (empty || 'Tidak ada data.') + '</td></tr>') + '</tbody></table></div>';
 }
 function importBadge(s) { return '<span class="badge b-' + (s === 'COMPLETED' ? 'COMPLETED' : 'PENDING') + '">' + esc(String(s).replace(/_/g, ' ')) + '</span>'; }
-function stat(v, l) { return '<div class="stat"><div class="v">' + esc(v) + '</div><div class="l">' + esc(l) + '</div></div>'; }
+function stat(v, l, ic, hl) { return '<div class="stat' + (hl ? ' hl' : '') + '">' + (ic ? '<div class="chip">' + icon(ic) + '</div>' : '') + '<div class="v">' + esc(v) + '</div><div class="l">' + esc(l) + '</div></div>'; }
+function ph(eb, title, act) { return '<div class="ph"><div><div class="eyebrow">' + eb + '</div><h2>' + title + '</h2></div>' + (act ? '<div class="act">' + act + '</div>' : '') + '</div>'; }
 function opt(v, l, sel) { return '<option value="' + esc(v) + '"' + (String(v) === String(sel) ? ' selected' : '') + '>' + esc(l === undefined ? v : l) + '</option>'; }
 
 var Admin = {
@@ -959,20 +1281,31 @@ var Admin = {
   NAV: [['dashboard', 'Dashboard'], ['orders', 'Orders'], ['import', 'Import Orders'], ['monitoring', 'Fulfillment Monitoring'], ['videos', 'Videos'], ['exceptions', 'Exceptions'],
     ['users', 'Users'], ['config', 'Configuration'], ['audit', 'Audit Logs'], ['settings', 'Settings']],
 
+  ICON: { dashboard: 'grid', orders: 'list', import: 'upload', monitoring: 'activity', videos: 'video', exceptions: 'alert', users: 'users', config: 'sliders', audit: 'file', settings: 'user' },
+  cache: {},
+
   start: function (me) {
     Admin.me = me; App.view = Admin;
     var u = me.user;
-    $app().innerHTML = '<div class="adm"><nav class="side"><div class="brand">Fulfillment<br><span style="font-weight:500;color:#94a3b8;font-size:12px">Management System</span></div>' +
-      Admin.NAV.map(function (n) {
-        var s = '<a data-nav="' + n[0] + '">' + n[1] + '</a>';
-        if (n[0] === 'users') s += [['ALL', 'All Users'], ['ADMIN', 'Admin'], ['PICKER', 'Picker'], ['PACKER', 'Packer'], ['ACTIVE', 'Active Users'], ['INACTIVE', 'Inactive Users'], ['ADD', '+ Add User']]
-          .map(function (x) { return '<a class="sub" data-nav="users" data-arg="' + x[0] + '">' + x[1] + '</a>'; }).join('');
+    var nav = function (n) { return '<a class="nv" data-nav="' + n[0] + '">' + icon(Admin.ICON[n[0]]) + n[1] + '</a>'; };
+    $app().innerHTML = '<div class="adm"><nav class="side">' + brand() +
+      '<div class="sec">OPERASIONAL</div>' + Admin.NAV.slice(0, 6).map(nav).join('') +
+      '<div class="sec" style="margin-top:10px">ADMINISTRASI</div>' + Admin.NAV.slice(6).map(function (n) {
+        var s = nav(n);
+        if (n[0] === 'users') s += [['ALL', 'Semua user'], ['PICKER', 'Picker'], ['PACKER', 'Packer'], ['ADMIN', 'Admin'], ['ACTIVE', 'Aktif'], ['INACTIVE', 'Nonaktif'], ['ADD', '+ Tambah user']]
+          .map(function (x) { return '<a class="nv sub" data-nav="users" data-arg="' + x[0] + '">' + x[1] + '</a>'; }).join('');
         return s;
-      }).join('') + '<a id="adm-out">Logout</a>' +
-      '<div class="me"><div style="color:#fff;font-weight:600">' + esc(u.name) + '</div><div>' + esc(u.username) + ' · ' + esc(u.role) + '</div></div></nav><main class="main" id="main"></main></div>';
+      }).join('') +
+      '<div class="me"><div class="avatar">' + esc(initials(u.name)) + '</div><div><div class="n">' + esc(u.name) + '</div><div class="r">' + esc(u.role.replace('_', ' ')) + '</div></div><button id="adm-out" title="Logout">' + icon('logout') + '</button></div></nav><main class="main" id="main"></main></div>';
     $$('[data-nav]').forEach(function (a) { a.onclick = function () { Admin.go(a.getAttribute('data-nav'), a.getAttribute('data-arg')); }; });
     $('#adm-out').onclick = function () { Admin.stop(); App.logout(); };
     Admin.go('dashboard');
+  },
+  /** Tampilkan data cache seketika, lalu segarkan dari server (stale-while-revalidate). */
+  swr: function (key, name, args) {
+    var c = Admin.cache[key];
+    var p = api(name, args || {}, { quiet: !!c }).then(function (d) { Admin.cache[key] = d; return d; });
+    return { then: function (fn, rej) { if (c) { try { fn(c, true); } catch (e) { console.error(e); } } var q = p.then(function (d) { return fn(d, false); }); return rej ? q.catch(rej) : q; } };
   },
   stop: function () { clearInterval(Admin.timer); },
 
@@ -981,7 +1314,7 @@ var Admin = {
     Admin.page = page;
     $$('[data-nav]').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-nav') === page && (a.getAttribute('data-arg') || '') === (arg || '')); });
     var el = $('#main');
-    el.innerHTML = '<div class="muted">Memuat…</div>';
+    el.innerHTML = '<div class="loading"><span class="spinner"></span>Memuat…</div>';
     Admin.pages[page](el, arg);
   },
   every: function (sec, fn) { clearInterval(Admin.timer); Admin.timer = setInterval(function () { if (!modalOpen() && document.visibilityState === 'visible') fn(); }, sec * 1000); },
@@ -992,21 +1325,21 @@ var Admin = {
 /* ───────── Dashboard (§35, §36) ───────── */
 Admin.pages.dashboard = function (el) {
   var load = function () {
-    api('dashboard').then(function (d) {
+    Admin.swr('dashboard', 'dashboard').then(function (d) {
       if (Admin.page !== 'dashboard') return;
       var c = d.cards, k = d.kpi;
-      el.innerHTML = '<div class="row"><h2>Dashboard</h2><span class="muted right">' + esc(d.today) + ' · auto-refresh 30 dtk</span></div>' +
-        '<div class="cards">' + stat(c.todayOrders, "Today's Orders") + stat(c.imported, 'Orders Imported (tanpa resi)') + stat(c.waitingPicking, 'Waiting for Picking') + stat(c.pickingInProgress, 'Picking in Progress') +
-        stat(c.pickingCompleted, 'Picking Completed') + stat(c.packingInProgress, 'Packing in Progress') + stat(c.packingCompletedToday, 'Packing Completed (hari ini)') + stat(c.exceptionsOpen, 'Exceptions (open)') +
-        stat(c.activePickers, 'Active Pickers') + stat(c.activePackers, 'Active Packers') + '</div>' +
-        '<h3 style="margin:6px 0 8px">KPI Operasional (hari ini)</h3><div class="cards">' + stat(k.totalOrders, 'Total Orders') + stat(k.totalItems, 'Total Items') +
+      el.innerHTML = ph('Ringkasan hari ini', 'Dashboard', '<span class="muted">' + esc(todayLong()) + ' · diperbarui otomatis</span>') +
+        '<div class="cards">' + stat(c.todayOrders, "Today's Orders", 'package', true) + stat(c.imported, 'Orders Imported (tanpa resi)', 'upload') + stat(c.waitingPicking, 'Waiting for Picking', 'clock') + stat(c.pickingInProgress, 'Picking in Progress', 'scan') +
+        stat(c.pickingCompleted, 'Picking Completed', 'check') + stat(c.packingInProgress, 'Packing in Progress', 'video') + stat(c.packingCompletedToday, 'Packing Completed (hari ini)', 'truck') + stat(c.exceptionsOpen, 'Exceptions (open)', 'alert') +
+        stat(c.activePickers, 'Active Pickers', 'users') + stat(c.activePackers, 'Active Packers', 'monitor') + '</div>' +
+        '<div class="sect" style="margin-top:6px">KPI Operasional (hari ini)</div><div class="cards">' + stat(k.totalOrders, 'Total Orders') + stat(k.totalItems, 'Total Items') +
         stat(k.pickingProductivity, 'Picking Productivity (order/picker)') + stat(k.packingProductivity, 'Packing Productivity (order/packer)') +
         stat(fmtDur(k.avgPickingSec), 'Average Picking Time') + stat(fmtDur(k.avgPackingSec), 'Average Packing Time') +
         stat(k.dailyCompletionRate + '%', 'Daily Completion Rate') + stat(k.exceptionRate + '%', 'Exception Rate') + '</div>' +
-        '<div class="grid2"><div><h3 style="margin:6px 0 8px">Orders per Picker</h3>' + tbl(['Picker', 'Order', 'Rata-rata'], d.pickers.map(function (p) { return '<tr><td>' + esc(p.name) + '</td><td>' + p.orders + '</td><td>' + fmtDur(p.avgSec) + '</td></tr>'; })) + '</div>' +
-        '<div><h3 style="margin:6px 0 8px">Orders per Packer</h3>' + tbl(['Packer', 'Order', 'Rata-rata'], d.packers.map(function (p) { return '<tr><td>' + esc(p.name) + '</td><td>' + p.orders + '</td><td>' + fmtDur(p.avgSec) + '</td></tr>'; })) + '</div></div>' +
-        '<div class="grid2" style="margin-top:14px"><div><h3 style="margin:6px 0 8px">User online (15 menit)</h3>' + tbl(['User', 'Role', 'Terakhir aktif'], d.online.map(function (u) { return '<tr><td>' + esc(u.username) + '</td><td>' + badge(u.role) + '</td><td>' + esc(u.last_seen_at) + '</td></tr>'; })) + '</div>' +
-        '<div><h3 style="margin:6px 0 8px">Aktivitas terbaru</h3>' + tbl(['Waktu', 'User', 'Aksi', 'Resi'], d.recent.map(function (a) { return '<tr><td class="mono" style="font-size:12px">' + esc(a.timestamp.slice(11)) + '</td><td>' + esc(a.username) + '</td><td>' + esc(a.action) + '</td><td class="mono">' + esc(a.tracking_number) + '</td></tr>'; })) + '</div></div>';
+        '<div class="grid2"><div><div class="sect" style="margin-top:6px">Orders per Picker</div>' + tbl(['Picker', 'Order', 'Rata-rata'], d.pickers.map(function (p) { return '<tr><td>' + esc(p.name) + '</td><td>' + p.orders + '</td><td>' + fmtDur(p.avgSec) + '</td></tr>'; })) + '</div>' +
+        '<div><div class="sect" style="margin-top:6px">Orders per Packer</div>' + tbl(['Packer', 'Order', 'Rata-rata'], d.packers.map(function (p) { return '<tr><td>' + esc(p.name) + '</td><td>' + p.orders + '</td><td>' + fmtDur(p.avgSec) + '</td></tr>'; })) + '</div></div>' +
+        '<div class="grid2" style="margin-top:14px"><div><div class="sect" style="margin-top:6px">User online (15 menit)</div>' + tbl(['User', 'Role', 'Terakhir aktif'], d.online.map(function (u) { return '<tr><td>' + esc(u.username) + '</td><td>' + badge(u.role) + '</td><td>' + esc(u.last_seen_at) + '</td></tr>'; })) + '</div>' +
+        '<div><div class="sect" style="margin-top:6px">Aktivitas terbaru</div>' + tbl(['Waktu', 'User', 'Aksi', 'Resi'], d.recent.map(function (a) { return '<tr><td class="mono" style="font-size:12px">' + esc(a.timestamp.slice(11)) + '</td><td>' + esc(a.username) + '</td><td>' + esc(a.action) + '</td><td class="mono">' + esc(a.tracking_number) + '</td></tr>'; })) + '</div></div>';
     }).catch(function () {});
   };
   load(); Admin.every(30, load);
@@ -1016,7 +1349,7 @@ Admin.pages.dashboard = function (el) {
 Admin.pages.orders = function (el, preset) {
   var F = Admin.orderFilter = Admin.orderFilter || { q: '', status: '', dateFrom: '', dateTo: '', dateField: 'created_at', picker: '', packer: '', page: 0 };
   if (preset && STATUSES.indexOf(preset) >= 0) { F.status = preset; F.page = 0; }
-  el.innerHTML = '<h2>Orders</h2><form class="filters" id="of">' +
+  el.innerHTML = ph('Data pesanan', 'Orders') + '<form class="filters" id="of">' +
     '<input class="in" name="q" placeholder="Resi / Order ID / SKU / produk / nama" style="width:280px" value="' + esc(F.q) + '">' +
     '<select class="in" name="status">' + opt('', 'Semua status', F.status) + STATUSES.map(function (s) { return opt(s, s.replace(/_/g, ' '), F.status); }).join('') + '</select>' +
     '<select class="in" name="dateField">' + opt('created_at', 'Tgl import', F.dateField) + opt('order_date', 'Tgl order', F.dateField) + opt('picking_completed_at', 'Tgl picking', F.dateField) + opt('packing_completed_at', 'Tgl packing', F.dateField) + '</select>' +
@@ -1028,7 +1361,7 @@ Admin.pages.orders = function (el, preset) {
   $('#of-reset').onclick = function () { Admin.orderFilter = null; Admin.pages.orders(el); };
   var load = function () {
     $('#ol').innerHTML = '<div class="muted">Memuat…</div>';
-    api('ordersList', F).then(function (r) {
+    Admin.swr('orders' + JSON.stringify(F), 'ordersList', F).then(function (r) {
       var chips = Object.keys(r.counts).map(function (s) { return badge(s) + ' <b>' + r.counts[s] + '</b>'; }).join(' &nbsp; ');
       var pages = Math.max(1, Math.ceil(r.total / r.limit));
       $('#ol').innerHTML = '<div class="row" style="margin-bottom:8px"><span class="muted">' + r.total + ' order</span><span>' + chips + '</span><span class="right"></span>' +
@@ -1062,16 +1395,16 @@ Admin.orderDetail = function (id, onChange) {
     var canCancel = ['IMPORTED', 'READY_FOR_PICKING', 'PICKING_COMPLETED', 'EXCEPTION'].indexOf(o.status) >= 0 && d.store === 'DATA';
     m.innerHTML = '<div class="row"><h3 style="margin:0">Order ' + esc(o.order_number) + '</h3>' + badge(o.status) + (d.store !== 'DATA' ? '<span class="badge">ARSIP</span>' : '') +
       '<span class="right"></span>' + (canRelease ? '<button class="btn" id="od-rel">Lepas lock</button>' : '') + (canCancel ? '<button class="btn err" id="od-can">Batalkan order</button>' : '') + '<button class="btn" data-close>Tutup</button></div>' +
-      '<div class="grid2" style="margin-top:12px"><div><h4>Order Information</h4>' + kv([['Tracking Number', '<b class="mono">' + esc(o.tracking_number || '-') + '</b>', 1], ['Order ID', o.order_number], ['Marketplace', o.marketplace], ['Tanggal order', o.order_date], ['Kirim sebelum', o.ship_by],
+      '<div class="grid2" style="margin-top:12px"><div><div class="sect" style="font-size:14px;margin:18px 0 10px">Order Information</div>' + kv([['Tracking Number', '<b class="mono">' + esc(o.tracking_number || '-') + '</b>', 1], ['Order ID', o.order_number], ['Marketplace', o.marketplace], ['Tanggal order', o.order_date], ['Kirim sebelum', o.ship_by],
         ['Pengiriman', o.shipping_option], ['Penerima', o.customer_name], ['Username pembeli', o.buyer_username], ['Catatan pembeli', o.buyer_note], ['Diimport', o.created_at], ['Lock', o.locked_by_name ? o.locked_by_name + ' s/d ' + o.lock_expires_at : '-']]) + '</div>' +
-      '<div><h4>Picking Information</h4>' + kv([['Picker', o.picker_name], ['Mulai', o.picking_started_at], ['Selesai', o.picking_completed_at], ['Durasi', fmtDur(o.picking_duration)]]) +
-      '<h4>Packing Information</h4>' + kv([['Packer', o.packer_name], ['Workstation', o.workstation_code], ['Mulai', o.packing_started_at], ['Selesai', o.packing_completed_at], ['Durasi', fmtDur(o.packing_duration)]]) + '</div></div>' +
-      '<h4>Order Items (' + d.items.length + ')</h4>' + tbl(['#', 'Produk', 'Variasi', 'SKU (ref)', 'Qty'], d.items.map(function (i) { return '<tr><td>' + esc(i.line_no) + '</td><td>' + esc(i.product_name) + '</td><td>' + esc(i.variant) + '</td><td class="mono">' + esc(i.sku) + '</td><td><b>' + esc(i.quantity) + '</b></td></tr>'; })) +
-      '<h4>Video Evidence</h4>' + vids +
-      '<div class="grid2"><div><h4>Sesi Picking</h4>' + tbl(['Picker', 'Status', 'Mulai', 'Selesai', 'Device'], d.picking.map(function (s) { return '<tr><td>' + esc(s.picker_name) + '</td><td>' + badge(s.status) + '</td><td>' + esc(s.started_at) + '</td><td>' + esc(s.completed_at) + '</td><td style="font-size:11px">' + esc(s.device) + '</td></tr>'; })) + '</div>' +
-      '<div><h4>Sesi Packing</h4>' + tbl(['Packer', 'WS', 'Status', 'Mulai', 'Selesai'], d.packing.map(function (s) { return '<tr><td>' + esc(s.packer_name) + '</td><td>' + esc(s.workstation_code) + '</td><td>' + badge(s.status) + '</td><td>' + esc(s.started_at) + '</td><td>' + esc(s.completed_at) + (s.no_video_reason ? '<div class="muted">Tanpa video: ' + esc(s.no_video_reason) + '</div>' : '') + '</td></tr>'; })) + '</div></div>' +
-      '<h4>Exceptions</h4>' + tbl(['Waktu', 'Tipe', 'Alasan', 'Status', 'Catatan', 'Pelapor'], d.exceptions.map(function (e) { return '<tr><td>' + esc(e.created_at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.reason) + '</td><td>' + badge(e.status) + '</td><td>' + esc(e.note) + (e.resolution ? '<div class="muted">→ ' + esc(e.resolution) + '</div>' : '') + '</td><td>' + esc(e.reported_by_name) + '</td></tr>'; })) +
-      '<h4>Audit Trail</h4>' + Admin.auditTable(d.audit);
+      '<div><div class="sect" style="font-size:14px;margin:18px 0 10px">Picking Information</div>' + kv([['Picker', o.picker_name], ['Mulai', o.picking_started_at], ['Selesai', o.picking_completed_at], ['Durasi', fmtDur(o.picking_duration)]]) +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Packing Information</div>' + kv([['Packer', o.packer_name], ['Workstation', o.workstation_code], ['Mulai', o.packing_started_at], ['Selesai', o.packing_completed_at], ['Durasi', fmtDur(o.packing_duration)]]) + '</div></div>' +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Order Items (' + d.items.length + ')</div>' + tbl(['#', 'Produk', 'Variasi', 'SKU (ref)', 'Qty'], d.items.map(function (i) { return '<tr><td>' + esc(i.line_no) + '</td><td>' + esc(i.product_name) + '</td><td>' + esc(i.variant) + '</td><td class="mono">' + esc(i.sku) + '</td><td><b>' + esc(i.quantity) + '</b></td></tr>'; })) +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Video Evidence</div>' + vids +
+      '<div class="grid2"><div><div class="sect" style="font-size:14px;margin:18px 0 10px">Sesi Picking</div>' + tbl(['Picker', 'Status', 'Mulai', 'Selesai', 'Device'], d.picking.map(function (s) { return '<tr><td>' + esc(s.picker_name) + '</td><td>' + badge(s.status) + '</td><td>' + esc(s.started_at) + '</td><td>' + esc(s.completed_at) + '</td><td style="font-size:11px">' + esc(s.device) + '</td></tr>'; })) + '</div>' +
+      '<div><div class="sect" style="font-size:14px;margin:18px 0 10px">Sesi Packing</div>' + tbl(['Packer', 'WS', 'Status', 'Mulai', 'Selesai'], d.packing.map(function (s) { return '<tr><td>' + esc(s.packer_name) + '</td><td>' + esc(s.workstation_code) + '</td><td>' + badge(s.status) + '</td><td>' + esc(s.started_at) + '</td><td>' + esc(s.completed_at) + (s.no_video_reason ? '<div class="muted">Tanpa video: ' + esc(s.no_video_reason) + '</div>' : '') + '</td></tr>'; })) + '</div></div>' +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Exceptions</div>' + tbl(['Waktu', 'Tipe', 'Alasan', 'Status', 'Catatan', 'Pelapor'], d.exceptions.map(function (e) { return '<tr><td>' + esc(e.created_at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.reason) + '</td><td>' + badge(e.status) + '</td><td>' + esc(e.note) + (e.resolution ? '<div class="muted">→ ' + esc(e.resolution) + '</div>' : '') + '</td><td>' + esc(e.reported_by_name) + '</td></tr>'; })) +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Audit Trail</div>' + Admin.auditTable(d.audit);
     $$('[data-close]', m).forEach(function (b) { b.onclick = m.close; });
     var rel = $('#od-rel', m); if (rel) rel.onclick = function () {
       promptText('Lepas lock order', 'Alasan', { min: 3, ok: 'Lepas lock' }).then(function (note) {
@@ -1097,9 +1430,9 @@ Admin.auditTable = function (rows) {
 /* ───────── Import (§14–§17) ───────── */
 Admin.pages.import = function (el) {
   var cfg = Admin.me.config;
-  el.innerHTML = '<h2>Import Orders</h2><div class="card"><div class="row"><input type="file" id="imf" accept=".xlsx,.csv"><button class="btn pri" id="imb" disabled>Import</button></div>' +
+  el.innerHTML = ph('Shopee', 'Import Orders') + '<div class="card"><div class="row"><input type="file" id="imf" accept=".xlsx,.csv"><button class="btn pri" id="imb" disabled>' + icon('upload') + 'Import</button></div>' +
     '<p class="muted" style="margin:8px 0 0;font-size:13px">File export Shopee (sheet <b>orders</b>). Format: ' + esc(cfg.allowedImport) + ' · maks ' + cfg.maxImportMb + ' MB. Order tanpa No. Resi masuk sebagai IMPORTED dan otomatis READY FOR PICKING saat file berikutnya berisi resinya. SKU diabaikan — item dikenali dari Nama Produk + Nama Variasi.</p></div>' +
-    '<div id="imr"></div><h3>Riwayat import</h3><div id="imh"></div>';
+    '<div id="imr"></div><div class="sect">Riwayat import</div><div id="imh"></div>';
   var f = $('#imf'), b = $('#imb');
   f.onchange = function () { b.disabled = !f.files.length; };
   b.onclick = function () {
@@ -1107,18 +1440,18 @@ Admin.pages.import = function (el) {
     var ext = file.name.split('.').pop().toLowerCase();
     if (cfg.allowedImport.split(',').indexOf(ext) < 0) return toast('Format .' + ext + ' tidak diizinkan.', 'err');
     if (file.size > cfg.maxImportMb * 1048576) return toast('Ukuran file melebihi batas ' + cfg.maxImportMb + ' MB.', 'err');
-    b.disabled = true; b.textContent = 'Memproses…';
+    b.classList.add('busy'); b.disabled = true;
     $('#imr').innerHTML = '<div class="card" style="margin-top:12px">Mengupload & memvalidasi ' + esc(file.name) + '… (file xlsx dikonversi di Google Drive, bisa 10–60 detik)</div>';
     var r = new FileReader();
     r.onload = function () {
       api('importOrders', { filename: file.name, base64: String(r.result).split(',')[1] }, { silent: true }).then(function (S) {
         $('#imr').innerHTML = Admin.importResult(S); hist(); f.value = '';
-      }).catch(function (e) { $('#imr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; }).then(function () { b.disabled = false; b.textContent = 'Import'; });
+      }).catch(function (e) { $('#imr').innerHTML = '<div class="err-box">' + esc(e.message) + '</div>'; }).then(function () { b.classList.remove('busy'); b.disabled = false; });
     };
     r.readAsDataURL(file);
   };
   var hist = function () {
-    api('importsList').then(function (h) {
+    Admin.swr('imports', 'importsList').then(function (h) {
       $('#imh').innerHTML = tbl(['Waktu', 'File', 'Oleh', 'Baris', 'Order', 'Sukses', 'Duplikat', 'Ditolak (baris)', 'Status'], h.batches.map(function (x) {
         return '<tr class="click" data-b="' + esc(x.id) + '"><td>' + esc(x.uploaded_at) + '</td><td>' + esc(x.filename) + '</td><td>' + esc(x.uploaded_by_name) + '</td><td>' + esc(x.total_rows) + '</td><td>' + esc(x.total_orders) + '</td><td>' + esc(x.successful_orders) + '</td><td>' + esc(x.duplicate_orders) + '</td><td>' + esc(x.rejected_rows) + '</td><td>' + importBadge(x.status) + '</td></tr>';
       }));
@@ -1143,9 +1476,9 @@ Admin.importResult = function (S) {
 /* ───────── Monitoring (§37, §65) ───────── */
 Admin.pages.monitoring = function (el) {
   var load = function () {
-    api('monitoring').then(function (d) {
+    Admin.swr('monitoring', 'monitoring').then(function (d) {
       if (Admin.page !== 'monitoring') return;
-      el.innerHTML = '<div class="row"><h2>Fulfillment Monitoring</h2><span class="muted right">auto-refresh 15 dtk</span></div>' +
+      el.innerHTML = ph('Real-time', 'Fulfillment Monitoring', '<span class="muted">diperbarui tiap 15 dtk</span>') +
         '<div class="card" style="margin-bottom:12px"><b>User online:</b> ' + (d.online.map(function (u) { return badge(u.role) + ' ' + esc(u.username); }).join(' &nbsp; ') || '<span class="muted">tidak ada</span>') + '</div>' +
         tbl(['Tracking Number', 'Order ID', 'Status', 'Dipegang', 'Lock s/d', 'Picker', 'Picking', 'Packer', 'Packing', ''], d.rows.map(function (o) {
           var locked = ['PICKING_IN_PROGRESS', 'PACKING_IN_PROGRESS'].indexOf(o.status) >= 0;
@@ -1154,7 +1487,7 @@ Admin.pages.monitoring = function (el) {
             '<td>' + esc(o.picker_name) + '</td><td>' + esc(o.picking_completed_at || o.picking_started_at) + '</td><td>' + esc(o.packer_name) + ' ' + esc(o.workstation_code) + '</td><td>' + esc(o.packing_completed_at || o.packing_started_at) + '</td>' +
             '<td>' + (locked ? '<button class="btn sm" data-rel="' + esc(o.id) + '">Lepas lock</button>' : '') + '</td></tr>';
         }), 'Tidak ada order dalam proses hari ini.') +
-        '<h3>Video belum terupload</h3>' + tbl(['Resi', 'Packer', 'WS', 'Rekam', 'Ukuran', 'Status', 'Error'], d.pendingVideos.map(function (v) { return '<tr><td class="mono">' + esc(v.tracking_number) + '</td><td>' + esc(v.packer_name) + '</td><td>' + esc(v.workstation_code) + '</td><td>' + esc(v.recording_start) + '</td><td>' + fmtBytes(v.size_bytes) + '</td><td>' + badge(v.upload_status) + '</td><td style="font-size:12px">' + esc(v.last_error) + '</td></tr>'; }), 'Semua video sudah terupload.');
+        '<div class="sect">Video belum terupload</div>' + tbl(['Resi', 'Packer', 'WS', 'Rekam', 'Ukuran', 'Status', 'Error'], d.pendingVideos.map(function (v) { return '<tr><td class="mono">' + esc(v.tracking_number) + '</td><td>' + esc(v.packer_name) + '</td><td>' + esc(v.workstation_code) + '</td><td>' + esc(v.recording_start) + '</td><td>' + fmtBytes(v.size_bytes) + '</td><td>' + badge(v.upload_status) + '</td><td style="font-size:12px">' + esc(v.last_error) + '</td></tr>'; }), 'Semua video sudah terupload.');
       $$('[data-id]', el).forEach(function (tr) { tr.onclick = function () { Admin.orderDetail(tr.getAttribute('data-id'), load); }; });
       $$('[data-rel]', el).forEach(function (b) {
         b.onclick = function (e) {
@@ -1169,7 +1502,7 @@ Admin.pages.monitoring = function (el) {
 
 /* ───────── Videos ───────── */
 Admin.pages.videos = function (el) {
-  el.innerHTML = '<h2>Videos</h2><form class="filters" id="vf"><input class="in" name="q" placeholder="Resi / Order ID (persis)" style="width:240px"><input class="in" type="date" name="date">' +
+  el.innerHTML = ph('Bukti packing', 'Videos') + '<form class="filters" id="vf"><input class="in" name="q" placeholder="Resi / Order ID (persis)" style="width:240px"><input class="in" type="date" name="date">' +
     '<select class="in" name="status">' + opt('', 'Semua status') + ['UPLOADED', 'PENDING', 'UPLOADING', 'FAILED', 'PURGED'].map(function (s) { return opt(s); }).join('') + '</select><button class="btn pri">Cari</button></form>' +
     '<p class="muted" style="font-size:12px;margin:0 0 8px">Video tersimpan privat di Drive akun pemilik. Untuk memutar, browser harus login ke akun pemilik atau email Anda diberi akses ke folder video.</p><div id="vl"></div>';
   var f = $('#vf');
@@ -1193,9 +1526,9 @@ Admin.pages.videos = function (el) {
 /* ───────── Exceptions (§43) ───────── */
 Admin.pages.exceptions = function (el, st) {
   st = st || 'OPEN';
-  el.innerHTML = '<h2>Exceptions</h2><div class="tabs">' + [['OPEN', 'Open'], ['RESOLVED', 'Resolved'], ['LOGGED', 'Log scan ditolak'], ['ALL', 'Semua']].map(function (t) { return '<a data-st="' + t[0] + '" class="' + (t[0] === st ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div><div id="el"></div>';
+  el.innerHTML = ph('Perlu tindakan', 'Exceptions') + '<div class="tabs">' + [['OPEN', 'Open'], ['RESOLVED', 'Resolved'], ['LOGGED', 'Log scan ditolak'], ['ALL', 'Semua']].map(function (t) { return '<a data-st="' + t[0] + '" class="' + (t[0] === st ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div><div id="el"></div>';
   $$('[data-st]', el).forEach(function (a) { a.onclick = function () { Admin.pages.exceptions(el, a.getAttribute('data-st')); }; });
-  api('exceptionsList', { status: st }).then(function (r) {
+  Admin.swr('exc' + st, 'exceptionsList', { status: st }).then(function (r) {
     $('#el').innerHTML = '<div class="muted" style="margin-bottom:6px">' + r.total + ' exception</div>' + tbl(['Waktu', 'Tipe', 'Alasan', 'Tahap', 'Resi', 'Catatan', 'Pelapor', 'Status', ''], r.rows.map(function (e) {
       return '<tr><td style="white-space:nowrap">' + esc(e.created_at) + '</td><td>' + esc(e.type) + '</td><td>' + esc(e.reason) + '</td><td>' + esc(e.stage) + '</td><td class="mono">' + (e.order_id ? '<a href="#" data-oid="' + esc(e.order_id) + '">' + esc(e.tracking_number || e.order_number) + '</a>' : esc(e.tracking_number)) + '</td>' +
         '<td>' + esc(e.note) + (e.resolution ? '<div class="muted">→ ' + esc(e.resolution) + ' (' + esc(e.resolved_by_name) + ')</div>' : '') + '</td><td>' + esc(e.reported_by_name) + '</td><td>' + badge(e.status) + '</td>' +
@@ -1204,10 +1537,10 @@ Admin.pages.exceptions = function (el, st) {
     $$('[data-oid]', $('#el')).forEach(function (a) { a.onclick = function (ev) { ev.preventDefault(); Admin.orderDetail(a.getAttribute('data-oid')); }; });
     $$('[data-res]', $('#el')).forEach(function (b) {
       b.onclick = function () {
-        var m = modal('<h3>Selesaikan exception</h3><label class="f">Tindakan</label><select class="in" id="xa" style="width:100%">' +
+        var m = modal('<div class="sect">Selesaikan exception</div><label class="f">Tindakan</label><select class="in" id="xa" style="width:100%">' +
           opt('REPICK', 'Picking ulang (order → READY FOR PICKING)') + opt('TO_PACKING', 'Kembalikan ke antrian packing (→ PICKING COMPLETED)') + opt('CANCEL', 'Batalkan order (→ CANCELLED)') + opt('CLOSE', 'Tutup saja (status order tidak diubah)') + '</select>' +
           '<label class="f">Catatan penyelesaian</label><textarea class="in" id="xn" rows="3" style="width:100%"></textarea><div class="row" style="margin-top:12px"><button class="btn pri" id="xok">Simpan</button><button class="btn" data-close>Batal</button></div>');
-        $('#xok', m).onclick = function () { api('exceptionResolve', { id: b.getAttribute('data-res'), action: $('#xa', m).value, resolution: $('#xn', m).value }).then(function () { toast('Exception diselesaikan.', 'ok'); m.close(); Admin.pages.exceptions(el, st); }); };
+        $('#xok', m).onclick = function () { busy($('#xok', m), api('exceptionResolve', { id: b.getAttribute('data-res'), action: $('#xa', m).value, resolution: $('#xn', m).value })).then(function () { toast('Exception diselesaikan.', 'ok'); m.close(); Admin.pages.exceptions(el, st); }); };
       };
     });
   });
@@ -1217,12 +1550,12 @@ Admin.pages.exceptions = function (el, st) {
 Admin.pages.users = function (el, filter) {
   if (filter === 'ADD') { filter = 'ALL'; setTimeout(function () { Admin.userForm(null, function () { Admin.pages.users(el, 'ALL'); }); }, 0); }
   filter = filter || 'ALL';
-  api('usersList').then(function (r) {
+  Admin.swr('users', 'usersList').then(function (r) {
     var rows = r.users.filter(function (u) {
       return filter === 'ALL' || (filter === 'ADMIN' && (u.role === 'ADMIN' || u.role === 'SUPER_ADMIN')) || u.role === filter || u.status === filter;
     });
     var can = function (u) { return r.manageableRoles.indexOf(u.role) >= 0 && u.id !== Admin.me.user.id; };
-    el.innerHTML = '<div class="row"><h2>Users</h2><button class="btn pri right" id="ua">+ Add User</button></div><div class="tabs">' +
+    el.innerHTML = ph('Akun & akses', 'Users', '<button class="btn pri" id="ua">' + icon('plus') + 'Tambah user</button>') + '<div class="tabs">' +
       [['ALL', 'All Users'], ['ADMIN', 'Admin'], ['PICKER', 'Picker'], ['PACKER', 'Packer'], ['ACTIVE', 'Active'], ['INACTIVE', 'Inactive']].map(function (t) { return '<a data-f="' + t[0] + '" class="' + (t[0] === filter ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div>' +
       tbl(['Nama', 'Username', 'Email', 'Role', 'Status', 'Last Login', 'Dibuat', ''], rows.map(function (u) {
         return '<tr><td><b>' + esc(u.name) + '</b>' + (u.mustChangePassword ? '<div class="muted" style="font-size:11px">wajib ganti password</div>' : '') + '</td><td class="mono">' + esc(u.username) + '</td><td>' + esc(u.email) + '</td><td>' + badge(u.role) + '</td>' +
@@ -1255,13 +1588,13 @@ Admin.pages.users = function (el, filter) {
 };
 
 Admin.showTempPassword = function (username, pw) {
-  modal('<h3>Password sementara</h3><p>Berikan kepada user <b>' + esc(username) + '</b>. Password ini hanya ditampilkan sekali dan wajib diganti saat login pertama.</p>' +
+  modal('<div class="sect">Password sementara</div><p>Berikan kepada user <b>' + esc(username) + '</b>. Password ini hanya ditampilkan sekali dan wajib diganti saat login pertama.</p>' +
     '<div class="mono" style="font-size:24px;font-weight:800;background:#f1f5f9;border-radius:10px;padding:14px;text-align:center;user-select:all">' + esc(pw) + '</div><button class="btn pri" data-close style="margin-top:12px">Sudah dicatat</button>', { sticky: true });
 };
 
 Admin.userForm = function (u, onDone, roles) {
   roles = roles || Admin.manageableRoles || ['PICKER', 'PACKER'];
-  var m = modal('<h3>' + (u ? 'Edit user' : 'Add User') + '</h3><form id="uf">' +
+  var m = modal('<div class="sect">' + (u ? 'Edit user' : 'Add User') + '</div><form id="uf">' +
     '<label class="f">Nama lengkap</label><input class="in" name="name" style="width:100%" required value="' + esc(u ? u.name : '') + '">' +
     (u ? '<label class="f">Username</label><div class="mono">' + esc(u.username) + '</div>' : '<label class="f">Username</label><input class="in" name="username" style="width:100%" required autocapitalize="off" placeholder="mis. picker.andi">') +
     '<label class="f">Email (opsional)</label><input class="in" name="email" type="email" style="width:100%" value="' + esc(u ? u.email : '') + '">' +
@@ -1274,7 +1607,7 @@ Admin.userForm = function (u, onDone, roles) {
     e.preventDefault();
     var p = u ? api('usersUpdate', { id: u.id, name: f.name.value, email: f.email.value, role: f.role.value })
       : api('usersCreate', { name: f.name.value, username: f.username.value, email: f.email.value, role: f.role.value, status: f.status.value, password: f.password.value });
-    p.then(function (r) { m.close(); toast('User disimpan.', 'ok'); if (r.tempPassword) Admin.showTempPassword(r.user.username, r.tempPassword); else if (!u) Admin.showTempPassword(r.user.username, '(password yang Anda isi)'); if (onDone) onDone(); });
+    busy(f.querySelector('.btn.pri'), p).then(function (r) { m.close(); toast('User disimpan.', 'ok'); if (r.tempPassword) Admin.showTempPassword(r.user.username, r.tempPassword); else if (!u) Admin.showTempPassword(r.user.username, '(password yang Anda isi)'); if (onDone) onDone(); });
   };
 };
 
@@ -1283,16 +1616,16 @@ Admin.pages.config = function (el, tab) {
   tab = tab || 'drive';
   var tabs = [['drive', 'Google Drive'], ['operational', 'Operational'], ['video', 'Video & Kamera'], ['security', 'Security'], ['workstation', 'Workstation'], ['roles', 'Role Matrix']];
   if (Admin.isSuper()) tabs.push(['system', 'Sistem']);
-  el.innerHTML = '<h2>Configuration</h2><div class="tabs">' + tabs.map(function (t) { return '<a data-t="' + t[0] + '" class="' + (t[0] === tab ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div><div id="cfg"></div>';
+  el.innerHTML = ph('Pengaturan sistem', 'Configuration') + '<div class="tabs">' + tabs.map(function (t) { return '<a data-t="' + t[0] + '" class="' + (t[0] === tab ? 'on' : '') + '">' + t[1] + '</a>'; }).join('') + '</div><div id="cfg"></div>';
   $$('[data-t]', el).forEach(function (a) { a.onclick = function () { Admin.pages.config(el, a.getAttribute('data-t')); }; });
   var box = $('#cfg');
   if (tab === 'workstation') return Admin.workstations(box);
-  if (tab === 'roles') return api('rolesMatrix').then(function (r) {
+  if (tab === 'roles') return Admin.swr('roles', 'rolesMatrix').then(function (r) {
     box.innerHTML = tbl(['Fitur'].concat(r.roles), r.rows.map(function (x) { return '<tr><td>' + esc(x[0]) + '</td>' + x.slice(1).map(function (v) { return '<td style="text-align:center">' + (v ? '✅' : '—') + '</td>'; }).join('') + '</tr>'; })) +
       '<p class="muted" style="font-size:12px">Hak akses ditegakkan di server pada setiap panggilan (PRD §41). Menu yang disembunyikan di layar bukan kontrol keamanan.</p>';
   });
   if (tab === 'system') return Admin.system(box);
-  api('settingsGet').then(function (r) {
+  Admin.swr('settings', 'settingsGet').then(function (r) {
     var items = r.items.filter(function (i) { return i.group === tab; });
     box.innerHTML = '<form class="card" id="sf" style="max-width:720px">' + items.map(function (i) {
       var dis = i.editable ? '' : ' disabled';
@@ -1307,7 +1640,7 @@ Admin.pages.config = function (el, tab) {
       var ch = {};
       items.forEach(function (i) { if (i.editable && String(f[i.key].value) !== String(i.value)) ch[i.key] = f[i.key].value; });
       if (!Object.keys(ch).length) return toast('Tidak ada perubahan.', 'warn');
-      api('settingsUpdate', { changes: ch }).then(function (x) { toast('Tersimpan: ' + x.changed.join(', '), 'ok'); Admin.pages.config(el, tab); api('me').then(function (me) { Admin.me = me; App.me = me; }); });
+      busy(f.querySelector('.btn.pri'), api('settingsUpdate', { changes: ch })).then(function (x) { delete Admin.cache.settings; return x; }).then(function (x) { toast('Tersimpan: ' + x.changed.join(', '), 'ok'); Admin.pages.config(el, tab); api('me').then(function (me) { Admin.me = me; App.me = me; }); });
     };
     var dt = $('#dt'); if (dt) dt.onclick = function () {
       $('#dtr').innerHTML = '<div class="muted">Menguji…</div>';
@@ -1320,17 +1653,17 @@ Admin.pages.config = function (el, tab) {
 };
 
 Admin.workstations = function (box) {
-  api('workstationsList').then(function (r) {
+  Admin.swr('ws', 'workstationsList').then(function (r) {
     box.innerHTML = '<div class="row" style="margin-bottom:8px"><button class="btn pri" id="wa">+ Tambah workstation</button></div>' + tbl(['Kode', 'Nama', 'Lokasi', 'Status', 'Dibuat', ''], r.workstations.map(function (w) {
       return '<tr><td class="mono"><b>' + esc(w.workstation_code) + '</b></td><td>' + esc(w.workstation_name) + '</td><td>' + esc(w.location) + '</td><td>' + badge(w.status) + '</td><td>' + esc(w.created_at) + '</td><td><button class="btn sm" data-w="' + esc(w.id) + '">Edit</button></td></tr>';
     }));
     var byId = {}; r.workstations.forEach(function (w) { byId[w.id] = w; });
     var form = function (w) {
-      var m = modal('<h3>' + (w ? 'Edit' : 'Tambah') + ' workstation</h3><form id="wf"><label class="f">Kode</label><input class="in mono" name="workstation_code" style="width:100%" value="' + esc(w ? w.workstation_code : 'PACKING-0' + (r.workstations.length + 1)) + '">' +
+      var m = modal('<div class="sect">' + (w ? 'Edit' : 'Tambah') + ' workstation</div><form id="wf"><label class="f">Kode</label><input class="in mono" name="workstation_code" style="width:100%" value="' + esc(w ? w.workstation_code : 'PACKING-0' + (r.workstations.length + 1)) + '">' +
         '<label class="f">Nama</label><input class="in" name="workstation_name" style="width:100%" value="' + esc(w ? w.workstation_name : '') + '"><label class="f">Lokasi</label><input class="in" name="location" style="width:100%" value="' + esc(w ? w.location : '') + '">' +
         '<label class="f">Status</label><select class="in" name="status">' + opt('ACTIVE', 'ACTIVE', w && w.status) + opt('INACTIVE', 'INACTIVE', w && w.status) + '</select><div class="row" style="margin-top:12px"><button class="btn pri">Simpan</button><button class="btn" type="button" data-close>Batal</button></div></form>');
       var f = $('#wf', m);
-      f.onsubmit = function (e) { e.preventDefault(); api('workstationsSave', { id: w ? w.id : '', workstation_code: f.workstation_code.value, workstation_name: f.workstation_name.value, location: f.location.value, status: f.status.value }).then(function () { m.close(); toast('Workstation disimpan.', 'ok'); Admin.workstations(box); }); };
+      f.onsubmit = function (e) { e.preventDefault(); busy(f.querySelector('.btn.pri'), api('workstationsSave', { id: w ? w.id : '', workstation_code: f.workstation_code.value, workstation_name: f.workstation_name.value, location: f.location.value, status: f.status.value })).then(function () { m.close(); toast('Workstation disimpan.', 'ok'); Admin.workstations(box); }); };
     };
     $('#wa').onclick = function () { form(null); };
     $$('[data-w]', box).forEach(function (b) { b.onclick = function () { form(byId[b.getAttribute('data-w')]); }; });
@@ -1340,8 +1673,8 @@ Admin.workstations = function (box) {
 Admin.system = function (box) {
   api('systemInfo').then(function (s) {
     box.innerHTML = '<div class="card"><h4 style="margin-top:0">Database (Google Sheets)</h4>' + s.stores.map(function (x) { return '<div><span class="mono" style="display:inline-block;min-width:160px">' + esc(x.key) + '</span><a target="_blank" href="' + esc(x.url) + '">buka</a></div>'; }).join('') +
-      '<h4>Trigger</h4>' + (s.triggers.map(function (t) { return '<div class="mono">' + esc(t.handler) + ' · ' + esc(t.type) + '</div>'; }).join('') || '<div class="err-box">Belum ada trigger. Jalankan installTriggers() dari editor.</div>') +
-      '<h4>Maintenance terakhir</h4><div class="mono" style="font-size:12px">' + esc(s.lastMaintenance || '-') + '</div>' +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Trigger</div>' + (s.triggers.map(function (t) { return '<div class="mono">' + esc(t.handler) + ' · ' + esc(t.type) + '</div>'; }).join('') || '<div class="err-box">Belum ada trigger. Jalankan installTriggers() dari editor.</div>') +
+      '<div class="sect" style="font-size:14px;margin:18px 0 10px">Maintenance terakhir</div><div class="mono" style="font-size:12px">' + esc(s.lastMaintenance || '-') + '</div>' +
       '<div class="row" style="margin-top:12px"><button class="btn" id="rp">Jalankan retensi video sekarang</button><button class="btn" id="ra">Jalankan arsip sekarang</button></div><div id="rr"></div></div>';
     $('#rp').onclick = function () { ask('Hapus PERMANEN video yang melewati masa retensi sekarang?', 'Jalankan', true).then(function (y) { if (y) api('runPurgeNow').then(function (r) { $('#rr').innerHTML = '<div class="ok-box">' + esc(JSON.stringify(r)) + '</div>'; }); }); };
     $('#ra').onclick = function () { api('runArchiveNow').then(function (r) { $('#rr').innerHTML = '<div class="ok-box">' + esc(JSON.stringify(r)) + '</div>'; }); };
@@ -1351,11 +1684,11 @@ Admin.system = function (box) {
 /* ───────── Audit Logs (§40) ───────── */
 Admin.pages.audit = function (el) {
   var F = { q: '', action: '', year: '', page: 0 };
-  el.innerHTML = '<h2>Audit Logs</h2><form class="filters" id="af"><input class="in" name="q" placeholder="Resi / Order ID / username (persis)" style="width:260px"><select class="in" name="action">' + opt('', 'Semua aksi') + AUDIT_ACTIONS.map(function (a) { return opt(a); }).join('') + '</select>' +
+  el.innerHTML = ph('Jejak aktivitas', 'Audit Logs') + '<form class="filters" id="af"><input class="in" name="q" placeholder="Resi / Order ID / username (persis)" style="width:260px"><select class="in" name="action">' + opt('', 'Semua aksi') + AUDIT_ACTIONS.map(function (a) { return opt(a); }).join('') + '</select>' +
     '<select class="in" name="year"></select><button class="btn pri">Cari</button></form><div id="al"></div>';
   var f = $('#af');
   var load = function () {
-    api('auditList', F).then(function (r) {
+    Admin.swr('audit' + JSON.stringify(F), 'auditList', F).then(function (r) {
       if (!f.year.options.length) f.year.innerHTML = (r.years.length ? r.years : [r.year]).map(function (y) { return opt(y, y, r.year); }).join('');
       var pages = Math.max(1, Math.ceil(r.total / (r.limit || 100)));
       $('#al').innerHTML = '<div class="row" style="margin-bottom:8px"><span class="muted">' + r.total + ' entri · append-only</span><span class="right"></span><button class="btn sm" id="ap" ' + (F.page ? '' : 'disabled') + '>‹</button><span class="muted">Hal ' + (F.page + 1) + '/' + pages + '</span><button class="btn sm" id="an" ' + (F.page + 1 < pages ? '' : 'disabled') + '>›</button></div>' + Admin.auditTable(r.rows);
@@ -1369,7 +1702,7 @@ Admin.pages.audit = function (el) {
 
 /* ───────── Settings (akun sendiri) ───────── */
 Admin.pages.settings = function (el) {
-  el.innerHTML = '<h2>Settings</h2><div class="card" style="max-width:460px;margin-bottom:14px"><div class="kv"><div>Nama</div><div>' + esc(Admin.me.user.name) + '</div><div>Username</div><div>' + esc(Admin.me.user.username) + '</div><div>Role</div><div>' + badge(Admin.me.user.role) + '</div></div></div><div id="cpbox"></div>';
+  el.innerHTML = ph('Akun saya', 'Settings') + '<div class="card" style="max-width:460px;margin-bottom:14px"><div class="kv"><div>Nama</div><div>' + esc(Admin.me.user.name) + '</div><div>Username</div><div>' + esc(Admin.me.user.username) + '</div><div>Role</div><div>' + badge(Admin.me.user.role) + '</div></div></div><div id="cpbox"></div>';
   App.showChangePassword(false, $('#cpbox'));
 };
 </script>
