@@ -334,6 +334,20 @@ body.pk-body{background:var(--bg)}
 .team .on{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;box-shadow:0 0 0 3px var(--ok-soft)}
 .team .off{width:8px;height:8px;border-radius:50%;background:#cfcbc0;display:inline-block}
 @media (max-width:1100px){.kpi4{grid-template-columns:repeat(2,minmax(0,1fr))}.dash2,.imp{grid-template-columns:1fr}}
+/* ───────── cetak resi ───────── */
+.lbl-kpi{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pill2{background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--muted);font-weight:600;box-shadow:var(--shadow)}.pill2 b{color:var(--fg);font-weight:900}
+.pill2.acc{background:var(--acc-soft);border-color:#f3c6b0;color:var(--acc-ink)}.pill2.acc b{color:var(--acc-ink)}
+.lbl-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow);margin-bottom:14px;position:sticky;top:8px;z-index:3}
+.lbl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.lbl{background:#fff;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color .12s,box-shadow .12s,transform .06s;box-shadow:var(--shadow)}
+.lbl:active{transform:scale(.985)}.lbl.on{border-color:var(--acc);box-shadow:0 0 0 3px rgba(232,105,58,.15)}
+.lbl-img{background:#f3f2ee;padding:8px;border-bottom:1px solid var(--line-2)}.lbl-img img{display:block;width:100%;height:auto;background:#fff}
+.lbl:not(.on) .lbl-img img{opacity:.55}
+.lbl-meta{display:flex;align-items:center;gap:10px;padding:10px 12px 4px}
+.cbx{width:22px;height:22px;border-radius:7px;border:2px solid #c9c4b6;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.lbl.on .cbx{background:var(--acc);border-color:var(--acc)}.cbx .ic{width:14px;height:14px;stroke-width:3}
+.lbl-tag{padding:4px 12px 12px}
 /* ───────── PACKER (desktop, gelap) ───────── */
 body.dark{background:#1f2622;color:#e6ebe6}
 .pc{min-height:100vh;display:flex;flex-direction:column}
@@ -417,6 +431,7 @@ var ICONS = {
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
   play: '<polygon points="6 3 20 12 6 21 6 3"/>',
   lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  printer: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/>',
   monitor: '<rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>'
 };
 function icon(name, cls) { return '<svg class="ic ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[name] || '') + '</svg>'; }
@@ -1397,10 +1412,10 @@ function opt(v, l, sel) { return '<option value="' + esc(v) + '"' + (String(v) =
 
 var Admin = {
   me: null, page: null, timer: null,
-  NAV: [['dashboard', 'Dashboard'], ['orders', 'Orders'], ['import', 'Import Orders'], ['monitoring', 'Monitoring'], ['videos', 'Video Packing'], ['exceptions', 'Exceptions'],
+  NAV: [['dashboard', 'Dashboard'], ['orders', 'Orders'], ['import', 'Import Orders'], ['labels', 'Cetak Resi'], ['monitoring', 'Monitoring'], ['videos', 'Video Packing'], ['exceptions', 'Exceptions'],
     ['settings', 'Pengaturan']],
 
-  ICON: { dashboard: 'grid', orders: 'list', import: 'upload', monitoring: 'activity', videos: 'video', exceptions: 'alert', settings: 'sliders' },
+  ICON: { dashboard: 'grid', orders: 'list', import: 'upload', labels: 'printer', monitoring: 'activity', videos: 'video', exceptions: 'alert', settings: 'sliders' },
   cache: {},
 
   start: function (me) {
@@ -1408,8 +1423,8 @@ var Admin = {
     var u = me.user;
     var nav = function (n) { return '<a class="nv" data-nav="' + n[0] + '">' + icon(Admin.ICON[n[0]]) + n[1] + '</a>'; };
     $app().innerHTML = '<div class="adm"><nav class="side">' + brand() +
-      '<div class="sec">OPERASIONAL</div>' + Admin.NAV.slice(0, 6).map(nav).join('') +
-      '<div class="sec" style="margin-top:10px">SISTEM</div>' + Admin.NAV.slice(6).map(nav).join('') +
+      '<div class="sec">OPERASIONAL</div>' + Admin.NAV.slice(0, 7).map(nav).join('') +
+      '<div class="sec" style="margin-top:10px">SISTEM</div>' + Admin.NAV.slice(7).map(nav).join('') +
       '<div class="me"><div class="avatar">' + esc(initials(u.name)) + '</div><div><div class="n">' + esc(u.name) + '</div><div class="r">' + esc(u.role.replace('_', ' ')) + '</div></div><button id="adm-out" title="Logout">' + icon('logout') + '</button></div></nav><main class="main" id="main"></main></div>';
     $$('[data-nav]').forEach(function (a) { a.onclick = function () { Admin.go(a.getAttribute('data-nav'), a.getAttribute('data-arg')); }; });
     $('#adm-out').onclick = function () { Admin.stop(); App.logout(); };
@@ -1666,6 +1681,184 @@ Admin.importResult = function (S) {
     '<div class="cards">' + stat(S.newOrders, 'Order baru') + stat(S.newReady, 'Baru — READY FOR PICKING') + stat(S.newAwaitingResi, 'Baru — menunggu resi (IMPORTED)') + stat(S.resiAssigned + (S.resiChanged || 0), 'Resi baru diisi → siap picking') + stat(S.cancelledOrders, 'Batal di Shopee') + '</div>' +
     ((S.errors || []).length ? '<h4 style="color:var(--err)">Validation Errors</h4><div class="err-box" style="font-weight:500;max-height:260px;overflow:auto">' + list(S.errors) + '</div>' : '') +
     ((S.warnings || []).length ? '<h4 style="color:var(--warn)">Peringatan</h4><div class="warn-box" style="font-weight:500;max-height:260px;overflow:auto">' + list(S.warnings) + '</div>' : '') + '</div>';
+};
+
+/* ───────── Cetak Resi — PDF resi Shopee → 8 label per A4 tanpa daftar item ───────── */
+var PDFJS_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.min.mjs';
+var PDFJS_WORKER = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.worker.min.mjs';
+var LABEL_DPI = 300;
+
+Admin.loadPdfJs = function () {
+  if (!Admin._pdfjs) Admin._pdfjs = import(PDFJS_URL).then(function (m) { m.GlobalWorkerOptions.workerSrc = PDFJS_WORKER; return m; });
+  return Admin._pdfjs;
+};
+
+/**
+ * Baca PDF resi Shopee: setiap label dikenali dari teks "No. Resi:". Area yang dipotong = kotak label
+ * (logo, kode sortir, barcode resi, penerima, pengirim, berat, batas kirim, QR, barcode pesanan);
+ * tabel item di bawahnya tidak ikut. Ukuran relatif terhadap "No. Resi:" mengikuti template Shopee/SPX.
+ */
+Admin.extractLabels = function (file, onProgress) {
+  return Promise.all([Admin.loadPdfJs(), file.arrayBuffer()]).then(function (r) {
+    var pdfjs = r[0];
+    return pdfjs.getDocument({ data: new Uint8Array(r[1]) }).promise.then(function (doc) {
+      var labels = [], scale = LABEL_DPI / 72;
+      var pageNo = 0;
+      var next = function () {
+        pageNo++;
+        if (pageNo > doc.numPages) return labels;
+        return doc.getPage(pageNo).then(function (page) {
+          var vp1 = page.getViewport({ scale: 1 });
+          return page.getTextContent().then(function (tc) {
+            var items = tc.items.filter(function (i) { return i.str && i.str.trim(); }).map(function (i) {
+              return { s: i.str.trim(), x: i.transform[4], y: vp1.height - i.transform[5], f: Math.abs(i.transform[0]) || Math.abs(i.transform[3]) };
+            });
+            var anchors = items.filter(function (i) { return /^No\.?\s*Resi\s*:?$/i.test(i.s); });
+            if (!anchors.length) { onProgress(pageNo, doc.numPages, labels.length); return next(); }
+            var vp = page.getViewport({ scale: scale });
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.ceil(vp.width); canvas.height = Math.ceil(vp.height);
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            return page.render({ canvasContext: ctx, viewport: vp }).promise.then(function () {
+              anchors.forEach(function (a) {
+                var resiItem = items.filter(function (i) { return /^[A-Z0-9]{8,30}$/.test(i.s) && i.f >= 6 && i.y > a.y && i.y - a.y < 14 && Math.abs(i.x - a.x) < 60; })[0];
+                if (!resiItem) return;
+                var pes = items.filter(function (i) { return /^No\.?\s*Pesanan\s*:/i.test(i.s) && i.y > a.y && i.y < a.y + 170 && i.x > a.x - 230 && i.x < a.x; })[0];
+                var box = { x0: Math.max(0, a.x - 209.3), x1: Math.min(vp1.width, a.x + 59.6), y0: Math.max(0, a.y - 41.3), y1: Math.min(vp1.height, a.y + 168.8) };
+                var w = Math.round((box.x1 - box.x0) * scale), h = Math.round((box.y1 - box.y0) * scale);
+                var cut = document.createElement('canvas'); cut.width = w; cut.height = h;
+                cut.getContext('2d').drawImage(canvas, Math.round(box.x0 * scale), Math.round(box.y0 * scale), w, h, 0, 0, w, h);
+                labels.push({ resi: resiItem.s.toUpperCase(), orderNumber: pes ? pes.s.replace(/^No\.?\s*Pesanan\s*:\s*/i, '').trim() : '', img: cut.toDataURL('image/png'), page: pageNo });
+              });
+              canvas.width = canvas.height = 0;
+              onProgress(pageNo, doc.numPages, labels.length);
+              return next();
+            });
+          });
+        });
+      };
+      return next();
+    });
+  });
+};
+
+Admin.pages.labels = function (el) {
+  var S = Admin.labelState = Admin.labelState || { labels: [], file: '' };
+  el.innerHTML = ph('Pengiriman', 'Cetak Resi', '<span class="muted">8 resi per lembar A4 · tanpa daftar item</span>') +
+    '<div class="lbl-kpi" id="lk"></div><div id="lz"></div><div class="sect">Resi belum dicetak</div><div class="muted" style="font-size:12.5px;margin:-6px 0 10px">Order yang sudah punya resi di sistem tetapi belum pernah dicetak. Unduh PDF resinya dari Shopee (Pesanan Saya → Perlu Dikirim → Cetak Resi), lalu tarik ke kotak di atas.</div><div id="lp"></div>';
+  var kpi = function (p) {
+    var sel = S.labels.filter(function (l) { return l.sel; }).length;
+    $('#lk').innerHTML = '<div class="pill2"><b>' + (p ? p.pendingTotal : '…') + '</b> belum dicetak</div><div class="pill2"><b>' + (p ? p.printedToday : '…') + '</b> dicetak hari ini</div>' +
+      (S.labels.length ? '<div class="pill2"><b>' + S.labels.length + '</b> label di ' + esc(S.file) + '</div><div class="pill2 acc"><b>' + sel + '</b> dipilih · ' + Math.ceil(sel / 8) + ' lembar A4</div>' : '');
+  };
+  var pending = function () {
+    Admin.swr('labelsPending', 'labelsPending').then(function (p) {
+      if (Admin.page !== 'labels') return;
+      Admin._pend = p; kpi(p);
+      $('#lp').innerHTML = tbl(['Resi', 'Order ID', 'Status', 'Kirim sebelum', 'Qty'], p.pending.map(function (o) {
+        return '<tr class="click" data-id="' + esc(o.id) + '"><td class="mono">' + esc(o.tracking_number) + '</td><td class="mono">' + esc(o.order_number) + '</td><td>' + badge(o.status) + '</td><td>' + esc(o.ship_by) + '</td><td>' + esc(o.total_qty) + '</td></tr>';
+      }), 'Semua resi di sistem sudah dicetak.');
+      $$('[data-id]', $('#lp')).forEach(function (tr) { tr.onclick = function () { Admin.orderDetail(tr.getAttribute('data-id')); }; });
+    }).catch(function () {});
+  };
+  var tag = function (l) {
+    if (!l.chk) return '<span class="badge">memeriksa…</span>';
+    if (!l.chk.found) return '<span class="badge b-PENDING">Tidak ada di sistem</span>';
+    if (l.chk.status === 'CANCELLED') return '<span class="badge b-FAILED">Order dibatalkan</span>';
+    if (l.chk.archived) return '<span class="badge b-PURGED">Order sudah diarsip</span>';
+    return l.chk.printCount ? '<span class="badge b-READY_FOR_PICKING">Sudah dicetak ' + l.chk.printCount + '× · ' + esc(String(l.chk.printedAt).slice(5, 16)) + '</span>' : '<span class="badge b-COMPLETED">Belum dicetak</span>';
+  };
+  var view = function () {
+    kpi(Admin._pend);
+    if (!S.labels.length) {
+      $('#lz').innerHTML = '<input type="file" id="lf-in" accept="application/pdf,.pdf" hidden><div class="drop" id="ldrop"><div class="di">' + icon('printer') + '</div><div class="dt">Tarik & lepas PDF resi dari Shopee di sini</div><div class="ds">atau <b>klik untuk memilih file</b> · PDF "Cetak Resi" dari Seller Centre</div><div class="fmt"><span>.pdf</span></div></div>';
+      var d = $('#ldrop'), inp = $('#lf-in');
+      d.onclick = function () { inp.click(); };
+      ['dragenter', 'dragover'].forEach(function (ev) { d.addEventListener(ev, function (e) { e.preventDefault(); d.classList.add('over'); }); });
+      ['dragleave', 'drop'].forEach(function (ev) { d.addEventListener(ev, function (e) { e.preventDefault(); d.classList.remove('over'); }); });
+      d.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) load(e.dataTransfer.files[0]); });
+      inp.onchange = function () { if (inp.files.length) load(inp.files[0]); };
+      return;
+    }
+    var sel = S.labels.filter(function (l) { return l.sel; });
+    $('#lz').innerHTML = '<div class="lbl-bar"><button class="btn sm" id="ls-new">' + icon('refresh') + 'Pilih belum dicetak</button><button class="btn sm" id="ls-all">Pilih semua</button><button class="btn sm" id="ls-none">Kosongkan</button>' +
+      '<button class="btn sm ghost" id="ls-reset">' + icon('x') + 'Ganti PDF</button><span class="right"></span><button class="btn pri" id="ls-print" style="height:42px;padding:0 18px" ' + (sel.length ? '' : 'disabled') + '>' + icon('printer') + 'Cetak ' + sel.length + ' resi · ' + Math.ceil(sel.length / 8) + ' lembar</button></div>' +
+      '<div class="lbl-grid">' + S.labels.map(function (l, i) {
+        return '<div class="lbl ' + (l.sel ? 'on' : '') + '" data-i="' + i + '"><div class="lbl-img"><img src="' + l.img + '" alt="Resi ' + esc(l.resi) + '" loading="lazy"></div><div class="lbl-meta"><span class="cbx">' + (l.sel ? icon('check') : '') + '</span><div class="grow"><div class="mono" style="font-weight:700;font-size:12.5px">' + esc(l.resi) + '</div><div class="muted" style="font-size:11.5px">' + esc(l.orderNumber || '-') + '</div></div></div><div class="lbl-tag">' + tag(l) + '</div></div>';
+      }).join('') + '</div>';
+    $$('.lbl', $('#lz')).forEach(function (c) { c.onclick = function () { var l = S.labels[Number(c.getAttribute('data-i'))]; l.sel = !l.sel; view(); }; });
+    $('#ls-new').onclick = function () { S.labels.forEach(function (l) { l.sel = Admin.labelDefaultSel(l); }); view(); };
+    $('#ls-all').onclick = function () { S.labels.forEach(function (l) { l.sel = true; }); view(); };
+    $('#ls-none').onclick = function () { S.labels.forEach(function (l) { l.sel = false; }); view(); };
+    $('#ls-reset').onclick = function () { S.labels = []; S.file = ''; view(); };
+    $('#ls-print').onclick = function () { Admin.printLabels(S.labels.filter(function (l) { return l.sel; }), function () { view(); delete Admin.cache.labelsPending; pending(); }); };
+  };
+  var load = function (file) {
+    if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') return toast('Gunakan file PDF resi dari Shopee.', 'err');
+    $('#lz').innerHTML = '<div class="file-card"><div class="fi" style="background:#fdecec;color:#b42318">PDF</div><div class="grow"><div class="fn">' + esc(file.name) + '</div><div class="fs" id="lprog">Memuat pembaca PDF…</div><div class="indet"></div></div></div>';
+    Admin.extractLabels(file, function (p, n, found) { var e = $('#lprog'); if (e) e.textContent = 'Memproses halaman ' + p + ' / ' + n + ' · ' + found + ' label ditemukan'; }).then(function (labels) {
+      if (!labels.length) { toast('Tidak ada label resi Shopee yang dikenali di PDF ini.', 'err'); S.labels = []; return view(); }
+      S.labels = labels; S.file = file.name;
+      view();
+      api('labelsCheck', { resis: labels.map(function (l) { return l.resi; }) }, { silent: true }).then(function (r) {
+        var by = {}; r.rows.forEach(function (x) { by[x.resi] = x; });
+        S.labels.forEach(function (l) { l.chk = by[l.resi] || { found: false }; l.sel = Admin.labelDefaultSel(l); });
+        if (Admin.page === 'labels') view();
+      }).catch(function (e) { toast('Status resi gagal diperiksa: ' + e.message, 'err'); S.labels.forEach(function (l) { l.sel = true; }); view(); });
+    }).catch(function (e) { toast('PDF gagal dibaca: ' + (e && e.message || e), 'err'); S.labels = []; view(); });
+  };
+  view(); pending();
+};
+
+Admin.labelDefaultSel = function (l) { return !!(l.chk && l.chk.found && !l.chk.archived && l.chk.status !== 'CANCELLED' && !l.chk.printCount); };
+
+/** Susun 8 label per A4 (2 × 4) dengan garis potong putus-putus, cetak lewat iframe, lalu konfirmasi. */
+Admin.labelSheetHtml = function (list) {
+  var sheets = [];
+  for (var i = 0; i < list.length; i += 8) {
+    var cells = list.slice(i, i + 8).map(function (l) { return '<div class="c"><img src="' + l.img + '"></div>'; });
+    while (cells.length < 8) cells.push('<div class="c"></div>');
+    sheets.push('<div class="sheet">' + cells.join('') + '</div>');
+  }
+  var html = '<!doctype html><html><head><meta charset="utf-8"><title>Resi ' + new Date().toISOString().slice(0, 10) + '</title><style>' +
+    '@page{size:A4;margin:5mm}*{box-sizing:border-box}html,body{margin:0;background:#fff}' +
+    '.sheet{width:200mm;height:287mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,1fr);break-after:page;page-break-after:always;overflow:hidden}' +
+    '.sheet:last-child{break-after:auto;page-break-after:auto}' +
+    '.c{display:flex;align-items:center;justify-content:center;padding:2.5mm;border-right:.3mm dashed #8f8f8f;border-bottom:.3mm dashed #8f8f8f;overflow:hidden;min-height:0}' +
+    '.c:nth-child(2n){border-right:0}.c:nth-child(n+7){border-bottom:0}' +
+    '.c img{max-width:100%;max-height:100%;display:block}</style></head><body>' + sheets.join('') + '</body></html>';
+  return html;
+};
+
+Admin.printLabels = function (list, done) {
+  if (!list.length) return;
+  var html = Admin.labelSheetHtml(list);
+  var old = document.getElementById('label-print'); if (old) old.remove();
+  var fr = document.createElement('iframe');
+  fr.id = 'label-print';
+  fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+  document.body.appendChild(fr);
+  var doc = fr.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+  var imgs = Array.prototype.slice.call(doc.images);
+  Promise.all(imgs.map(function (im) { return im.complete ? 0 : new Promise(function (r) { im.onload = im.onerror = r; }); })).then(function () {
+    fr.contentWindow.focus();
+    fr.contentWindow.print();
+    setTimeout(function () {
+      var m = modal('<h3>Resi berhasil dicetak?</h3><p style="color:#4e5751;margin:0">Tandai <b>' + list.length + ' resi</b> sebagai sudah dicetak agar tidak tercetak dua kali. Resi yang tidak ada di sistem tidak ikut ditandai.</p>' +
+        '<div class="row" style="margin-top:20px"><button class="btn pri" id="lm-yes" style="height:44px;padding:0 18px">' + icon('check') + 'Ya, tandai sudah dicetak</button><button class="btn" data-close style="height:44px;padding:0 18px">Belum / batal cetak</button></div>');
+      $('#lm-yes', m).onclick = function () {
+        busy($('#lm-yes', m), api('labelsMark', { resis: list.map(function (l) { return l.resi; }) })).then(function (r) {
+          m.close();
+          var now = new Date(Date.now() + 7 * 3600000).toISOString().replace('T', ' ').slice(0, 19);
+          list.forEach(function (l) { if (l.chk && l.chk.found && !l.chk.archived) { l.chk.printCount = (l.chk.printCount || 0) + 1; l.chk.printedAt = now; } l.sel = false; });
+          toast(r.marked + ' resi ditandai sudah dicetak.', 'ok');
+          if (done) done();
+        });
+      };
+    }, 400);
+  });
 };
 
 /* ───────── Monitoring (§37, §65) ───────── */
