@@ -1,6 +1,6 @@
 {
-  "name": "Meirista Fulfillment System",
-  "short_name": "Meirista",
+  "name": "FMS Meirista",
+  "short_name": "FMS Meirista",
   "description": "Picking, packing, dan cetak resi Meirista",
   "start_url": "./",
   "scope": "./",
