@@ -2,7 +2,7 @@
  * Tujuan: aplikasi tetap TERBUKA saat internet putus / halaman di-refresh offline, supaya rekaman di antrean
  * perangkat bisa dipulihkan & dilanjutkan. Halaman: jaringan dulu (selalu versi terbaru), salinan terakhir bila offline.
  * Data (panggilan API ke Apps Script) TIDAK pernah di-cache. */
-var CACHE = 'fms-shell-v1';
+var CACHE = 'fms-shell-v3'; // v3: ikon aplikasi baru — cache lama (berisi ikon lama) dihapus saat service worker aktif
 var SHELL = './';
 
 self.addEventListener('install', function (e) {
@@ -35,7 +35,8 @@ self.addEventListener('fetch', function (e) {
   }
 
   // ikon/logo sendiri & pustaka MD5 (verifikasi video): cache dulu, jaringan bila belum ada
-  var mine = url.origin === self.location.origin && /\.(png|webp|webmanifest|ico|svg)$/.test(url.pathname);
+  // manifest TIDAK di-cache (selalu terbaru → ikon & warna aplikasi di HP bisa diperbarui)
+  var mine = url.origin === self.location.origin && /\.(png|webp|ico|svg)$/.test(url.pathname);
   var lib = url.hostname === 'cdnjs.cloudflare.com' && url.pathname.indexOf('/spark-md5/') >= 0;
   if (mine || lib) {
     e.respondWith(caches.match(req).then(function (hit) {
