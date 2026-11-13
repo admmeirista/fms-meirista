@@ -6,23 +6,23 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#F7F5F1",
+  "background_color": "#26352E",
   "theme_color": "#26352E",
   "icons": [
     {
-      "src": "icon-192.png?v=3",
+      "src": "icon-192.png?v=4",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png?v=3",
+      "src": "icon-512.png?v=4",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-maskable-512.png?v=3",
+      "src": "icon-maskable-512.png?v=4",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

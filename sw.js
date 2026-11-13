@@ -2,7 +2,7 @@
  * Tujuan: aplikasi tetap TERBUKA saat internet putus / halaman di-refresh offline, supaya rekaman di antrean
  * perangkat bisa dipulihkan & dilanjutkan. Halaman: jaringan dulu (selalu versi terbaru), salinan terakhir bila offline.
  * Data (panggilan API ke Apps Script) TIDAK pernah di-cache. */
-var CACHE = 'fms-shell-v3'; // v3: ikon aplikasi baru — cache lama (berisi ikon lama) dihapus saat service worker aktif
+var CACHE = 'fms-shell-v4'; // Logo FMS baru: hapus salinan ikon versi sebelumnya.
 var SHELL = './';
 
 self.addEventListener('install', function (e) {
