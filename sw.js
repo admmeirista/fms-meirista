@@ -36,7 +36,7 @@ self.addEventListener('fetch', function (e) {
 
   // ikon/logo sendiri & pustaka MD5 (verifikasi video): cache dulu, jaringan bila belum ada
   // manifest TIDAK di-cache (selalu terbaru → ikon & warna aplikasi di HP bisa diperbarui)
-  var mine = url.origin === self.location.origin && /\.(png|webp|ico|svg)$/.test(url.pathname);
+  var mine = url.origin === self.location.origin && (/\.(png|webp|ico|svg)$/.test(url.pathname)||/\/xlsx\.full\.min\.js$/.test(url.pathname));
   var lib = url.hostname === 'cdnjs.cloudflare.com' && url.pathname.indexOf('/spark-md5/') >= 0;
   if (mine || lib) {
     e.respondWith(caches.match(req).then(function (hit) {
