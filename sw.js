@@ -2,7 +2,7 @@
  * Tujuan: aplikasi tetap TERBUKA saat internet putus / halaman di-refresh offline, supaya rekaman di antrean
  * perangkat bisa dipulihkan & dilanjutkan. Halaman: jaringan dulu (selalu versi terbaru), salinan terakhir bila offline.
  * Data (panggilan API ke Apps Script) TIDAK pernah di-cache. */
-var CACHE = 'fms-shell-v4'; // Logo FMS baru: hapus salinan ikon versi sebelumnya.
+var CACHE = 'fms-shell-v5'; // Logo FMS baru: hapus salinan ikon versi sebelumnya.
 var SHELL = './';
 
 self.addEventListener('install', function (e) {
@@ -37,8 +37,10 @@ self.addEventListener('fetch', function (e) {
   // ikon/logo sendiri & pustaka MD5 (verifikasi video): cache dulu, jaringan bila belum ada
   // manifest TIDAK di-cache (selalu terbaru → ikon & warna aplikasi di HP bisa diperbarui)
   var mine = url.origin === self.location.origin && (/\.(png|webp|ico|svg)$/.test(url.pathname)||/\/xlsx\.full\.min\.js$/.test(url.pathname));
+  var scannerAsset=url.origin===self.location.origin&&/\/(barcode-ponyfill-3\.0\.8\.js|zxing_reader-2\.2\.4\.wasm|zxing-js-0\.21\.3\.min\.js)$/.test(url.pathname);
+  var faceAsset=url.hostname==='cdn.jsdelivr.net'&&/^\/npm\/@vladmandic\/face-api@1\.7\.15\/(dist\/face-api\.js|model\/[^/]+\.(json|bin|weights|shard[0-9]+))$/.test(url.pathname);
   var lib = url.hostname === 'cdnjs.cloudflare.com' && url.pathname.indexOf('/spark-md5/') >= 0;
-  if (mine || lib) {
+  if (mine || lib || scannerAsset || faceAsset) {
     e.respondWith(caches.match(req).then(function (hit) {
       return hit || fetch(req).then(function (res) {
         if (res && (res.ok || res.type === 'opaque')) { var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); }); }
